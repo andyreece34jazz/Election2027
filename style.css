@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7f9;
+    color: #17202a;
+}
+
+.container {
+    width: min(1100px, 92%);
+    margin: 0 auto;
+}
+
+.site-header {
+    background: #ffffff;
+    border-bottom: 1px solid #dfe4e8;
+    padding: 32px 0;
+}
+
+.site-header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+.site-header p {
+    margin: 0;
+    color: #5f6b76;
+}
+
+.section {
+    background: #ffffff;
+    margin: 28px 0;
+    padding: 24px;
+    border: 1px solid #dfe4e8;
+    border-radius: 10px;
+}
+
+.section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.status {
+    color: #5f6b76;
+    margin-bottom: 18px;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+}
+
+.result-card {
+    border: 1px solid #dfe4e8;
+    border-radius: 8px;
+    padding: 18px;
+    background: #fafbfc;
+}
+
+.result-card .label {
+    display: block;
+    font-size: 13px;
+    color: #65727e;
+    margin-bottom: 8px;
+}
+
+.result-card .value {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.party-card {
+    background: #ffffff;
+}
+
+.party-card .value {
+    font-size: 28px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    border: 1px solid #cbd3da;
+    border-radius: 6px;
+    background: #ffffff;
+    font-size: 16px;
+}
+
+.lga-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+}
+
+.lga-table th,
+.lga-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e1e5e8;
+    text-align: left;
+}
+
+.lga-table th {
+    background: #f5f7f9;
+    font-size: 13px;
+}
+
+.lga-table td {
+    font-size: 14px;
+}
+
+.empty {
+    padding: 20px 0;
+    color: #65727e;
+}
+
+.error {
+    padding: 14px;
+    border-radius: 6px;
+    background: #fff1f1;
+    color: #9b1c1c;
+}
+
+footer {
+    padding: 30px 0;
+    color: #65727e;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    .site-header h1 {
+        font-size: 26px;
+    }
+
+    .section {
+        padding: 18px;
+    }
+
+    .lga-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
