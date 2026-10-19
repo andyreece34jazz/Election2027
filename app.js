@@ -7,7 +7,6 @@ const stateSelect = document.getElementById("state-select");
 const stateResults = document.getElementById("state-results");
 const lgaResults = document.getElementById("lga-results");
 
-
 async function fetchSupabase(view) {
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/${view}?select=*`,
@@ -20,163 +19,199 @@ async function fetchSupabase(view) {
     );
 
     if (!response.ok) {
-        throw new Error(
-            `${view}: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`${view}: ${response.status} ${response.statusText}`);
     }
 
     return response.json();
 }
 
-
 function formatNumber(value) {
     if (value === null || value === undefined) {
         return "—";
     }
-
     return Number(value).toLocaleString("en-GB");
 }
 
+function formatPercent(part, total) {
+    if (!total || total === 0) return "0.0";
+    return ((part / total) * 100).toFixed(1);
+}
 
-function createCard(label, value, extraClass = "") {
+function figure(label, value) {
+    const val = formatNumber(value);
+    const isDash = (val === "—");
     return `
-        <div class="result-card ${extraClass}">
+        <div class="figure">
             <span class="label">${label}</span>
-            <span class="value">${formatNumber(value)}</span>
+            <span class="value ${isDash ? 'dash' : ''}">${val}</span>
         </div>
     `;
 }
 
-
 function renderNational(data) {
+    // New layout relies on State and LGA. 
+    // If we have national data, we can optionally render it here.
     if (!data.length) {
-        nationalResults.innerHTML =
-            '<div class="empty">No national results available.</div>';
+        nationalStatus.textContent = "National projection unavailable. State and LGA estimates are shown below.";
         return;
     }
 
     const result = data[0];
+    
+    nationalStatus.textContent = "Estimates based on figures received and checked so far.";
 
+    // Render national aggregate using the same grid as state if desired
     nationalResults.innerHTML = `
-        ${createCard("Verified polling units", result.verified_polling_units)}
-        ${createCard("Registered voters", result.registered_voters)}
-        ${createCard("Accredited voters", result.accredited_voters)}
-        ${createCard("Total votes cast", result.total_votes_cast)}
-        ${createCard("Total valid votes", result.total_valid_votes)}
-        ${createCard("Rejected votes", result.rejected_votes)}
-
-        ${createCard("PDP", result.pdp, "party-card")}
-        ${createCard("APC", result.apc, "party-card")}
-        ${createCard("NDC", result.ndc, "party-card")}
-        ${createCard("ADC", result.adc, "party-card")}
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3>National Estimates</h3>
+                    <span class="not-official">Estimated Figures - Not Official</span>
+                </div>
+                <div class="coverage-block">
+                    <div class="pct">${formatNumber(result.verified_polling_units)}</div>
+                    <div class="label">Polling units covered</div>
+                </div>
+            </div>
+            <hr style="border: 0; border-top: 1px solid var(--line); margin: 16px 0;">
+            <div class="figures">
+                ${figure("APC", result.apc)}
+                ${figure("PDP", result.pdp)}
+                ${figure("ADC", result.adc)}
+                ${figure("NDC", result.ndc)}
+            </div>
+            <div class="figures" style="margin-bottom: 0;">
+                ${figure("Registered voters", result.registered_voters)}
+                ${figure("Accredited voters", result.accredited_voters)}
+                ${figure("Valid votes", result.total_valid_votes)}
+                ${figure("Rejected votes", result.rejected_votes)}
+            </div>
+        </div>
     `;
 }
 
-
 function populateStates(data) {
-    stateSelect.innerHTML =
-        '<option value="">Select a state</option>';
+    stateSelect.innerHTML = '<option value="">Select a state</option>';
 
     data.forEach(state => {
         const option = document.createElement("option");
-
         option.value = state.state_name;
         option.textContent = state.state_name;
-
         stateSelect.appendChild(option);
     });
 }
 
-
 function renderState(data, stateName) {
-    const result = data.find(
-        item => item.state_name === stateName
-    );
+    const s = data.find(item => item.state_name === stateName);
 
-    if (!result) {
+    if (!s) {
         stateResults.innerHTML = "";
         return;
     }
 
+    // Note: If your Supabase view doesn't have total_polling_units yet, 
+    // we default to 0 which shows 0.0% coverage.
+    const totalPUs = s.total_polling_units || 0;
+    const covPercent = formatPercent(s.verified_polling_units, totalPUs);
+
     stateResults.innerHTML = `
-        <div class="result-card">
-            <span class="label">Verified polling units</span>
-            <span class="value">${formatNumber(result.verified_polling_units)}</span>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h3>${s.state_name} State</h3>
+                    <span class="not-official">Estimated Figures - Not Official</span>
+                </div>
+                <div class="coverage-block">
+                    <div class="pct">${covPercent}%</div>
+                    <div class="label">Polling-unit coverage</div>
+                    <div class="label">${formatNumber(s.verified_polling_units)} of ${formatNumber(totalPUs)} polling units</div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #dfe4e8; margin: 16px 0;">
+
+            <div class="figures">
+                ${figure("APC", s.apc)}
+                ${figure("PDP", s.pdp)}
+                ${figure("ADC", s.adc)}
+                ${figure("NDC", s.ndc)}
+            </div>
+
+            <div class="figures" style="margin-bottom: 0;">
+                ${figure("Registered voters", s.registered_voters)}
+                ${figure("Accredited voters", s.accredited_voters)}
+                ${figure("Valid votes", s.total_valid_votes)}
+                ${figure("Rejected votes", s.rejected_votes)}
+            </div>
+
+            <div class="meta">
+                <!-- If you add these to the view later, they will appear. Otherwise fallback to — -->
+                <p><strong>${formatNumber(s.sources_matched) || '—'}</strong> sources matched · <strong>${formatNumber(s.single_source) || '—'}</strong> single-source</p>
+                <p style="margin-bottom:0;">
+                    Estimates based on polling-unit figures received so far. Coverage is not a full state count. These figures are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">INEC Election Results Portal ↗</a>.
+                </p>
+            </div>
         </div>
-
-        ${createCard("Registered voters", result.registered_voters)}
-        ${createCard("Accredited voters", result.accredited_voters)}
-        ${createCard("Total votes cast", result.total_votes_cast)}
-        ${createCard("Total valid votes", result.total_valid_votes)}
-        ${createCard("Rejected votes", result.rejected_votes)}
-
-        ${createCard("PDP", result.pdp, "party-card")}
-        ${createCard("APC", result.apc, "party-card")}
-        ${createCard("NDC", result.ndc, "party-card")}
-        ${createCard("ADC", result.adc, "party-card")}
     `;
 }
 
-
 function renderLGAs(data, stateName) {
-    const rows = data.filter(
-        item => item.state_name === stateName
-    );
+    const rows = data.filter(item => item.state_name === stateName);
 
     if (!rows.length) {
-        lgaResults.innerHTML =
-            '<div class="empty">No LGA results available.</div>';
+        lgaResults.innerHTML = '<div class="empty-state">No LGA estimates available for this state yet.</div>';
         return;
     }
 
-    const tableRows = rows.map(row => `
-        <tr>
-            <td>${row.lga_name}</td>
-            <td>${formatNumber(row.verified_polling_units)}</td>
-            <td>${formatNumber(row.registered_voters)}</td>
-            <td>${formatNumber(row.accredited_voters)}</td>
-            <td>${formatNumber(row.total_votes_cast)}</td>
-            <td>${formatNumber(row.total_valid_votes)}</td>
-            <td>${formatNumber(row.rejected_votes)}</td>
-            <td>${formatNumber(row.pdp)}</td>
-            <td>${formatNumber(row.apc)}</td>
-            <td>${formatNumber(row.ndc)}</td>
-            <td>${formatNumber(row.adc)}</td>
-        </tr>
-    `).join("");
+    const tableRows = rows.map(r => {
+        const totalPUs = r.total_polling_units || 0;
+        const covPercent = formatPercent(r.verified_polling_units, totalPUs);
+        
+        return `
+            <tr>
+                <td>${r.lga_name}</td>
+                <td class="num">${formatNumber(r.apc)}</td>
+                <td class="num">${formatNumber(r.pdp)}</td>
+                <td class="num ${r.adc == null ? 'dash' : ''}">${formatNumber(r.adc)}</td>
+                <td class="num ${r.ndc == null ? 'dash' : ''}">${formatNumber(r.ndc)}</td>
+                <td class="num">
+                    <strong>${covPercent}%</strong><br>
+                    <span style="font-size:0.75rem; color:var(--muted);">${formatNumber(r.verified_polling_units)} / ${formatNumber(totalPUs)}</span>
+                </td>
+            </tr>
+        `;
+    }).join("");
 
     lgaResults.innerHTML = `
-        <table class="lga-table">
-            <thead>
-                <tr>
-                    <th>LGA</th>
-                    <th>Verified PUs</th>
-                    <th>Registered</th>
-                    <th>Accredited</th>
-                    <th>Votes Cast</th>
-                    <th>Valid</th>
-                    <th>Rejected</th>
-                    <th>PDP</th>
-                    <th>APC</th>
-                    <th>NDC</th>
-                    <th>ADC</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${tableRows}
-            </tbody>
-        </table>
+        <div class="table-wrap" style="margin-top:20px;">
+            <table class="lga-table">
+                <thead>
+                    <tr>
+                        <th>LGA</th>
+                        <th class="num">APC</th>
+                        <th class="num">PDP</th>
+                        <th class="num">ADC</th>
+                        <th class="num">NDC</th>
+                        <th class="num">Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        </div>
+        <div class="meta" style="padding:12px 0 0; border:none; font-size:0.85rem; color:var(--muted);">
+            <p style="margin:0;">
+                Estimates based on polling-unit figures received so far. Not a full count. 
+                For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">INEC Election Results Portal ↗</a>.
+            </p>
+        </div>
     `;
 }
 
-
 async function initialise() {
     try {
-        const [
-            national,
-            states,
-            lgas
-        ] = await Promise.all([
+        const [national, states, lgas] = await Promise.all([
             fetchSupabase("public_national_results"),
             fetchSupabase("public_state_results"),
             fetchSupabase("public_lga_results")
@@ -190,7 +225,7 @@ async function initialise() {
 
             if (!stateName) {
                 stateResults.innerHTML = "";
-                lgaResults.innerHTML = "";
+                lgaResults.innerHTML = '<div class="empty-state">Select a state above to view LGA estimates.</div>';
                 return;
             }
 
@@ -198,18 +233,10 @@ async function initialise() {
             renderLGAs(lgas, stateName);
         });
 
-        nationalStatus.textContent =
-            "Results loaded successfully.";
-
     } catch (error) {
         console.error(error);
-
-        nationalStatus.innerHTML =
-            `<div class="error">
-                Unable to load results.
-            </div>`;
+        nationalStatus.innerHTML = `<div class="error">Unable to load figures. Please try again later.</div>`;
     }
 }
-
 
 initialise();
