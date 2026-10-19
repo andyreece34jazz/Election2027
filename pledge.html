@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pledge to Cover Your Polling Unit - Nigerian Election 2027</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container">
+        <h1>
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                Nigerian Election 2027
+            </a>
+        </h1>
+        <p class="disclaimer">
+            Independent, evidence-based election information tracking. Not an official government or INEC service.
+        </p>
+    </div>
+</header>
+
+<main class="container">
+    <div class="card" style="max-width: 600px; margin: 40px auto;">
+        <h2>Pledge to Cover Your Polling Unit</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">
+            We are a citizen-led transparency project. We need everyday Nigerians to send photos of their EC8A forms on election day. Enter your polling unit code to see if it is covered.
+        </p>
+
+        <label for="pu-code">Polling Unit Code (e.g., 29/13/06/009)</label>
+        <input type="text" id="pu-code" placeholder="Enter code" style="width:100%; padding:12px; margin-bottom:16px; border:1px solid #cbd3da; border-radius:6px; font-size:16px;">
+
+        <button id="check-btn" onclick="checkPledge()" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
+            Check Availability
+        </button>
+
+        <div id="result-area" style="margin-top: 24px;"></div>
+
+        <hr style="border: 0; border-top: 1px solid var(--line); margin: 30px 0 20px;">
+
+        <a href="index.html" style="color: var(--link); text-decoration: none; font-weight: 600;">
+            &larr; Return to Estimated Figures
+        </a>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>
+            Nigerian Election 2027 — independent, evidence-based election information.
+            Estimates only. Official results at
+            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
+                inecelectionresults.ng
+            </a>.
+        </p>
+    </div>
+</footer>
+
+<!-- Inline script for the Pledge logic -->
+<script>
+const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
+
+async function checkPledge() {
+    const codeInput = document.getElementById("pu-code").value.trim();
+    const resultArea = document.getElementById("result-area");
+    const btn = document.getElementById("check-btn");
+
+    if (!codeInput) {
+        resultArea.innerHTML = `<div class="error">Please enter a polling unit code.</div>`;
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Checking...";
+    resultArea.innerHTML = "";
+
+    try {
+        // 1. Look up the polling unit ID in Supabase
+        const puRes = await fetch(`${SUPABASE_URL}/rest/v1/polling_units?full_code=eq.${encodeURIComponent(codeInput)}&select=id,pu_name,ward_name,lga_name`, {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        const puData = await puRes.json();
+
+        if (!puData || puData.length === 0) {
+            resultArea.innerHTML = `<div class="error">Polling unit not found. Please check the code format (NN/NN/NN/NNN).</div>`;
+            return;
+        }
+
+        const pu = puData[0];
+
+        // 2. Check if a pledge already exists for this PU
+        const pledgeRes = await fetch(`${SUPABASE_URL}/rest/v1/pledges?polling_unit_id=eq.${pu.id}&select=phone_number`, {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        const pledges = await pledgeRes.json();
+
+        if (pledges && pledges.length > 0) {
+            // Already pledged
+            resultArea.innerHTML = `
+                <div class="card" style="background: #eaf7ee; border-color: #a3dfb8;">
+                    <h3 style="margin-top:0; color: #1e6b3a;">Good news!</h3>
+                    <p style="margin-bottom:0;"><strong>${pu.pu_name}</strong> (${pu.ward_name}, ${pu.lga_name}) already has a pledged observer.</p>
+                </div>
+            `;
+        } else {
+            // Needs pledge
+            resultArea.innerHTML = `
+                <div class="card" style="background: var(--amber-bg); border-color: var(--amber-line);">
+                    <h3 style="margin-top:0; color: var(--amber-ink);">No one has pledged this unit yet!</h3>
+                    <p>Be the hero for <strong>${pu.pu_name}</strong> (${pu.ward_name}, ${pu.lga_name}).</p>
+                    
+                    <label for="phone" style="margin-top: 16px; display:block;">Your WhatsApp Number</label>
+                    <input type="tel" id="phone" placeholder="e.g. 2348012345678" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #cbd3da; border-radius:6px; font-size:16px;">
+                    
+                    <button onclick="submitPledge(${pu.id})" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
+                        I Pledge to Submit
+                    </button>
+                </div>
+            `;
+        }
+
+    } catch (err) {
+        console.error(err);
+        resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Check Availability";
+    }
+}
+
+async function submitPledge(puId) {
+    const phone = document.getElementById("phone").value.trim();
+    const resultArea = document.getElementById("result-area");
+
+    if (!phone || phone.length < 10) {
+        alert("Please enter a valid WhatsApp number (include country code, e.g., 234...).");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges`, {
+            method: "POST",
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({ polling_unit_id: puId, phone_number: phone })
+        });
+
+        if (res.ok) {
+            resultArea.innerHTML = `
+                <div class="card" style="background: #eaf7ee; border-color: #a3dfb8;">
+                    <h3 style="margin-top:0; color: #1e6b3a;">Pledge Confirmed!</h3>
+                    <p style="margin-bottom:0;">Thank you! We will send a reminder to your WhatsApp on election day.</p>
+                </div>
+            `;
+        } else {
+            resultArea.innerHTML = `<div class="error">Could not save pledge. That number may already be registered.</div>`;
+        }
+    } catch (err) {
+        console.error(err);
+        resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+    }
+}
+</script>
+
+</body>
+</html>
