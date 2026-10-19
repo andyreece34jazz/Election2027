@@ -12,52 +12,57 @@
 <header class="site-header">
     <div class="container">
         <h1>Nigerian Election 2027</h1>
-        <p>Not official election results.</p>
+
+        <div class="alert-title">
+            Estimated Figures - Not Official
+        </div>
 
         <p class="disclaimer">
-          The information shown is based on submitted and verified polling-unit evidence.
-          It is independent, evidence-based election tracking provided for public information
-          and transparency only. The figures do not constitute official election results or an
-          official declaration of election results by INEC or any government authority.
-          For official results, please refer to the
-       <a href="https://www.inecnigeria.org/" target="_blank" rel="noopener noreferrer">INEC Portal</a>.
-       </p>
-
-        <p class="update-note">
-          Results are updated as additional polling-unit evidence is submitted and verified.
-       </p>
-
+            These are estimates based on submitted and independently checked polling-unit
+            evidence, not official results or an INEC declaration. Estimates are updated
+            as more evidence is received and checked. For official results, visit the
+            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
+                INEC Election Results Portal
+            </a>.
+        </p>
     </div>
 </header>
 
 <main class="container">
 
     <section class="section">
-        <h2>Federal Results</h2>
-
-        <div id="national-status" class="status">
-            Loading Federal results...
+        <h2>National Estimates - Not Official</h2>
+        
+        <div id="national-status" class="empty-state">
+            National estimates unavailable. State and LGA estimates are shown below.
+            For official national results, visit the
+            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
+                INEC Election Results Portal
+            </a>.
         </div>
 
-        <div id="national-results" class="results-grid"></div>
+        <div id="national-results"></div>
     </section>
 
     <section class="section">
-        <h2>State Results</h2>
+        <h2>State Estimated Figures</h2>
 
-        <label for="state-select">Select state</label>
+        <label for="state-select">Select a state</label>
 
         <select id="state-select">
             <option value="">Select a state</option>
+            <!-- app.js will populate this dropdown automatically -->
         </select>
 
-        <div id="state-results" class="results-grid"></div>
+        <div id="state-results"></div>
     </section>
 
     <section class="section">
-        <h2>LGA Results</h2>
-
-        <div id="lga-results"></div>
+        <h2>LGA Estimated Figures</h2>
+        
+        <div id="lga-results">
+            <div class="empty-state">Select a state above to view LGA estimates.</div>
+        </div>
     </section>
 
 </main>
@@ -65,7 +70,11 @@
 <footer>
     <div class="container">
         <p>
-            Nigerian Election 2027 — Independent evidence-based election information.
+            Nigerian Election 2027 — independent, evidence-based election information.
+            Estimates only. Official results at
+            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
+                inecelectionresults.ng
+            </a>.
         </p>
     </div>
 </footer>
