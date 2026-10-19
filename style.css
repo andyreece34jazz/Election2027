@@ -1,86 +1,306 @@
+/* =========================================
+   BASE & LAYOUT
+   ========================================= */
+:root {
+    --bg: #f5f7f9;
+    --card: #ffffff;
+    --ink: #17202a;
+    --muted: #5f6b76;
+    --line: #dfe4e8;
+    --amber-bg: #fff7e6;
+    --amber-line: #f0c14b;
+    --amber-ink: #7a5200;
+    --link: #0b5cad;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f5f7f9;
-    color: #17202a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
 }
 
 .container {
-    width: min(1100px, 92%);
+    width: min(980px, 92%);
     margin: 0 auto;
 }
 
+/* =========================================
+   HEADER
+   ========================================= */
 .site-header {
-    background: #ffffff;
-    border-bottom: 1px solid #dfe4e8;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
     padding: 32px 0;
 }
 
 .site-header h1 {
     margin: 0 0 8px;
     font-size: 32px;
+    letter-spacing: -0.01em;
 }
 
-.site-header p {
+.alert-title {
+    display: inline-block;
+    margin: 14px 0 12px;
+    padding: 8px 14px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-left: 5px solid var(--amber-line);
+    border-radius: 4px;
+    color: var(--amber-ink);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.disclaimer {
+    font-size: 14px;
+    color: var(--muted);
     margin: 0;
-    color: #5f6b76;
+    max-width: 780px;
 }
 
+.disclaimer a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+.disclaimer a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   SECTIONS & CARDS
+   ========================================= */
 .section {
-    background: #ffffff;
     margin: 28px 0;
-    padding: 24px;
-    border: 1px solid #dfe4e8;
-    border-radius: 10px;
 }
 
 .section h2 {
     margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+/* Used for the State summary */
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.card-header h3 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+}
+
+/* Coverage block (Top right of state card) */
+.coverage-block {
+    text-align: right;
+}
+
+.coverage-block .pct {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+}
+
+.coverage-block .label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* Yellow badge */
+.not-official {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--amber-ink);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* =========================================
+   DATA GRIDS (Parties & Turnout)
+   ========================================= */
+.figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px 20px;
     margin-bottom: 20px;
 }
 
-.status {
-    color: #5f6b76;
-    margin-bottom: 18px;
+.figure {
+    display: flex;
+    flex-direction: column;
 }
 
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 14px;
+.figure .label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
-.result-card {
-    border: 1px solid #dfe4e8;
-    border-radius: 8px;
-    padding: 18px;
+.figure .value {
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.figure .value.dash {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* =========================================
+   META & FOOTERS
+   ========================================= */
+.meta {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.meta p {
+    margin: 0 0 8px 0;
+}
+
+.meta strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.meta a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+.meta a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   LGA TABLE
+   ========================================= */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.lga-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 15px;
+}
+
+.lga-table th,
+.lga-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+    vertical-align: top;
+}
+
+.lga-table th {
+    background: #f0f2f6;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.lga-table td.num {
+    text-align: right;
+}
+
+.lga-table td.dash {
+    color: var(--muted);
+}
+
+.lga-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.lga-table tbody tr:hover {
     background: #fafbfc;
 }
 
-.result-card .label {
+/* =========================================
+   STATES (Empty, Error, Warnings)
+   ========================================= */
+.empty-state {
+    padding: 20px 22px;
+    background: var(--card);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.empty-state a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+.empty-state a:hover {
+    text-decoration: underline;
+}
+
+.coverage-warn {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: 8px;
+    padding: 16px 20px;
+    color: var(--amber-ink);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.coverage-warn strong {
     display: block;
-    font-size: 13px;
-    color: #65727e;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    font-size: 15px;
 }
 
-.result-card .value {
-    font-size: 24px;
-    font-weight: 700;
+.error {
+    padding: 14px;
+    border-radius: 6px;
+    background: #fff1f1;
+    color: #9b1c1c;
 }
 
-.party-card {
-    background: #ffffff;
-}
-
-.party-card .value {
-    font-size: 28px;
-}
-
+/* =========================================
+   FORM ELEMENTS
+   ========================================= */
 label {
     display: block;
     margin-bottom: 8px;
@@ -93,48 +313,30 @@ select {
     padding: 12px;
     border: 1px solid #cbd3da;
     border-radius: 6px;
-    background: #ffffff;
+    background: var(--card);
     font-size: 16px;
+    margin-bottom: 16px;
 }
 
-.lga-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 18px;
-}
-
-.lga-table th,
-.lga-table td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #e1e5e8;
-    text-align: left;
-}
-
-.lga-table th {
-    background: #f5f7f9;
-    font-size: 13px;
-}
-
-.lga-table td {
-    font-size: 14px;
-}
-
-.empty {
-    padding: 20px 0;
-    color: #65727e;
-}
-
-.error {
-    padding: 14px;
-    border-radius: 6px;
-    background: #fff1f1;
-    color: #9b1c1c;
-}
-
+/* =========================================
+   FOOTER & RESPONSIVE
+   ========================================= */
 footer {
-    padding: 30px 0;
-    color: #65727e;
+    border-top: 1px solid var(--line);
+    padding: 24px 0;
+    color: var(--muted);
     font-size: 13px;
+    background: var(--card);
+    margin-top: 40px;
+}
+
+footer a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
 }
 
 @media (max-width: 700px) {
@@ -142,13 +344,24 @@ footer {
         font-size: 26px;
     }
 
-    .section {
-        padding: 18px;
+    .card {
+        padding: 16px;
     }
 
-    .lga-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+    .figures {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .figure .value {
+        font-size: 18px;
+    }
+
+    .card-header {
+        flex-direction: column;
+    }
+
+    .coverage-block {
+        text-align: left;
+        margin-top: 10px;
     }
 }
