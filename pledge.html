@@ -5,6 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pledge to Cover Your Polling Unit - Nigerian Election 2027</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Custom styles for the dropdowns and code display */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd3da;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #ffffff;
+            color: var(--ink);
+            margin-bottom: 0;
+        }
+        .form-group select:disabled {
+            background: #f0f2f5;
+            color: #9aa5b1;
+            cursor: not-allowed;
+        }
+        .code-display-box {
+            background: #f0f7ff;
+            border: 1px solid #b3d4ff;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            display: none; /* Hidden until PU is selected */
+        }
+        .code-display-box h4 {
+            margin: 0 0 8px 0;
+            color: #0b5cad;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .code-display-box .code {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 1px;
+        }
+        .code-display-box .hint {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+        .check-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--ink);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            display: none; /* Hidden until PU is selected */
+        }
+        .check-btn:hover {
+            background: #2c3e50;
+        }
+        .check-btn:disabled {
+            background: #9aa5b1;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
 
@@ -23,16 +97,45 @@
 
 <main class="container">
     <div class="card" style="max-width: 600px; margin: 40px auto;">
-        <h2>Pledge to Cover Your Polling Unit</h2>
-        <p style="color: var(--muted); margin-bottom: 20px;">
-            We are a citizen-led transparency project. We need everyday Nigerians to send photos of their EC8A forms on election day. Enter your polling unit code to see if it is covered.
+        
+        <h2 style="margin-top: 0;">Find Your Polling Unit</h2>
+        <p style="color: var(--muted); margin-bottom: 24px; font-size: 15px;">
+            Select your location to check whether your polling unit is covered.
         </p>
 
-        <label for="pu-code">Polling Unit Code (e.g., 29/13/06/009)</label>
-        <input type="text" id="pu-code" placeholder="Enter code" style="width:100%; padding:12px; margin-bottom:16px; border:1px solid #cbd3da; border-radius:6px; font-size:16px;">
+        <!-- Step 1: State -->
+        <div class="form-group">
+            <label for="state-select">State</label>
+            <select id="state-select" onchange="loadLGAs()">
+                <option value="">Loading states...</option>
+            </select>
+        </div>
 
-        <button id="check-btn" onclick="checkPledge()" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
-            Check Availability
+        <!-- Step 2: LGA -->
+        <div class="form-group">
+            <label for="lga-select">Local Government Area (LGA)</label>
+            <select id="lga-select" onchange="loadPUs()" disabled>
+                <option value="">Select a State first</option>
+            </select>
+        </div>
+
+        <!-- Step 3: Polling Unit -->
+        <div class="form-group">
+            <label for="pu-select">Polling Unit</label>
+            <select id="pu-select" onchange="onPUChange()" disabled>
+                <option value="">Select an LGA first</option>
+            </select>
+        </div>
+
+        <!-- Auto-populated Code -->
+        <div id="code-box" class="code-display-box">
+            <h4>Your Polling Unit Code</h4>
+            <div id="display-code" class="code">--/--/--/---</div>
+            <div class="hint">Use this exact code as the caption when sending your image on WhatsApp.</div>
+        </div>
+
+        <button id="check-btn" class="check-btn" onclick="checkCoverage()">
+            Check Coverage
         </button>
 
         <div id="result-area" style="margin-top: 24px;"></div>
@@ -57,90 +160,209 @@
     </div>
 </footer>
 
-<!-- Inline script for the Pledge logic -->
 <script>
 const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
 
-async function checkPledge() {
-    const codeInput = document.getElementById("pu-code").value.trim();
-    const resultArea = document.getElementById("result-area");
-    const btn = document.getElementById("check-btn");
+// DOM Elements
+const stateSelect = document.getElementById("state-select");
+const lgaSelect = document.getElementById("lga-select");
+const puSelect = document.getElementById("pu-select");
+const codeBox = document.getElementById("code-box");
+const displayCode = document.getElementById("display-code");
+const checkBtn = document.getElementById("check-btn");
+const resultArea = document.getElementById("result-area");
 
-    if (!codeInput) {
-        resultArea.innerHTML = `<div class="error">Please enter a polling unit code.</div>`;
+let selectedPUData = null;
+
+// Fetch Headers
+const headers = {
+    "apikey": SUPABASE_ANON_KEY,
+    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+};
+
+// 1. Load States on page load
+async function loadStates() {
+    try {
+        // We use public_state_results to get the distinct list of states.
+        // It's only 37 rows, so it's incredibly fast.
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/public_state_results?select=state_name&order=state_name.asc`, { headers });
+        const data = await res.json();
+        
+        stateSelect.innerHTML = '<option value="">Select a State</option>';
+        data.forEach(row => {
+            const option = document.createElement("option");
+            option.value = row.state_name;
+            option.textContent = row.state_name;
+            stateSelect.appendChild(option);
+        });
+    } catch (err) {
+        stateSelect.innerHTML = '<option value="">Error loading states</option>';
+        console.error(err);
+    }
+}
+
+// 2. Load LGAs when State changes
+async function loadLGAs() {
+    const state = stateSelect.value;
+    
+    // Reset downstream
+    lgaSelect.innerHTML = '<option value="">Loading LGAs...</option>';
+    lgaSelect.disabled = true;
+    puSelect.innerHTML = '<option value="">Select an LGA first</option>';
+    puSelect.disabled = true;
+    codeBox.style.display = "none";
+    checkBtn.style.display = "none";
+    resultArea.innerHTML = "";
+
+    if (!state) {
+        lgaSelect.innerHTML = '<option value="">Select a State first</option>';
         return;
     }
 
-    btn.disabled = true;
-    btn.textContent = "Checking...";
+    try {
+        // We use public_lga_results to get distinct LGAs for this state.
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/public_lga_results?state_name=eq.${encodeURIComponent(state)}&select=lga_name&order=lga_name.asc`, { headers });
+        const data = await res.json();
+        
+        lgaSelect.innerHTML = '<option value="">Select an LGA</option>';
+        data.forEach(row => {
+            const option = document.createElement("option");
+            option.value = row.lga_name;
+            option.textContent = row.lga_name;
+            lgaSelect.appendChild(option);
+        });
+        lgaSelect.disabled = false;
+    } catch (err) {
+        lgaSelect.innerHTML = '<option value="">Error loading LGAs</option>';
+        console.error(err);
+    }
+}
+
+// 3. Load PUs when LGA changes
+async function loadPUs() {
+    const state = stateSelect.value;
+    const lga = lgaSelect.value;
+
+    // Reset downstream
+    puSelect.innerHTML = '<option value="">Loading Polling Units...</option>';
+    puSelect.disabled = true;
+    codeBox.style.display = "none";
+    checkBtn.style.display = "none";
     resultArea.innerHTML = "";
 
-    try {
-        // 1. Look up the polling unit ID in Supabase
-        const puRes = await fetch(`${SUPABASE_URL}/rest/v1/polling_units?full_code=eq.${encodeURIComponent(codeInput)}&select=id,pu_name,ward_name,lga_name`, {
-            headers: {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-            }
-        });
-        const puData = await puRes.json();
+    if (!lga) {
+        puSelect.innerHTML = '<option value="">Select an LGA first</option>';
+        return;
+    }
 
-        if (!puData || puData.length === 0) {
-            resultArea.innerHTML = `<div class="error">Polling unit not found. Please check the code format (NN/NN/NN/NNN).</div>`;
+    try {
+        // Fetch from the main polling_units table
+        const url = `${SUPABASE_URL}/rest/v1/polling_units?state_name=eq.${encodeURIComponent(state)}&lga_name=eq.${encodeURIComponent(lga)}&select=id,pu_name,full_code&order=pu_name.asc`;
+        const res = await fetch(url, { headers });
+        const data = await res.json();
+        
+        if (data.length === 0) {
+            puSelect.innerHTML = '<option value="">No PUs found for this LGA</option>';
             return;
         }
 
-        const pu = puData[0];
-
-        // 2. Check if a pledge already exists for this PU
-        const pledgeRes = await fetch(`${SUPABASE_URL}/rest/v1/pledges?polling_unit_id=eq.${pu.id}&select=phone_number`, {
-            headers: {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-            }
+        puSelect.innerHTML = '<option value="">Select a Polling Unit</option>';
+        data.forEach(row => {
+            const option = document.createElement("option");
+            option.value = row.id; // Use ID as value for easy DB lookup later
+            // Format: PU Name (Code)
+            option.textContent = `${row.pu_name} (${row.full_code})`;
+            // Store the full row in the DOM element for easy access
+            option.dataset.code = row.full_code;
+            option.dataset.name = row.pu_name;
+            puSelect.appendChild(option);
         });
-        const pledges = await pledgeRes.json();
+        puSelect.disabled = false;
+    } catch (err) {
+        puSelect.innerHTML = '<option value="">Error loading PUs</option>';
+        console.error(err);
+    }
+}
+
+// 4. Handle PU Selection (Show code box)
+function onPUChange() {
+    const selectedOption = puSelect.options[puSelect.selectedIndex];
+    resultArea.innerHTML = "";
+    
+    if (!selectedOption || !selectedOption.value) {
+        codeBox.style.display = "none";
+        checkBtn.style.display = "none";
+        selectedPUData = null;
+        return;
+    }
+
+    // Extract the data we stored in the dataset
+    const fullCode = selectedOption.dataset.code;
+    const puName = selectedOption.dataset.name;
+    
+    selectedPUData = {
+        id: selectedOption.value,
+        fullCode: fullCode,
+        name: puName,
+        state: stateSelect.value,
+        lga: lgaSelect.value
+    };
+
+    displayCode.textContent = fullCode;
+    codeBox.style.display = "block";
+    checkBtn.style.display = "block";
+}
+
+// 5. Check Coverage
+async function checkCoverage() {
+    if (!selectedPUData) return;
+
+    checkBtn.disabled = true;
+    checkBtn.textContent = "Checking...";
+    resultArea.innerHTML = "";
+
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges?polling_unit_id=eq.${selectedPUData.id}&select=phone_number`, { headers });
+        const pledges = await res.json();
 
         if (pledges && pledges.length > 0) {
-            // Already pledged
             resultArea.innerHTML = `
                 <div class="card" style="background: #eaf7ee; border-color: #a3dfb8;">
                     <h3 style="margin-top:0; color: #1e6b3a;">Good news!</h3>
-                    <p style="margin-bottom:0;"><strong>${pu.pu_name}</strong> (${pu.ward_name}, ${pu.lga_name}) already has a pledged observer.</p>
+                    <p style="margin-bottom:0;"><strong>${selectedPUData.name}</strong> already has a pledged observer. You don't need to cover this one, but you can still send us the photo on election day!</p>
                 </div>
             `;
         } else {
-            // Needs pledge
             resultArea.innerHTML = `
                 <div class="card" style="background: var(--amber-bg); border-color: var(--amber-line);">
                     <h3 style="margin-top:0; color: var(--amber-ink);">No one has pledged this unit yet!</h3>
-                    <p>Be the hero for <strong>${pu.pu_name}</strong> (${pu.ward_name}, ${pu.lga_name}).</p>
+                    <p>Be the hero for <strong>${selectedPUData.name}</strong>.</p>
                     
                     <label for="phone" style="margin-top: 16px; display:block;">Your WhatsApp Number</label>
                     <input type="tel" id="phone" placeholder="e.g. 2348012345678" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #cbd3da; border-radius:6px; font-size:16px;">
                     
-                    <button onclick="submitPledge(${pu.id})" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
+                    <button onclick="submitPledge()" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
                         I Pledge to Submit
                     </button>
                 </div>
             `;
         }
-
     } catch (err) {
         console.error(err);
         resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
     } finally {
-        btn.disabled = false;
-        btn.textContent = "Check Availability";
+        checkBtn.disabled = false;
+        checkBtn.textContent = "Check Coverage";
     }
 }
 
-async function submitPledge(puId) {
-    const phone = document.getElementById("phone").value.trim();
+// 6. Submit Pledge
+async function submitPledge() {
+    const phoneInput = document.getElementById("phone").value.trim();
     const resultArea = document.getElementById("result-area");
 
-    if (!phone || phone.length < 10) {
+    if (!phoneInput || phoneInput.length < 10) {
         alert("Please enter a valid WhatsApp number (include country code, e.g., 234...).");
         return;
     }
@@ -149,12 +371,11 @@ async function submitPledge(puId) {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges`, {
             method: "POST",
             headers: {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                ...headers,
                 "Content-Type": "application/json",
                 "Prefer": "return=minimal"
             },
-            body: JSON.stringify({ polling_unit_id: puId, phone_number: phone })
+            body: JSON.stringify({ polling_unit_id: selectedPUData.id, phone_number: phoneInput })
         });
 
         if (res.ok) {
@@ -172,6 +393,9 @@ async function submitPledge(puId) {
         resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
     }
 }
+
+// Initialize on load
+loadStates();
 </script>
 
 </body>
