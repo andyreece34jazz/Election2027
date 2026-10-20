@@ -49,18 +49,14 @@ function figure(label, value) {
 }
 
 function renderNational(data) {
-    // New layout relies on State and LGA. 
-    // If we have national data, we can optionally render it here.
     if (!data.length) {
         nationalStatus.textContent = "National projection unavailable. State and LGA estimates are shown below.";
         return;
     }
 
     const result = data[0];
-    
     nationalStatus.textContent = "Estimates based on figures received and checked so far.";
 
-    // Render national aggregate using the same grid as state if desired
     nationalResults.innerHTML = `
         <div class="card">
             <div class="card-header">
@@ -109,11 +105,22 @@ function renderState(data, stateName) {
         return;
     }
 
-    // Note: If your Supabase view doesn't have total_polling_units yet, 
-    // we default to 0 which shows 0.0% coverage.
     const totalPUs = s.total_polling_units || 0;
     const covPercent = formatPercent(s.verified_polling_units, totalPUs);
 
+    // 10% Threshold logic
+    if (parseFloat(covPercent) < 10) {
+        stateResults.innerHTML = `
+            <div class="coverage-warn">
+                <strong>${s.state_name} State Estimate — insufficient coverage</strong>
+                ${formatNumber(s.verified_polling_units)} of ${formatNumber(totalPUs)} polling units estimated (${covPercent}%).
+                A state estimate is published at 10% coverage. LGA estimates are shown below.
+            </div>
+        `;
+        return; // Exit early so we don't render the full card
+    }
+
+    // Render full card if coverage >= 10%
     stateResults.innerHTML = `
         <div class="card">
             <div class="card-header">
@@ -145,7 +152,6 @@ function renderState(data, stateName) {
             </div>
 
             <div class="meta">
-                <!-- If you add these to the view later, they will appear. Otherwise fallback to — -->
                 <p><strong>${formatNumber(s.sources_matched) || '—'}</strong> sources matched · <strong>${formatNumber(s.single_source) || '—'}</strong> single-source</p>
                 <p style="margin-bottom:0;">
                     Estimates based on polling-unit figures received so far. Coverage is not a full state count. These figures are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">INEC Election Results Portal ↗</a>.
