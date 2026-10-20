@@ -224,9 +224,15 @@ body {
 .lga-table td {
     padding: 14px 16px;
     border-bottom: 1px solid var(--line);
-    text-align: left;
     font-variant-numeric: tabular-nums;
     vertical-align: top;
+    text-align: left; /* Default left alignment for LGA names */
+}
+
+/* Fix: Right-align both headers and cells that have the "num" class */
+.lga-table th.num,
+.lga-table td.num {
+    text-align: right; 
 }
 
 .lga-table th {
@@ -236,10 +242,6 @@ body {
     letter-spacing: 0.04em;
     color: var(--muted);
     font-weight: 600;
-}
-
-.lga-table td.num {
-    text-align: right;
 }
 
 .lga-table td.dash {
