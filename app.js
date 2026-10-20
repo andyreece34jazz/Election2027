@@ -175,14 +175,14 @@ function renderLGAs(data, stateName) {
         
         return `
             <tr>
-                <td>${r.lga_name}</td>
-                <td class="num">${formatNumber(r.apc)}</td>
-                <td class="num">${formatNumber(r.pdp)}</td>
-                <td class="num ${r.adc == null ? 'dash' : ''}">${formatNumber(r.adc)}</td>
-                <td class="num ${r.ndc == null ? 'dash' : ''}">${formatNumber(r.ndc)}</td>
-                <td class="num">
+                <td style="text-align: left;">${r.lga_name}</td>
+                <td style="text-align: right;">${formatNumber(r.apc)}</td>
+                <td style="text-align: right;">${formatNumber(r.pdp)}</td>
+                <td style="text-align: right;" class="${r.adc == null ? 'dash' : ''}">${formatNumber(r.adc)}</td>
+                <td style="text-align: right;" class="${r.ndc == null ? 'dash' : ''}">${formatNumber(r.ndc)}</td>
+                <td style="text-align: right;">
                     <strong>${covPercent}%</strong><br>
-                    <span style="font-size:0.75rem; color:var(--muted);">${formatNumber(r.verified_polling_units)} / ${formatNumber(totalPUs)}</span>
+                    <span style="font-size:0.75rem; color:var(--muted); font-weight: normal;">${formatNumber(r.verified_polling_units)} / ${formatNumber(totalPUs)}</span>
                 </td>
             </tr>
         `;
@@ -193,12 +193,12 @@ function renderLGAs(data, stateName) {
             <table class="lga-table">
                 <thead>
                     <tr>
-                        <th>LGA</th>
-                        <th class="num">APC</th>
-                        <th class="num">PDP</th>
-                        <th class="num">ADC</th>
-                        <th class="num">NDC</th>
-                        <th class="num">Coverage</th>
+                        <th style="text-align: left;">LGA</th>
+                        <th style="text-align: right;">APC</th>
+                        <th style="text-align: right;">PDP</th>
+                        <th style="text-align: right;">ADC</th>
+                        <th style="text-align: right;">NDC</th>
+                        <th style="text-align: right;">Coverage</th>
                     </tr>
                 </thead>
                 <tbody>
