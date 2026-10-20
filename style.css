@@ -226,12 +226,12 @@ body {
     border-bottom: 1px solid var(--line);
     font-variant-numeric: tabular-nums;
     vertical-align: top;
-    text-align: left; /* Default left alignment for LGA names */
+    text-align: left; /* Default left alignment for LGA name */
 }
 
-/* Fix: Right-align both headers and cells that have the "num" class */
-.lga-table th.num,
-.lga-table td.num {
+/* Force right alignment on all columns EXCEPT the first one (LGA Name) */
+.lga-table th:not(:first-child),
+.lga-table td:not(:first-child) {
     text-align: right; 
 }
 
