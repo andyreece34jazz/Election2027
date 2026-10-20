@@ -226,18 +226,13 @@ body {
     border-bottom: 1px solid var(--line);
     font-variant-numeric: tabular-nums;
     vertical-align: top;
-}
-
-/* Force left alignment strictly for the first column (LGA Name) */
-.lga-table th:nth-child(1),
-.lga-table td:nth-child(1) {
     text-align: left;
 }
 
-/* Force right alignment strictly for all other columns (APC, PDP, Coverage, etc.) */
-.lga-table th:nth-child(n+2),
-.lga-table td:nth-child(n+2) {
-    text-align: right;
+/* Force right alignment on all columns except the first one */
+.lga-table th:not(:first-child),
+.lga-table td:not(:first-child) {
+    text-align: right !important; 
 }
 
 .lga-table th {
