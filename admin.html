@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Monitoring Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { padding: 10px; border: 1px solid var(--line); text-align: left; }
+        th { background: #f0f2f6; font-weight: 600; }
+        tr:nth-child(even) { background: #fafbfc; }
+        .highlight { background: #fff7e6; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Campaign Monitoring</h1>
+    <p>Live data pulled from Supabase. <a href="index.html">Return to Public Site</a></p>
+    
+    <div style="overflow-x: auto;">
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>LGA</th>
+                    <th>Total PUs</th>
+                    <th>Pledged PUs</th>
+                    <th>Pledge %</th>
+                    <th>Images Received</th>
+                    <th>Verified</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr><td colspan="7">Loading data...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
+
+async function loadDashboard() {
+    try {
+        // Fetch from the view we created in SQL
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=pledged_pus.desc`, {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        const data = await res.json();
+        
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            // Highlight rows where pledges are high but no images have come in yet
+            if (row.pledged_pus > 5 && row.images_received === 0) {
+                tr.className = "highlight";
+            }
+            
+            tr.innerHTML = `
+                <td>${row.state_name}</td>
+                <td>${row.lga_name}</td>
+                <td>${row.total_pus}</td>
+                <td><strong>${row.pledged_pus}</strong></td>
+                <td>${row.pledge_coverage_pct}%</td>
+                <td>${row.images_received}</td>
+                <td>${row.results_verified}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error(err);
+        document.getElementById("table-body").innerHTML = `<tr><td colspan="7">Error loading data. Did you create the SQL view?</td></tr>`;
+    }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
