@@ -3,90 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nigerian Election 2027</title>
+    <title>Nigerian Election 2027 — Estimated Figures</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional 1-page specific styles */
+        html { scroll-behavior: smooth; }
+        .nav-bar {
+            position: sticky; top: 0; background: var(--card); 
+            border-bottom: 1px solid var(--line); padding: 12px 0; z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .nav-bar .container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: 14px; }
+        .nav-links a:hover { color: var(--link); }
+        
+        .hero { background: var(--ink); color: white; padding: 60px 0; text-align: center; }
+        .hero h1 { font-size: 36px; margin-bottom: 16px; }
+        .hero p { font-size: 18px; max-width: 600px; margin: 0 auto 30px; color: #b0b8c4; }
+        
+        .btn-wa { 
+            display: inline-block; background: #25D366; color: white; 
+            padding: 16px 32px; border-radius: 50px; text-decoration: none; 
+            font-size: 18px; font-weight: bold; transition: 0.2s;
+        }
+        .btn-wa:hover { background: #128C7E; color: white; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+        
+        .step-box { background: #f0f7ff; padding: 20px; border-radius: 8px; border: 1px solid #b3d4ff; }
+        .step-box h4 { color: #0b5cad; margin-top: 0; }
+        
+        /* Hide private elements explicitly just in case */
+        .private-data { display: none !important; }
+    </style>
 </head>
-
 <body>
 
-<header class="site-header">
+<!-- Sticky Navigation -->
+<div class="nav-bar">
     <div class="container">
-        <h1>Nigerian Election 2027</h1>
-
-        <div class="alert-title">
-            Estimated Figures - Not Official
+        <strong>Election 2027 Tracking</strong>
+        <div class="nav-links">
+            <a href="#dashboard">Results</a>
+            <a href="#submit">Submit EC8A</a>
+            <a href="#methodology">Methodology</a>
         </div>
+    </div>
+</div>
 
+<!-- Disclaimer Header -->
+<header class="site-header" style="padding: 20px 0;">
+    <div class="container">
+        <div class="alert-title" style="margin: 0 0 8px 0;">Estimated Figures - Not Official</div>
         <p class="disclaimer">
-            These are estimates based on submitted and independently checked polling-unit
-            evidence, not official results or an INEC declaration. Estimates are updated
-            as more evidence is received and checked. For official results, visit the
-            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
-                INEC Election Results Portal
-            </a>.
+            These figures are estimates derived from submitted and independently checked polling-unit evidence. They are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank">INEC Portal</a>.
         </p>
-
-        <!-- Pledge Button Added Here -->
-        <div style="margin-top: 20px;">
-            <a href="pledge.html" style="display: inline-block; padding: 12px 24px; background: #17202a; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 700; font-size: 15px;">
-                Pledge to cover your polling unit &rarr;
-            </a>
-        </div>
     </div>
 </header>
 
-<main class="container">
+<!-- Hero Section: Submit CTA -->
+<section class="hero" id="submit">
+    <div class="container">
+        <h1>Protect Your Vote</h1>
+        <p>We need everyday Nigerians to send photos of their EC8A result sheets. Your submission helps build a transparent, verified database of the 2027 election.</p>
+        <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" class="btn-wa" target="_blank">
+            Submit via WhatsApp &rarr;
+        </a>
+        <p style="margin-top: 16px; font-size: 13px;">(Replace YOUR_WHATSAPP_NUMBER with your live number, e.g., 2348012345678)</p>
+    </div>
+</section>
 
-    <section class="section">
-        <h2>National Estimates - Not Official</h2>
+<!-- Submission Instructions -->
+<section class="section" style="margin-top: -30px; position: relative; z-index: 10;">
+    <div class="container">
+        <div class="card">
+            <h2 style="margin-top: 0; text-align: center;">How to Submit Your Polling Unit Result</h2>
+            <div class="grid-2" style="margin-top: 24px;">
+                <div class="step-box">
+                    <h4>1. Snap Clearly</h4>
+                    <p>Take a clear, well-lit photo of the entire EC8A form. Make sure all numbers and text are readable. <strong>Do not send it as a document.</strong></p>
+                </div>
+                <div class="step-box">
+                    <h4>2. Include Your PU Code</h4>
+                    <p>Send the image via WhatsApp and type your 9-digit Polling Unit code as the caption (e.g., <code>29/13/06/009</code>).</p>
+                </div>
+                <div class="step-box">
+                    <h4>3. Await Review</h4>
+                    <p>Our system extracts the figures, and a human reviewer checks them. Submissions do not immediately change public figures.</p>
+                </div>
+                <div class="step-box">
+                    <h4>Don't know your code?</h4>
+                    <p>Use our <a href="pledge.html" style="color: #0b5cad; font-weight: bold;">Search Tool</a> to find your polling unit and generate the code automatically.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Results Dashboard -->
+<section class="section" id="dashboard">
+    <div class="container">
+        <h2>Public Results Dashboard</h2>
         
-        <div id="national-status" class="empty-state">
-            National estimates unavailable. State and LGA estimates are shown below.
-            For official national results, visit the
-            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
-                INEC Election Results Portal
-            </a>.
+        <!-- National Estimates -->
+        <div id="national-results" class="card">
+            <p style="text-align: center; color: var(--muted);">Loading national estimates...</p>
         </div>
 
-        <div id="national-results"></div>
-    </section>
+        <!-- State & LGA Filtering -->
+        <div class="card" style="margin-top: 24px;">
+            <h3>State and LGA Details</h3>
+            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Select a state to view aggregated estimates and coverage stats.</p>
+            
+            <div class="grid-2">
+                <div>
+                    <label for="state-select">Select State</label>
+                    <select id="state-select">
+                        <option value="">Loading states...</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="lga-select">Select LGA (Optional)</label>
+                    <select id="lga-select" disabled>
+                        <option value="">Select a state first</option>
+                    </select>
+                </div>
+            </div>
 
-    <section class="section">
-        <h2>State Estimated Figures</h2>
-
-        <label for="state-select">Select a state</label>
-
-        <select id="state-select">
-            <option value="">Select a state</option>
-            <!-- app.js will populate this dropdown automatically -->
-        </select>
-
-        <div id="state-results"></div>
-    </section>
-
-    <section class="section">
-        <h2>LGA Estimated Figures</h2>
-        
-        <div id="lga-results">
-            <div class="empty-state">Select a state above to view LGA estimates.</div>
+            <!-- Output area for state/lga data -->
+            <div id="detail-results" style="margin-top: 24px;"></div>
         </div>
-    </section>
+    </div>
+</section>
 
-</main>
+<!-- Methodology & About -->
+<section class="section" id="methodology">
+    <div class="container">
+        <div class="card">
+            <h2 style="margin-top: 0;">Methodology & FAQ</h2>
+            
+            <h3 style="font-size: 18px; margin-top: 24px;">What does "Estimated Figures" mean?</h3>
+            <p>We do not claim to replace official INEC declarations. Our platform aggregates independently verified polling unit results to provide a parallel, transparent estimate of the election outcome.</p>
+            
+            <h3 style="font-size: 18px; margin-top: 24px;">What is "Matched vs. Single Source"?</h3>
+            <p><strong>Matched:</strong> Two or more independent submissions from the same polling unit confirm the same numbers.<br>
+            <strong>Single Source:</strong> Only one submission has been verified. We publish this as a provisional data point.</p>
+
+            <h3 style="font-size: 18px; margin-top: 24px;">Data Privacy</h3>
+            <p>Your phone number and personal details are never published. The public views only display aggregated polling unit figures, matched source counts, and coverage percentages.</p>
+
+            <h3 style="font-size: 18px; margin-top: 24px;">How to report an error</h3>
+            <p>If you spot an inaccuracy, please use the <a href="privacy.html">Contact/Privacy page</a> or message the WhatsApp number with the word <code>CORRECTION</code>.</p>
+        </div>
+    </div>
+</section>
 
 <footer>
     <div class="container">
         <p>
-            Nigerian Election 2027 — independent, evidence-based election information.
-            Estimates only. Official results at
-            <a href="https://inecelectionresults.ng/" target="_blank" rel="noopener noreferrer">
-                inecelectionresults.ng
-            </a>.
+            Nigerian Election 2027 — Independent evidence-based election tracking.
+            Estimates only. Official results at <a href="https://inecelectionresults.ng/" target="_blank">inecelectionresults.ng</a>.
         </p>
     </div>
 </footer>
 
 <script src="app.js"></script>
-
 </body>
 </html>
