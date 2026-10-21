@@ -5,166 +5,284 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nigerian Election 2027 — Estimated Figures</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Additional 1-page specific styles */
-        html { scroll-behavior: smooth; }
-        .nav-bar {
-            position: sticky; top: 0; background: var(--card); 
-            border-bottom: 1px solid var(--line); padding: 12px 0; z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        /* Revolut-inspired Clean Design System */
+        :root {
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --ink: #0F172A;
+            --muted: #64748B;
+            --line: #E2E8F0;
+            
+            --green: #10B981;
+            --green-hover: #059669;
+            --amber-bg: #FEF3C7;
+            --amber-text: #92400E;
+            --amber-border: #FDE68A;
         }
-        .nav-bar .container { display: flex; justify-content: space-between; align-items: center; }
-        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: 14px; }
-        .nav-links a:hover { color: var(--link); }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Navigation */
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
+        .logo { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: var(--muted); }
+        .nav-links a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--ink); }
+
+        /* Alert Banner */
+        .alert-banner { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 8px; padding: 16px; display: flex; gap: 12px; font-size: 13px; color: var(--amber-text); margin: 24px 0; align-items: flex-start; }
+        .alert-banner strong { display: block; font-weight: 700; margin-bottom: 2px; }
+        .alert-banner a { color: inherit; font-weight: 600; text-decoration: underline; }
+
+        /* Hero Section */
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 40px 0; }
+        .hero-text h1 { font-size: 48px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .hero-text h2 { font-size: 18px; font-weight: 500; color: var(--green); margin-bottom: 16px; }
+        .hero-text p { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+        .btn-primary { background: var(--green); color: white; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; transition: background 0.2s; }
+        .btn-primary:hover { background: var(--green-hover); }
+        .hero-img { width: 100%; height: 300px; object-fit: cover; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+        /* Search Bar */
+        .search-bar { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin: 20px 0; font-size: 14px; color: var(--muted); }
+
+        /* How to Submit */
+        .section-title { font-size: 20px; font-weight: 700; margin: 40px 0 20px; letter-spacing: -0.01em; }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .step-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
+        .step-card .num { font-size: 24px; font-weight: 800; color: #CBD5E1; margin-bottom: 16px; display: block; }
+        .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .step-card p { font-size: 14px; color: var(--muted); }
+
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
         
-        .hero { background: var(--ink); color: white; padding: 60px 0; text-align: center; }
-        .hero h1 { font-size: 36px; margin-bottom: 16px; }
-        .hero p { font-size: 18px; max-width: 600px; margin: 0 auto 30px; color: #b0b8c4; }
-        
-        .btn-wa { 
-            display: inline-block; background: #25D366; color: white; 
-            padding: 16px 32px; border-radius: 50px; text-decoration: none; 
-            font-size: 18px; font-weight: bold; transition: 0.2s;
+        /* Federal Header */
+        .dash-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+        .dash-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .dash-header .badge { background: var(--amber-bg); color: var(--amber-text); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--amber-border); }
+        .dash-header .coverage-text { text-align: right; font-size: 14px; font-weight: 500; }
+        .dash-header .coverage-text span { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+
+        /* 4-Column Grids */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+        .stat-block .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.05em; }
+        .stat-block .value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+        .stat-block .dash { color: #CBD5E1; }
+
+        /* Party Grid */
+        .party-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 16px; }
+        .party-block .party-name { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+        .party-block .party-val { font-size: 20px; font-weight: 700; }
+
+        /* State & LGA */
+        .state-lga-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 14px; background: var(--surface); outline: none; }
+        select:focus { border-color: var(--green); }
+
+        /* LGA Table */
+        .lga-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .lga-table th { text-align: left; padding: 12px 8px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+        .lga-table th.num { text-align: right; }
+        .lga-table td { padding: 16px 8px; border-bottom: 1px solid var(--line); }
+        .lga-table td.num { text-align: right; font-weight: 500; }
+        .lga-table tr:last-child td { border-bottom: none; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--line); padding: 32px 0; margin-top: 60px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+        footer a { color: var(--muted); text-decoration: none; margin-left: 16px; }
+        footer a:hover { color: var(--ink); }
+
+        @media (max-width: 768px) {
+            .hero { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: 1fr 1fr; }
+            .party-grid { grid-template-columns: 1fr 1fr; }
+            .state-lga-controls { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            footer { flex-direction: column; gap: 16px; text-align: center; }
+            footer a { margin: 0 8px; }
         }
-        .btn-wa:hover { background: #128C7E; color: white; }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
-        
-        .step-box { background: #f0f7ff; padding: 20px; border-radius: 8px; border: 1px solid #b3d4ff; }
-        .step-box h4 { color: #0b5cad; margin-top: 0; }
-        
-        /* Hide private elements explicitly just in case */
-        .private-data { display: none !important; }
     </style>
 </head>
 <body>
 
-<!-- Sticky Navigation -->
-<div class="nav-bar">
-    <div class="container">
-        <strong>Election 2027 Tracking</strong>
+<div class="container">
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="logo">🇳🇬 Election 2027</div>
         <div class="nav-links">
             <a href="#dashboard">Results</a>
             <a href="#submit">Submit EC8A</a>
             <a href="#methodology">Methodology</a>
         </div>
+    </nav>
+
+    <!-- Alert -->
+    <div class="alert-banner">
+        <span>ℹ️</span>
+        <div>
+            <strong>Estimated Figures - Not Official</strong>
+            These figures are estimates derived from submitted and independently checked polling-unit evidence. They are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank">INEC Portal</a>.
+        </div>
     </div>
+
+    <!-- Hero -->
+    <section class="hero" id="submit">
+        <div class="hero-text">
+            <h1>Protect your vote.</h1>
+            <h2>Help to ensure the integrity of our elections.</h2>
+            <p>Snap the results. Send the photo. Compare the figures.</p>
+            <a href="https://wa.me/YOUR_NUMBER" class="btn-primary" target="_blank">Pledge to Submit Results</a>
+        </div>
+        <img src="https://images.unsplash.com/photo-1590418606746-018840ffc5ce?q=80&w=800&auto=format&fit=crop" alt="Citizen taking photo of result" class="hero-img">
+    </section>
+
+    <!-- Search CTA -->
+    <div class="search-bar">
+        <span>Don't know your code? Find your polling unit using our search tool to generate the code.</span>
+        <a href="pledge.html" style="text-decoration: none; color: var(--ink);">🔍</a>
+    </div>
+
+    <!-- How to Submit -->
+    <h2 class="section-title">How to Submit Your Polling Results</h2>
+    <div class="steps-grid">
+        <div class="step-card">
+            <span class="num">01 /</span>
+            <h3>Pledge to be a Champion</h3>
+            <p>We need people like you to champion our democracy. Pledge to verify your polling unit results.</p>
+        </div>
+        <div class="step-card">
+            <span class="num">02 /</span>
+            <h3>Snap a sharp, clear photo</h3>
+            <p>Once polling officials complete the count, snap a clear, straight photo of the official, pasted EC8A form.</p>
+        </div>
+        <div class="step-card">
+            <span class="num">03 /</span>
+            <h3>Send using WhatsApp</h3>
+            <p>Send the image to our WhatsApp. Include the polling unit code as the caption (e.g., 29/12/06/007).</p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <h2 class="section-title" id="dashboard">Public Results Dashboard</h2>
+    <div class="dashboard-grid">
+        
+        <!-- Federal Header -->
+        <div class="dash-header">
+            <div>
+                <h3>Federal Estimates</h3>
+                <div class="badge">Estimated Figures - Not Official</div>
+            </div>
+            <div class="coverage-text">
+                <div id="dash-coverage">0 out of 0</div>
+                <span>Polling units have been reviewed</span>
+            </div>
+        </div>
+
+        <!-- Voter Stats -->
+        <div class="stat-grid">
+            <div class="stat-block">
+                <div class="label">Registered Voters</div>
+                <div class="value" id="dash-registered">—</div>
+            </div>
+            <div class="stat-block">
+                <div class="label">Accredited Voters</div>
+                <div class="value" id="dash-accredited">—</div>
+            </div>
+            <div class="stat-block">
+                <div class="label">Valid Votes</div>
+                <div class="value" id="dash-valid">—</div>
+            </div>
+            <div class="stat-block">
+                <div class="label">Rejected Votes</div>
+                <div class="value" id="dash-rejected">—</div>
+            </div>
+        </div>
+
+        <!-- Party Stats -->
+        <div class="party-grid">
+            <div class="party-block">
+                <div class="party-name">APC</div>
+                <div class="party-val" id="dash-apc">—</div>
+            </div>
+            <div class="party-block">
+                <div class="party-name">PDP</div>
+                <div class="party-val" id="dash-pdp">—</div>
+            </div>
+            <div class="party-block">
+                <div class="party-name">ADC</div>
+                <div class="party-val" id="dash-adc">—</div>
+            </div>
+            <div class="party-block">
+                <div class="party-name">NDC</div>
+                <div class="party-val" id="dash-ndc">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- State & LGA -->
+    <h2 class="section-title">State and LGA Details</h2>
+    <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">Select a state to view aggregated estimates and coverage stats.</p>
+    
+    <div class="state-lga-controls">
+        <div>
+            <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block;">Select State</label>
+            <select id="state-select">
+                <option value="">Loading states...</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block;">Select LGA (Optional)</label>
+            <select id="lga-select" disabled>
+                <option value="">Select a State first</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- LGA Output -->
+    <div id="lga-breakdown" style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; display: none;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">LGA Breakdown</h3>
+        <table class="lga-table">
+            <thead>
+                <tr>
+                    <th>LGA</th>
+                    <th class="num">APC</th>
+                    <th class="num">PDP</th>
+                    <th class="num">ADC</th>
+                    <th class="num">NDC</th>
+                    <th class="num">Coverage</th>
+                </tr>
+            </thead>
+            <tbody id="lga-table-body">
+                <!-- Rows injected by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Methodology -->
+    <h2 class="section-title" id="methodology">Methodology & FAQ</h2>
+    <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-bottom: 40px;">
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">What does "Estimated Figures" mean?</h3>
+        <p style="font-size: 14px; color: var(--muted); margin-bottom: 24px;">We do not claim to replace official INEC declarations. Our platform aggregates independently verified polling unit results to provide a parallel, transparent estimate of the election outcome.</p>
+        
+        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">How is coverage calculated?</h3>
+        <p style="font-size: 14px; color: var(--muted);">Coverage represents the number of verified polling units divided by the total number of registered polling units for that region. Estimates become more reliable as coverage increases.</p>
+    </div>
+
 </div>
 
-<!-- Disclaimer Header -->
-<header class="site-header" style="padding: 20px 0;">
-    <div class="container">
-        <div class="alert-title" style="margin: 0 0 8px 0;">Estimated Figures - Not Official</div>
-        <p class="disclaimer">
-            These figures are estimates derived from submitted and independently checked polling-unit evidence. They are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank">INEC Portal</a>.
-        </p>
-    </div>
-</header>
-
-<!-- Hero Section: Submit CTA -->
-<section class="hero" id="submit">
-    <div class="container">
-        <h1>Protect Your Vote</h1>
-        <p>We need everyday Nigerians to send photos of their EC8A result sheets. Your submission helps build a transparent, verified database of the 2027 election.</p>
-        <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" class="btn-wa" target="_blank">
-            Submit via WhatsApp &rarr;
-        </a>
-        <p style="margin-top: 16px; font-size: 13px;">(Replace YOUR_WHATSAPP_NUMBER with your live number, e.g., 2348012345678)</p>
-    </div>
-</section>
-
-<!-- Submission Instructions -->
-<section class="section" style="margin-top: -30px; position: relative; z-index: 10;">
-    <div class="container">
-        <div class="card">
-            <h2 style="margin-top: 0; text-align: center;">How to Submit Your Polling Unit Result</h2>
-            <div class="grid-2" style="margin-top: 24px;">
-                <div class="step-box">
-                    <h4>1. Snap Clearly</h4>
-                    <p>Take a clear, well-lit photo of the entire EC8A form. Make sure all numbers and text are readable. <strong>Do not send it as a document.</strong></p>
-                </div>
-                <div class="step-box">
-                    <h4>2. Include Your PU Code</h4>
-                    <p>Send the image via WhatsApp and type your 9-digit Polling Unit code as the caption (e.g., <code>29/13/06/009</code>).</p>
-                </div>
-                <div class="step-box">
-                    <h4>3. Await Review</h4>
-                    <p>Our system extracts the figures, and a human reviewer checks them. Submissions do not immediately change public figures.</p>
-                </div>
-                <div class="step-box">
-                    <h4>Don't know your code?</h4>
-                    <p>Use our <a href="pledge.html" style="color: #0b5cad; font-weight: bold;">Search Tool</a> to find your polling unit and generate the code automatically.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Results Dashboard -->
-<section class="section" id="dashboard">
-    <div class="container">
-        <h2>Public Results Dashboard</h2>
-        
-        <!-- National Estimates -->
-        <div id="national-results" class="card">
-            <p style="text-align: center; color: var(--muted);">Loading national estimates...</p>
-        </div>
-
-        <!-- State & LGA Filtering -->
-        <div class="card" style="margin-top: 24px;">
-            <h3>State and LGA Details</h3>
-            <p style="color: var(--muted); font-size: 14px; margin-bottom: 16px;">Select a state to view aggregated estimates and coverage stats.</p>
-            
-            <div class="grid-2">
-                <div>
-                    <label for="state-select">Select State</label>
-                    <select id="state-select">
-                        <option value="">Loading states...</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="lga-select">Select LGA (Optional)</label>
-                    <select id="lga-select" disabled>
-                        <option value="">Select a state first</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Output area for state/lga data -->
-            <div id="detail-results" style="margin-top: 24px;"></div>
-        </div>
-    </div>
-</section>
-
-<!-- Methodology & About -->
-<section class="section" id="methodology">
-    <div class="container">
-        <div class="card">
-            <h2 style="margin-top: 0;">Methodology & FAQ</h2>
-            
-            <h3 style="font-size: 18px; margin-top: 24px;">What does "Estimated Figures" mean?</h3>
-            <p>We do not claim to replace official INEC declarations. Our platform aggregates independently verified polling unit results to provide a parallel, transparent estimate of the election outcome.</p>
-            
-            <h3 style="font-size: 18px; margin-top: 24px;">What is "Matched vs. Single Source"?</h3>
-            <p><strong>Matched:</strong> Two or more independent submissions from the same polling unit confirm the same numbers.<br>
-            <strong>Single Source:</strong> Only one submission has been verified. We publish this as a provisional data point.</p>
-
-            <h3 style="font-size: 18px; margin-top: 24px;">Data Privacy</h3>
-            <p>Your phone number and personal details are never published. The public views only display aggregated polling unit figures, matched source counts, and coverage percentages.</p>
-
-            <h3 style="font-size: 18px; margin-top: 24px;">How to report an error</h3>
-            <p>If you spot an inaccuracy, please use the <a href="privacy.html">Contact/Privacy page</a> or message the WhatsApp number with the word <code>CORRECTION</code>.</p>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="container">
-        <p>
-            Nigerian Election 2027 — Independent evidence-based election tracking.
-            Estimates only. Official results at <a href="https://inecelectionresults.ng/" target="_blank">inecelectionresults.ng</a>.
-        </p>
+<footer class="container">
+    <div>© 2027 Nigerian Election Tracking. Estimates only.</div>
+    <div>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="https://inecelectionresults.ng/" target="_blank">Official INEC Results</a>
     </div>
 </footer>
 
