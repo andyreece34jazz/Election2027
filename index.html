@@ -5,109 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nigerian Election 2027 — Estimated Figures</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for a clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Revolut-inspired Clean Design System */
+        /* Neo-Brutalist / High-Contrast Design System */
         :root {
-            --bg: #F8FAFC;
+            --bg: #F4F5F7;
             --surface: #FFFFFF;
-            --ink: #0F172A;
-            --muted: #64748B;
-            --line: #E2E8F0;
+            --ink: #0A192F; /* Deep Navy */
+            --muted: #4B5563;
+            --line: #0A192F;
             
-            --green: #10B981;
-            --green-hover: #059669;
-            --amber-bg: #FEF3C7;
-            --amber-text: #92400E;
-            --amber-border: #FDE68A;
+            --accent-green: #10886E;
+            --accent-green-hover: #0c6b56;
+            --accent-light: #E0F2FE;
+            --border-thick: 2px solid var(--ink);
+            --border-thin: 1px solid #D1D5DB;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Typography */
+        h1, h2, h3, .heavy-text { font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; }
+        h1 { font-size: 64px; margin-bottom: 16px; text-transform: uppercase; }
+        h2 { font-size: 32px; text-transform: uppercase; margin-bottom: 20px; }
 
         /* Navigation */
-        .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
-        .logo { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-        .nav-links { display: flex; gap: 24px; font-size: 14px; font-weight: 500; color: var(--muted); }
-        .nav-links a { text-decoration: none; color: inherit; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--ink); }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
+        .logo { font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 32px; font-size: 15px; font-weight: 600; }
+        .nav-links a { text-decoration: none; color: var(--ink); transition: opacity 0.2s; }
+        .nav-links a:hover { opacity: 0.7; }
 
-        /* Alert Banner */
-        .alert-banner { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 8px; padding: 16px; display: flex; gap: 12px; font-size: 13px; color: var(--amber-text); margin: 24px 0; align-items: flex-start; }
-        .alert-banner strong { display: block; font-weight: 700; margin-bottom: 2px; }
-        .alert-banner a { color: inherit; font-weight: 600; text-decoration: underline; }
+        /* Alert Pill */
+        .alert-pill { background: var(--surface); border: var(--border-thick); border-radius: 8px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 40px; }
+        .alert-pill span:first-child { color: #9CA3AF; font-size: 16px; }
 
         /* Hero Section */
-        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 40px 0; }
-        .hero-text h1 { font-size: 48px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
-        .hero-text h2 { font-size: 18px; font-weight: 500; color: var(--green); margin-bottom: 16px; }
-        .hero-text p { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
-        .btn-primary { background: var(--green); color: white; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; transition: background 0.2s; }
-        .btn-primary:hover { background: var(--green-hover); }
-        .hero-img { width: 100%; height: 300px; object-fit: cover; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px; }
+        .hero-text p { font-size: 18px; font-weight: 500; margin-bottom: 24px; line-height: 1.4; }
+        .hero-text p span { text-transform: uppercase; font-weight: 800; }
+        
+        .btn-primary { background: var(--accent-green); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; display: inline-block; border: var(--border-thick); box-shadow: 4px 4px 0 var(--ink); transition: all 0.1s; }
+        .btn-primary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+
+        /* Hero Image with Camera Overlay */
+        .hero-image-wrapper { position: relative; border: var(--border-thick); border-radius: 12px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); }
+        .hero-image { width: 100%; height: auto; display: block; }
+        
+        /* Fake Camera UI */
+        .cam-ui { position: absolute; inset: 0; pointer-events: none; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; color: white; font-family: monospace; font-weight: bold; text-shadow: 1px 1px 2px black;}
+        .cam-top { display: flex; justify-content: space-between; }
+        .rec-dot { width: 10px; height: 10px; background: red; border-radius: 50%; display: inline-block; margin-right: 6px; animation: blink 1s infinite; }
+        .cam-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .cam-corners { position: absolute; inset: 20px; border: 1px dashed rgba(255,255,255,0.5); }
+        
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         /* Search Bar */
-        .search-bar { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin: 20px 0; font-size: 14px; color: var(--muted); }
+        .search-bar { background: var(--surface); border: var(--border-thick); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 500; margin-bottom: 48px; }
+        .search-btn { background: #F3F4F6; border: 1px solid #D1D5DB; border-radius: 6px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
 
         /* How to Submit */
-        .section-title { font-size: 20px; font-weight: 700; margin: 40px 0 20px; letter-spacing: -0.01em; }
-        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .step-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
-        .step-card .num { font-size: 24px; font-weight: 800; color: #CBD5E1; margin-bottom: 16px; display: block; }
-        .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-        .step-card p { font-size: 14px; color: var(--muted); }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+        .step-card { background: var(--surface); border: var(--border-thick); border-radius: 12px; padding: 24px; }
+        .step-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .step-num { font-size: 24px; font-weight: 900; }
+        .step-icon { font-size: 28px; }
+        .step-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+        .step-card p { font-size: 14px; color: var(--muted); font-weight: 500; }
 
-        /* Dashboard */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
+        /* Dashboard Section */
+        .dashboard-section { border: var(--border-thick); border-radius: 16px; background: #E5E7EB; padding: 24px; margin-bottom: 48px; position: relative; overflow: hidden; }
+        /* Subtle Grid Background */
+        .dashboard-section::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(to right, #D1D5DB 1px, transparent 1px), linear-gradient(to bottom, #D1D5DB 1px, transparent 1px); background-size: 40px 40px; opacity: 0.3; pointer-events: none; }
+
+        .dash-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; position: relative; z-index: 1; }
+        .dash-header h2 { margin-bottom: 0; font-size: 36px; }
+        .dash-coverage { text-align: right; font-weight: 700; font-size: 16px; }
+        .dash-coverage span { display: block; font-weight: 500; font-size: 13px; color: var(--muted); }
         
-        /* Federal Header */
-        .dash-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
-        .dash-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .dash-header .badge { background: var(--amber-bg); color: var(--amber-text); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--amber-border); }
-        .dash-header .coverage-text { text-align: right; font-size: 14px; font-weight: 500; }
-        .dash-header .coverage-text span { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+        /* Progress Bar */
+        .progress-bar-container { position: relative; z-index: 1; margin-bottom: 24px; }
+        .progress-track { height: 8px; background: #D1D5DB; border: 1px solid #9CA3AF; border-radius: 4px; width: 100%; }
+        .progress-badge { background: var(--accent-green); color: white; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; position: absolute; top: -8px; left: 6%; border: 2px solid white; } /* Update left % dynamically in JS if needed */
 
-        /* 4-Column Grids */
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-        .stat-block .label { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.05em; }
-        .stat-block .value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
-        .stat-block .dash { color: #CBD5E1; }
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px 0; border-bottom: 2px solid #9CA3AF; margin-bottom: 16px; position: relative; z-index: 1; }
+        .stat-block { text-align: left; }
+        .stat-block .label { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .stat-block .value { font-size: 42px; font-weight: 900; line-height: 1; }
 
         /* Party Grid */
-        .party-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 16px; }
-        .party-block .party-name { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-        .party-block .party-val { font-size: 20px; font-weight: 700; }
+        .party-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; z-index: 1; }
+        .party-block .party-label { font-size: 24px; font-weight: 900; text-transform: uppercase; color: var(--ink); }
+        .party-block .party-value { font-size: 32px; font-weight: 900; color: var(--accent-green); line-height: 1; }
 
-        /* State & LGA */
-        .state-lga-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-        select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 14px; background: var(--surface); outline: none; }
-        select:focus { border-color: var(--green); }
+        /* State/LGA */
+        .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; position: relative; z-index: 1; }
+        .filters label { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: block; }
+        .filters select { width: 100%; padding: 16px; border: var(--border-thick); border-radius: 8px; font-family: inherit; font-size: 16px; font-weight: 600; background: white; outline: none; cursor: pointer; }
 
         /* LGA Table */
-        .lga-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        .lga-table th { text-align: left; padding: 12px 8px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+        .lga-container { margin-top: 24px; background: white; border: var(--border-thick); border-radius: 8px; overflow: hidden; position: relative; z-index: 1; }
+        .lga-table { width: 100%; border-collapse: collapse; font-size: 15px; font-weight: 500; }
+        .lga-table th { background: #F3F4F6; color: var(--muted); text-align: left; padding: 12px 16px; font-size: 12px; text-transform: uppercase; border-bottom: var(--border-thick); font-weight: 700; }
         .lga-table th.num { text-align: right; }
-        .lga-table td { padding: 16px 8px; border-bottom: 1px solid var(--line); }
-        .lga-table td.num { text-align: right; font-weight: 500; }
+        .lga-table td { padding: 16px; border-bottom: 1px solid #E5E7EB; }
+        .lga-table td.num { text-align: right; font-weight: 700; }
         .lga-table tr:last-child td { border-bottom: none; }
 
-        /* Footer */
-        footer { border-top: 1px solid var(--line); padding: 32px 0; margin-top: 60px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
-        footer a { color: var(--muted); text-decoration: none; margin-left: 16px; }
-        footer a:hover { color: var(--ink); }
+        /* FAQ Footer */
+        .faq-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .faq-footer a { color: var(--ink); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 
         @media (max-width: 768px) {
             .hero { grid-template-columns: 1fr; }
+            h1 { font-size: 48px; }
             .steps-grid { grid-template-columns: 1fr; }
-            .stat-grid { grid-template-columns: 1fr 1fr; }
-            .party-grid { grid-template-columns: 1fr 1fr; }
-            .state-lga-controls { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .party-grid { grid-template-columns: repeat(2, 1fr); }
+            .filters { grid-template-columns: 1fr; }
             .nav-links { display: none; }
-            footer { flex-direction: column; gap: 16px; text-align: center; }
-            footer a { margin: 0 8px; }
+            .stat-block .value { font-size: 32px; }
         }
     </style>
 </head>
@@ -116,7 +140,9 @@
 <div class="container">
     <!-- Nav -->
     <nav class="nav">
-        <div class="logo">🇳🇬 Election 2027</div>
+        <div class="logo">
+            <img src="https://flagcdn.com/w40/ng.png" alt="NG" style="border-radius: 50%;"> Election 2027
+        </div>
         <div class="nav-links">
             <a href="#dashboard">Results</a>
             <a href="#submit">Submit EC8A</a>
@@ -125,69 +151,96 @@
     </nav>
 
     <!-- Alert -->
-    <div class="alert-banner">
-        <span>ℹ️</span>
-        <div>
-            <strong>Estimated Figures - Not Official</strong>
-            These figures are estimates derived from submitted and independently checked polling-unit evidence. They are not official results or an INEC declaration. For official results, visit the <a href="https://inecelectionresults.ng/" target="_blank">INEC Portal</a>.
-        </div>
+    <div class="alert-pill">
+        <span>⚠️</span>
+        <div><span style="color: var(--ink);">ESTIMATED FIGURES — NOT OFFICIAL.</span> Driven by independently checked polling units.</div>
     </div>
 
     <!-- Hero -->
     <section class="hero" id="submit">
         <div class="hero-text">
-            <h1>Protect your vote.</h1>
-            <h2>Help to ensure the integrity of our elections.</h2>
-            <p>Snap the results. Send the photo. Compare the figures.</p>
-            <a href="https://wa.me/YOUR_NUMBER" class="btn-primary" target="_blank">Pledge to Submit Results</a>
+            <h1>Protect<br>Your Vote.</h1>
+            <p>
+                Help to ensure the integrity of our elections.<br>
+                <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
+            </p>
+            <a href="https://wa.me/YOUR_NUMBER" class="btn-primary" target="_blank">Pledge to Send Results</a>
         </div>
-        <img src="https://images.unsplash.com/photo-1590418606746-018840ffc5ce?q=80&w=800&auto=format&fit=crop" alt="Citizen taking photo of result" class="hero-img">
+        
+        <div class="hero-image-wrapper">
+            <!-- Replace with your actual local image if preferred -->
+            <img src="https://images.unsplash.com/photo-1590418606746-018840ffc5ce?q=80&w=800&auto=format&fit=crop" alt="Citizen taking photo" class="hero-image">
+            
+            <!-- Fake Camera Overlay -->
+            <div class="cam-ui">
+                <div class="cam-top">
+                    <div><span class="rec-dot"></span> REC</div>
+                    <div>00:14</div>
+                </div>
+                <div class="cam-corners"></div>
+                <div class="cam-bottom">
+                    <div>EC8A SECURE</div>
+                    <div>[ ]</div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- Search CTA -->
+    <!-- Search -->
     <div class="search-bar">
-        <span>Don't know your code? Find your polling unit using our search tool to generate the code.</span>
-        <a href="pledge.html" style="text-decoration: none; color: var(--ink);">🔍</a>
+        <div>Don't know your code? Find your polling unit using our search tool to generate the code.</div>
+        <a href="pledge.html" class="search-btn">🔍</a>
     </div>
 
     <!-- How to Submit -->
-    <h2 class="section-title">How to Submit Your Polling Results</h2>
+    <h2>How to Submit Your Polling Results</h2>
     <div class="steps-grid">
         <div class="step-card">
-            <span class="num">01 /</span>
+            <div class="step-top">
+                <div class="step-num">01 /</div>
+                <div class="step-icon">✋</div>
+            </div>
             <h3>Pledge to be a Champion</h3>
             <p>We need people like you to champion our democracy. Pledge to verify your polling unit results.</p>
         </div>
         <div class="step-card">
-            <span class="num">02 /</span>
+            <div class="step-top">
+                <div class="step-num">02 /</div>
+                <div class="step-icon">📷</div>
+            </div>
             <h3>Snap a sharp, clear photo</h3>
             <p>Once polling officials complete the count, snap a clear, straight photo of the official, pasted EC8A form.</p>
         </div>
         <div class="step-card">
-            <span class="num">03 /</span>
+            <div class="step-top">
+                <div class="step-num">03 /</div>
+                <div class="step-icon">💬</div>
+            </div>
             <h3>Send using WhatsApp</h3>
             <p>Send the image to our WhatsApp. Include the polling unit code as the caption (e.g., 29/12/06/007).</p>
         </div>
     </div>
 
     <!-- Dashboard -->
-    <h2 class="section-title" id="dashboard">Public Results Dashboard</h2>
-    <div class="dashboard-grid">
+    <div class="dashboard-section" id="dashboard">
         
-        <!-- Federal Header -->
         <div class="dash-header">
-            <div>
-                <h3>Federal Estimates</h3>
-                <div class="badge">Estimated Figures - Not Official</div>
-            </div>
-            <div class="coverage-text">
-                <div id="dash-coverage">0 out of 0</div>
+            <h2>Public Results Dashboard</h2>
+            <div class="dash-coverage">
+                <div id="dash-coverage-text">0 of 176,846</div>
                 <span>Polling units have been reviewed</span>
             </div>
         </div>
 
+        <div class="progress-bar-container">
+            <div class="progress-track"></div>
+            <div class="progress-badge" id="dash-coverage-pct">0%</div>
+        </div>
+
+        <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 16px;">State and LGA Estimates</h3>
+        
         <!-- Voter Stats -->
-        <div class="stat-grid">
+        <div class="stats-grid">
             <div class="stat-block">
                 <div class="label">Registered Voters</div>
                 <div class="value" id="dash-registered">—</div>
@@ -209,82 +262,70 @@
         <!-- Party Stats -->
         <div class="party-grid">
             <div class="party-block">
-                <div class="party-name">APC</div>
-                <div class="party-val" id="dash-apc">—</div>
+                <div class="party-label">APC</div>
+                <div class="party-value" id="dash-apc">—</div>
             </div>
             <div class="party-block">
-                <div class="party-name">PDP</div>
-                <div class="party-val" id="dash-pdp">—</div>
+                <div class="party-label">PDP</div>
+                <div class="party-value" id="dash-pdp">—</div>
             </div>
             <div class="party-block">
-                <div class="party-name">ADC</div>
-                <div class="party-val" id="dash-adc">—</div>
+                <div class="party-label">ADC</div>
+                <div class="party-value" id="dash-adc">—</div>
             </div>
             <div class="party-block">
-                <div class="party-name">NDC</div>
-                <div class="party-val" id="dash-ndc">—</div>
+                <div class="party-label">NDC</div>
+                <div class="party-value" id="dash-ndc">—</div>
             </div>
+        </div>
+
+        <!-- Filters -->
+        <h3 style="font-size: 20px; font-weight: 800; margin-top: 32px; margin-bottom: 4px;">State and LGA Estimates</h3>
+        <p style="font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 16px;">Select a state to view aggregated estimates and coverage stats.</p>
+
+        <div class="filters">
+            <div>
+                <label>Select State</label>
+                <select id="state-select">
+                    <option value="">Loading states...</option>
+                </select>
+            </div>
+            <div>
+                <label>Select LGA (Optional)</label>
+                <select id="lga-select" disabled>
+                    <option value="">Select a State first</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="lga-container" id="lga-breakdown" style="display: none;">
+            <div style="padding: 16px; border-bottom: var(--border-thick); font-weight: 800;">LGA Breakdown</div>
+            <table class="lga-table">
+                <thead>
+                    <tr>
+                        <th>LGA</th>
+                        <th class="num">APC</th>
+                        <th class="num">PDP</th>
+                        <th class="num">ADC</th>
+                        <th class="num">NDC</th>
+                        <th class="num">Coverage</th>
+                    </tr>
+                </thead>
+                <tbody id="lga-table-body">
+                    <!-- Rows injected by JS -->
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- State & LGA -->
-    <h2 class="section-title">State and LGA Details</h2>
-    <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">Select a state to view aggregated estimates and coverage stats.</p>
-    
-    <div class="state-lga-controls">
-        <div>
-            <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block;">Select State</label>
-            <select id="state-select">
-                <option value="">Loading states...</option>
-            </select>
-        </div>
-        <div>
-            <label style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block;">Select LGA (Optional)</label>
-            <select id="lga-select" disabled>
-                <option value="">Select a State first</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- LGA Output -->
-    <div id="lga-breakdown" style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; display: none;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">LGA Breakdown</h3>
-        <table class="lga-table">
-            <thead>
-                <tr>
-                    <th>LGA</th>
-                    <th class="num">APC</th>
-                    <th class="num">PDP</th>
-                    <th class="num">ADC</th>
-                    <th class="num">NDC</th>
-                    <th class="num">Coverage</th>
-                </tr>
-            </thead>
-            <tbody id="lga-table-body">
-                <!-- Rows injected by JS -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Methodology -->
-    <h2 class="section-title" id="methodology">Methodology & FAQ</h2>
-    <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-bottom: 40px;">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">What does "Estimated Figures" mean?</h3>
-        <p style="font-size: 14px; color: var(--muted); margin-bottom: 24px;">We do not claim to replace official INEC declarations. Our platform aggregates independently verified polling unit results to provide a parallel, transparent estimate of the election outcome.</p>
-        
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">How is coverage calculated?</h3>
-        <p style="font-size: 14px; color: var(--muted);">Coverage represents the number of verified polling units divided by the total number of registered polling units for that region. Estimates become more reliable as coverage increases.</p>
+    <!-- Methodology Footer Link -->
+    <div class="faq-footer" id="methodology">
+        <h2 style="margin: 0;">Methodology & FAQ</h2>
+        <a href="privacy.html">↗ Link</a>
     </div>
 
 </div>
-
-<footer class="container">
-    <div>© 2027 Nigerian Election Tracking. Estimates only.</div>
-    <div>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="https://inecelectionresults.ng/" target="_blank">Official INEC Results</a>
-    </div>
-</footer>
 
 <script src="app.js"></script>
 </body>
