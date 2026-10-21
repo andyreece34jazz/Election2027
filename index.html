@@ -52,15 +52,9 @@
         .btn-primary { background: var(--accent-green); color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; display: inline-block; border: var(--border-thick); box-shadow: 4px 4px 0 var(--ink); transition: all 0.1s; }
         .btn-primary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 
-        /* Hero Image with Camera Overlay */
+        /* Hero Image */
         .hero-image-wrapper { position: relative; border: var(--border-thick); border-radius: 12px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); }
         .hero-image { width: 100%; height: auto; display: block; }
-        .cam-ui { position: absolute; inset: 0; pointer-events: none; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; color: white; font-family: monospace; font-weight: bold; text-shadow: 1px 1px 2px black; }
-        .cam-top { display: flex; justify-content: space-between; font-size: 12px; }
-        .rec-dot { width: 8px; height: 8px; background: red; border-radius: 50%; display: inline-block; margin-right: 6px; animation: blink 1s infinite; }
-        .cam-bottom { display: flex; justify-content: space-between; align-items: flex-end; font-size: 12px; }
-        .cam-corners { position: absolute; inset: 16px; border: 1px dashed rgba(255,255,255,0.5); }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         /* Search Bar */
         .search-bar { background: var(--surface); border: var(--border-thick); border-radius: 8px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; margin-bottom: 40px; }
@@ -199,24 +193,11 @@
                 Help to ensure the integrity of our elections.<br>
                 <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
             </p>
-            <!-- Remember to change YOUR_NUMBER to your WhatsApp number -->
             <a href="https://wa.me/YOUR_NUMBER" class="btn-primary" target="_blank">Pledge to Send Results</a>
         </div>
         
         <div class="hero-image-wrapper">
-            <!-- Image updated to local file -->
             <img src="hero.jpg" alt="Citizen taking photo" class="hero-image">
-            <div class="cam-ui">
-                <div class="cam-top">
-                    <div><span class="rec-dot"></span> REC</div>
-                    <div>00:14</div>
-                </div>
-                <div class="cam-corners"></div>
-                <div class="cam-bottom">
-                    <div>EC8A SECURE</div>
-                    <div>[ ]</div>
-                </div>
-            </div>
         </div>
     </section>
 
