@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Neo-Brutalist / High-Contrast Design System (Proportional Sizing) */
+        /* Neo-Brutalist / High-Contrast Design System */
         :root {
             --bg: #F4F5F7;
             --surface: #FFFFFF;
@@ -80,17 +80,53 @@
         .dashboard-section::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(to right, #D1D5DB 1px, transparent 1px), linear-gradient(to bottom, #D1D5DB 1px, transparent 1px); background-size: 30px 30px; opacity: 0.4; pointer-events: none; }
         
         /* Inside Card Headers */
-        .dash-header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; position: relative; z-index: 1; }
+        .dash-header-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; position: relative; z-index: 1; }
         .dash-sub-title { font-size: 20px; font-weight: 900; }
-        .dash-sub-text { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 16px; }
         
-        .dash-coverage { text-align: right; font-weight: 800; font-size: 15px; }
+        .coverage-widget { text-align: right; }
+        .dash-coverage { font-weight: 800; font-size: 15px; margin-bottom: 8px; }
         .dash-coverage span { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
-        
-        /* Progress Bar */
-        .progress-bar-container { position: relative; z-index: 1; margin-bottom: 24px; }
-        .progress-track { height: 6px; background: #D1D5DB; border: 1px solid #9CA3AF; border-radius: 3px; width: 100%; }
-        .progress-badge { background: var(--accent-green); color: white; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; position: absolute; top: -8px; left: 6%; border: 2px solid white; }
+
+        /* Custom Pill Progress Bar */
+        .progress-pill-container {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--accent-green);
+            border-radius: 20px;
+            background: white;
+            height: 26px;
+            width: 180px;
+            overflow: hidden;
+            margin-left: auto; /* Align right */
+        }
+        .progress-pill-label {
+            background: var(--accent-green);
+            color: white;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 800;
+            z-index: 2;
+            white-space: nowrap;
+        }
+        .progress-pill-track {
+            flex-grow: 1;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+        }
+        .progress-pill-fill {
+            height: 16px;
+            background: var(--accent-green);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
 
         /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 0; border-bottom: 2px solid #9CA3AF; margin-bottom: 16px; position: relative; z-index: 1; }
@@ -128,6 +164,9 @@
             .party-grid { grid-template-columns: repeat(2, 1fr); }
             .filters { grid-template-columns: 1fr; }
             .nav-links { display: none; }
+            .dash-header-top { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .progress-pill-container { margin-left: 0; }
+            .coverage-widget { text-align: left; }
         }
     </style>
 </head>
@@ -220,19 +259,24 @@
     <!-- Dashboard Card -->
     <div class="dashboard-section">
         
-        <!-- Top Section -->
+        <!-- Top Section with Coverage Text & Progress Bar -->
         <div class="dash-header-top">
             <div class="dash-sub-title">State and LGA Estimates</div>
-            <div class="dash-coverage">
-                <div id="dash-coverage-text">0 of 176,846</div>
-                <span>Polling units have been reviewed</span>
+            
+            <div class="coverage-widget">
+                <div class="dash-coverage">
+                    <div id="dash-coverage-text">0 of 176,846</div>
+                    <span>Polling units have been reviewed</span>
+                </div>
+                
+                <!-- The Custom Pill Progress Bar -->
+                <div class="progress-pill-container">
+                    <div class="progress-pill-label" id="dash-coverage-pct">0.0%</div>
+                    <div class="progress-pill-track">
+                        <div class="progress-pill-fill" id="dash-progress-fill"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-bar-container">
-            <div class="progress-track"></div>
-            <div class="progress-badge" id="dash-coverage-pct">0.0%</div>
         </div>
 
         <!-- Voter Stats -->
@@ -279,7 +323,7 @@
 
         <!-- Filters Section -->
         <h3 class="dash-sub-title">State and LGA Estimates</h3>
-        <p class="dash-sub-text">Select a state to view aggregated estimates and coverage stats.</p>
+        <p style="font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 12px; position: relative; z-index: 1;">Select a state to view aggregated estimates and coverage stats.</p>
 
         <div class="filters">
             <div>
