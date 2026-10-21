@@ -7,77 +7,28 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* Custom styles for the dropdowns and code display */
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd3da;
-            border-radius: 6px;
-            font-size: 16px;
-            background: #ffffff;
-            color: var(--ink);
-            margin-bottom: 0;
-        }
-        .form-group select:disabled {
-            background: #f0f2f5;
-            color: #9aa5b1;
-            cursor: not-allowed;
-        }
-        .code-display-box {
-            background: #f0f7ff;
-            border: 1px solid #b3d4ff;
-            border-radius: 6px;
-            padding: 16px;
-            margin-top: 24px;
-            margin-bottom: 24px;
-            text-align: center;
-            display: none; /* Hidden until PU is selected */
-        }
-        .code-display-box h4 {
-            margin: 0 0 8px 0;
-            color: #0b5cad;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .code-display-box .code {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: 1px;
-        }
-        .code-display-box .hint {
-            font-size: 13px;
-            color: var(--muted);
-            margin-top: 8px;
-        }
-        .check-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--ink);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            display: none; /* Hidden until PU is selected */
-        }
-        .check-btn:hover {
-            background: #2c3e50;
-        }
-        .check-btn:disabled {
-            background: #9aa5b1;
-            cursor: not-allowed;
-        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+        .form-group select { width: 100%; padding: 12px; border: 1px solid #cbd3da; border-radius: 6px; font-size: 16px; background: #ffffff; color: var(--ink); margin-bottom: 0; }
+        .form-group select:disabled { background: #f0f2f5; color: #9aa5b1; cursor: not-allowed; }
+        
+        .code-display-box { background: #f0f7ff; border: 1px solid #b3d4ff; border-radius: 6px; padding: 16px; margin-top: 24px; margin-bottom: 24px; text-align: center; display: none; }
+        .code-display-box h4 { margin: 0 0 8px 0; color: #0b5cad; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .code-display-box .code { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: 1px; }
+        .code-display-box .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+        
+        .check-btn { width: 100%; padding: 14px; background: var(--ink); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; display: none; }
+        .check-btn:hover { background: #2c3e50; }
+        .check-btn:disabled { background: #9aa5b1; cursor: not-allowed; }
+        
+        /* Result Box Styles */
+        .result-box { margin-top: 24px; padding: 20px; border-radius: 6px; display: none; }
+        .result-success { background: #eaf7ee; border: 1px solid #a3dfb8; color: #1e6b3a; }
+        .result-warning { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber-ink); }
+        .result-box h3 { font-size: 18px; margin-top: 0; margin-bottom: 8px; }
+        .result-box input[type="tel"] { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px; border: 1px solid #cbd3da; border-radius: 6px; font-size: 16px; }
+        .result-box button { width: 100%; padding: 14px; background: var(--ink); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .result-box button:hover { background: #2c3e50; }
     </style>
 </head>
 <body>
@@ -164,7 +115,6 @@
 const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
 
-// DOM Elements
 const stateSelect = document.getElementById("state-select");
 const lgaSelect = document.getElementById("lga-select");
 const puSelect = document.getElementById("pu-select");
@@ -175,18 +125,15 @@ const resultArea = document.getElementById("result-area");
 
 let selectedPUData = null;
 
-// Fetch Headers
 const headers = {
     "apikey": SUPABASE_ANON_KEY,
     "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
 };
 
-// 1. Load States on page load
+// 1. Load States on page load (Using all_states view)
 async function loadStates() {
     try {
-        // We use public_state_results to get the distinct list of states.
-        // It's only 37 rows, so it's incredibly fast.
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/public_state_results?select=state_name&order=state_name.asc`, { headers });
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/all_states?select=state_name&order=state_name.asc`, { headers });
         const data = await res.json();
         
         stateSelect.innerHTML = '<option value="">Select a State</option>';
@@ -202,18 +149,17 @@ async function loadStates() {
     }
 }
 
-// 2. Load LGAs when State changes
+// 2. Load LGAs when State changes (Using all_lgas view)
 async function loadLGAs() {
     const state = stateSelect.value;
     
-    // Reset downstream
     lgaSelect.innerHTML = '<option value="">Loading LGAs...</option>';
     lgaSelect.disabled = true;
     puSelect.innerHTML = '<option value="">Select an LGA first</option>';
     puSelect.disabled = true;
     codeBox.style.display = "none";
     checkBtn.style.display = "none";
-    resultArea.innerHTML = "";
+    resultArea.style.display = "none";
 
     if (!state) {
         lgaSelect.innerHTML = '<option value="">Select a State first</option>';
@@ -221,8 +167,7 @@ async function loadLGAs() {
     }
 
     try {
-        // We use public_lga_results to get distinct LGAs for this state.
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/public_lga_results?state_name=eq.${encodeURIComponent(state)}&select=lga_name&order=lga_name.asc`, { headers });
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/all_lgas?state_name=eq.${encodeURIComponent(state)}&select=lga_name&order=lga_name.asc`, { headers });
         const data = await res.json();
         
         lgaSelect.innerHTML = '<option value="">Select an LGA</option>';
@@ -244,12 +189,11 @@ async function loadPUs() {
     const state = stateSelect.value;
     const lga = lgaSelect.value;
 
-    // Reset downstream
     puSelect.innerHTML = '<option value="">Loading Polling Units...</option>';
     puSelect.disabled = true;
     codeBox.style.display = "none";
     checkBtn.style.display = "none";
-    resultArea.innerHTML = "";
+    resultArea.style.display = "none";
 
     if (!lga) {
         puSelect.innerHTML = '<option value="">Select an LGA first</option>';
@@ -257,7 +201,6 @@ async function loadPUs() {
     }
 
     try {
-        // Fetch from the main polling_units table
         const url = `${SUPABASE_URL}/rest/v1/polling_units?state_name=eq.${encodeURIComponent(state)}&lga_name=eq.${encodeURIComponent(lga)}&select=id,pu_name,full_code&order=pu_name.asc`;
         const res = await fetch(url, { headers });
         const data = await res.json();
@@ -270,10 +213,8 @@ async function loadPUs() {
         puSelect.innerHTML = '<option value="">Select a Polling Unit</option>';
         data.forEach(row => {
             const option = document.createElement("option");
-            option.value = row.id; // Use ID as value for easy DB lookup later
-            // Format: PU Name (Code)
+            option.value = row.id;
             option.textContent = `${row.pu_name} (${row.full_code})`;
-            // Store the full row in the DOM element for easy access
             option.dataset.code = row.full_code;
             option.dataset.name = row.pu_name;
             puSelect.appendChild(option);
@@ -285,10 +226,10 @@ async function loadPUs() {
     }
 }
 
-// 4. Handle PU Selection (Show code box)
+// 4. Handle PU Selection
 function onPUChange() {
     const selectedOption = puSelect.options[puSelect.selectedIndex];
-    resultArea.innerHTML = "";
+    resultArea.style.display = "none";
     
     if (!selectedOption || !selectedOption.value) {
         codeBox.style.display = "none";
@@ -297,59 +238,61 @@ function onPUChange() {
         return;
     }
 
-    // Extract the data we stored in the dataset
-    const fullCode = selectedOption.dataset.code;
-    const puName = selectedOption.dataset.name;
-    
     selectedPUData = {
         id: selectedOption.value,
-        fullCode: fullCode,
-        name: puName,
-        state: stateSelect.value,
-        lga: lgaSelect.value
+        fullCode: selectedOption.dataset.code,
+        name: selectedOption.dataset.name
     };
 
-    displayCode.textContent = fullCode;
+    displayCode.textContent = selectedPUData.fullCode;
     codeBox.style.display = "block";
     checkBtn.style.display = "block";
 }
 
-// 5. Check Coverage
+// 5. Check Coverage (Allows unlimited contributors)
 async function checkCoverage() {
     if (!selectedPUData) return;
 
     checkBtn.disabled = true;
     checkBtn.textContent = "Checking...";
-    resultArea.innerHTML = "";
+    resultArea.style.display = "none";
 
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges?polling_unit_id=eq.${selectedPUData.id}&select=phone_number`, { headers });
         const pledges = await res.json();
 
-        if (pledges && pledges.length > 0) {
+        resultArea.style.display = "block";
+        const pledgeCount = pledges ? pledges.length : 0;
+
+        if (pledgeCount > 0) {
+            // Scenario 2: Already has contributors
+            resultArea.className = "result-box result-success";
             resultArea.innerHTML = `
-                <div class="card" style="background: #eaf7ee; border-color: #a3dfb8;">
-                    <h3 style="margin-top:0; color: #1e6b3a;">Good news!</h3>
-                    <p style="margin-bottom:0;"><strong>${selectedPUData.name}</strong> already has a pledged observer. You don't need to cover this one, but you can still send us the photo on election day!</p>
-                </div>
+                <h3>This polling unit already has ${pledgeCount} contributor(s). Add support.</h3>
+                <p>🏅 It's your turn to become a champion contributor. We need backups to ensure the result is captured!</p>
+                
+                <label style="display:block; margin-top: 16px; font-weight: 600;">📱 Enter Your WhatsApp Number</label>
+                <input type="tel" id="phone" placeholder="e.g., 2348012345678">
+                
+                <button onclick="submitPledge()">Pledge to Send Result Photo</button>
             `;
         } else {
+            // Scenario 1: First contributor
+            resultArea.className = "result-box result-warning";
             resultArea.innerHTML = `
-                <div class="card" style="background: var(--amber-bg); border-color: var(--amber-line);">
-                    <h3 style="margin-top:0; color: var(--amber-ink);">No one has pledged this unit yet!</h3>
-                    <p>Be the hero for <strong>${selectedPUData.name}</strong>.</p>
-                    
-                    <label for="phone" style="margin-top: 16px; display:block;">Your WhatsApp Number</label>
-                    <input type="tel" id="phone" placeholder="e.g. 2348012345678" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #cbd3da; border-radius:6px; font-size:16px;">
-                    
-                    <button onclick="submitPledge()" style="width:100%; padding:14px; background:var(--ink); color:white; border:none; border-radius:6px; font-weight:bold; font-size:16px; cursor:pointer;">
-                        I Pledge to Submit
-                    </button>
-                </div>
+                <h3>This polling unit is ready for its first contributor. Pledge Now.</h3>
+                <p>🎖️ It's your turn to be the first champion contributor.</p>
+                
+                <label style="display:block; margin-top: 16px; font-weight: 600;">📱 Enter Your WhatsApp Number</label>
+                <input type="tel" id="phone" placeholder="e.g., 2348012345678">
+                
+                <button onclick="submitPledge()">Pledge to Send Result Photo</button>
             `;
         }
     } catch (err) {
         console.error(err);
+        resultArea.className = "result-box result-warning";
+        resultArea.style.display = "block";
         resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
     } finally {
         checkBtn.disabled = false;
@@ -379,14 +322,13 @@ async function submitPledge() {
         });
 
         if (res.ok) {
+            resultArea.className = "result-box result-success";
             resultArea.innerHTML = `
-                <div class="card" style="background: #eaf7ee; border-color: #a3dfb8;">
-                    <h3 style="margin-top:0; color: #1e6b3a;">Pledge Confirmed!</h3>
-                    <p style="margin-bottom:0;">Thank you! We will send a reminder to your WhatsApp on election day.</p>
-                </div>
+                <h3>Pledge Confirmed!</h3>
+                <p style="margin-bottom:0;">Thank you! You are now a champion contributor. We will send a reminder to your WhatsApp on election day.</p>
             `;
         } else {
-            resultArea.innerHTML = `<div class="error">Could not save pledge. That number may already be registered.</div>`;
+            resultArea.innerHTML = `<div class="error" style="padding:10px; background:#fff1f1; color:#9b1c1c; border-radius:4px;">Could not save pledge. That number may already be registered for this polling unit.</div>`;
         }
     } catch (err) {
         console.error(err);
