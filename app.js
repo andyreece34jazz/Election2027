@@ -6,6 +6,8 @@ const lgaSelect = document.getElementById("lga-select");
 const lgaBreakdown = document.getElementById("lga-breakdown");
 const lgaTableBody = document.getElementById("lga-table-body");
 
+let currentLgaData = []; // Store data so LGA dropdown can filter locally
+
 const fmt = (num) => (num === null || num === undefined) ? "—" : Number(num).toLocaleString("en-GB");
 const pct = (part, total) => (total && total > 0) ? ((part / total) * 100).toFixed(1) + "%" : "0.0%";
 
@@ -25,20 +27,21 @@ async function loadDashboard() {
     try {
         const [data, stateData] = await Promise.all([
             fetchSupabase("public_national_results"),
-            fetchSupabase("public_state_results") // Just to get total PUs or assume a fixed number
+            fetchSupabase("public_state_results")
         ]);
         
         if (!data.length) return;
         const result = data[0];
 
-        // Calculate total PUs from state data (sum of total_polling_units)
+        // Calculate total PUs from state data
         let totalPUs = 176846; 
         if (stateData.length > 0) {
-            totalPUs = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
+            const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
+            if (sum > 0) totalPUs = sum;
         }
 
         // Update text fields
-        document.getElementById("dash-coverage").textContent = `${fmt(result.verified_polling_units)} out of ${fmt(totalPUs)}`;
+        document.getElementById("dash-coverage-text").textContent = `${fmt(result.verified_polling_units)} of ${fmt(totalPUs)}`;
         document.getElementById("dash-registered").textContent = fmt(result.registered_voters);
         document.getElementById("dash-accredited").textContent = fmt(result.accredited_voters);
         document.getElementById("dash-valid").textContent = fmt(result.total_valid_votes);
@@ -48,6 +51,15 @@ async function loadDashboard() {
         document.getElementById("dash-pdp").textContent = fmt(result.pdp);
         document.getElementById("dash-adc").textContent = fmt(result.adc);
         document.getElementById("dash-ndc").textContent = fmt(result.ndc);
+
+        // Update Progress Badge
+        const pctValue = ((result.verified_polling_units / totalPUs) * 100).toFixed(1);
+        const pctBadge = document.getElementById("dash-coverage-pct");
+        pctBadge.textContent = `${pctValue}%`;
+        
+        // Keep badge inside the progress track (max 95% so it doesn't overflow)
+        const safeLeft = Math.min(Math.max(pctValue, 0), 95); 
+        pctBadge.style.left = `calc(${safeLeft}% - 16px)`;
 
     } catch (err) {
         console.error("Dashboard error", err);
@@ -74,16 +86,17 @@ async function loadStates() {
 stateSelect.addEventListener("change", async () => {
     const stateName = stateSelect.value;
     lgaBreakdown.style.display = "none";
-    lgaSelect.innerHTML = '<option value="">Select LGA (Optional)</option>';
+    lgaSelect.innerHTML = '<option value="">All LGAs (shown below)</option>';
     lgaSelect.disabled = true;
+    currentLgaData = [];
 
     if (!stateName) return;
 
     try {
         const lgaData = await fetchSupabase(`public_lga_results?state_name=eq.${encodeURIComponent(stateName)}`);
+        currentLgaData = lgaData;
         
         // Populate LGA Dropdown
-        lgaSelect.innerHTML = '<option value="">All LGAs (shown below)</option>';
         lgaData.forEach(lga => {
             const opt = document.createElement("option");
             opt.value = lga.lga_name;
@@ -92,17 +105,28 @@ stateSelect.addEventListener("change", async () => {
         });
         lgaSelect.disabled = false;
 
-        // Render Table
-        renderLGATable(lgaData);
+        // Render Full Table
+        renderLGATable(currentLgaData);
 
     } catch (err) {
         console.error(err);
     }
 });
 
-// 4. Render LGA Table
+// 4. Handle LGA Change (Filter Table)
+lgaSelect.addEventListener("change", () => {
+    const selectedLga = lgaSelect.value;
+    if (!selectedLga) {
+        renderLGATable(currentLgaData);
+    } else {
+        const filtered = currentLgaData.filter(lga => lga.lga_name === selectedLga);
+        renderLGATable(filtered);
+    }
+});
+
+// 5. Render LGA Table
 function renderLGATable(lgas) {
-    if (!lgas.length) {
+    if (!lgas || !lgas.length) {
         lgaBreakdown.style.display = "none";
         return;
     }
@@ -113,14 +137,14 @@ function renderLGATable(lgas) {
         
         return `
             <tr>
-                <td style="font-weight: 500;">${r.lga_name}</td>
+                <td style="font-weight: 600;">${r.lga_name}</td>
                 <td class="num">${fmt(r.apc)}</td>
                 <td class="num">${fmt(r.pdp)}</td>
                 <td class="num">${fmt(r.adc)}</td>
                 <td class="num">${fmt(r.ndc)}</td>
-                <td class="num" style="font-weight: 600;">
+                <td class="num">
                     ${cov}<br>
-                    <span style="font-size: 11px; font-weight: 400; color: var(--muted);">${fmt(r.verified_polling_units)} / ${fmt(total)}</span>
+                    <span style="font-size: 11px; font-weight: 500; color: var(--muted);">${fmt(r.verified_polling_units)} / ${fmt(total)}</span>
                 </td>
             </tr>
         `;
