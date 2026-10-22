@@ -12,14 +12,11 @@ const estCoverageText = document.getElementById("est-coverage-text");
 const estCoveragePct = document.getElementById("est-coverage-pct");
 const estProgressFill = document.getElementById("est-progress-fill");
 
-let currentLgaData = []; 
+let allLgasData = []; // Store all LGAs globally so we don't have to keep querying
 let nationalTotalPUs = 176846;
 
 // Helpers
 const fmt = (num) => (num === null || num === undefined) ? "—" : Number(num).toLocaleString("en-GB");
-const pct = (part, total) => (total && total > 0) ? ((part / total) * 100).toFixed(1) + "%" : "0.0%";
-
-// Converts "OSUN" to "Osun"
 const toTitleCase = (str) => {
     if (!str) return "";
     return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -36,75 +33,71 @@ async function fetchSupabase(view) {
     return response.json();
 }
 
-// 1. Load Federal Dashboard
-async function loadDashboard() {
+// 1. Load Everything Initially
+async function loadInitialData() {
     try {
-        const [data, stateData] = await Promise.all([
+        // Fetch National, State, and ALL LGA data in parallel
+        const [nationalData, stateData, lgaData] = await Promise.all([
             fetchSupabase("public_national_results"),
-            fetchSupabase("public_state_results")
+            fetchSupabase("public_state_results"),
+            fetchSupabase("public_lga_results")
         ]);
         
-        if (!data.length) return;
-        const result = data[0];
+        allLgasData = lgaData; // Save all LGAs to memory
 
-        if (stateData.length > 0) {
-            const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
-            if (sum > 0) nationalTotalPUs = sum;
+        // Setup National Dashboard
+        if (nationalData.length > 0) {
+            const result = nationalData[0];
+            if (stateData.length > 0) {
+                const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
+                if (sum > 0) nationalTotalPUs = sum;
+            }
+
+            document.getElementById("dash-coverage-text").textContent = `${fmt(result.verified_polling_units)} of ${fmt(nationalTotalPUs)}`;
+            document.getElementById("dash-registered").textContent = fmt(result.registered_voters);
+            document.getElementById("dash-accredited").textContent = fmt(result.accredited_voters);
+            document.getElementById("dash-valid").textContent = fmt(result.total_valid_votes);
+            document.getElementById("dash-rejected").textContent = fmt(result.rejected_votes);
+            
+            document.getElementById("dash-apc").textContent = fmt(result.apc);
+            document.getElementById("dash-pdp").textContent = fmt(result.pdp);
+            document.getElementById("dash-adc").textContent = fmt(result.adc);
+            document.getElementById("dash-ndc").textContent = fmt(result.ndc);
+
+            const pctValue = ((result.verified_polling_units / nationalTotalPUs) * 100).toFixed(1);
+            const pctBadge = document.getElementById("dash-coverage-pct");
+            if (pctBadge) {
+                pctBadge.textContent = `${pctValue}%`;
+                const safeLeft = Math.min(Math.max(pctValue, 0), 95); 
+                pctBadge.style.left = `calc(${safeLeft}% - 16px)`;
+            }
         }
 
-        document.getElementById("dash-coverage-text").textContent = `${fmt(result.verified_polling_units)} of ${fmt(nationalTotalPUs)}`;
-        document.getElementById("dash-registered").textContent = fmt(result.registered_voters);
-        document.getElementById("dash-accredited").textContent = fmt(result.accredited_voters);
-        document.getElementById("dash-valid").textContent = fmt(result.total_valid_votes);
-        document.getElementById("dash-rejected").textContent = fmt(result.rejected_votes);
-        
-        document.getElementById("dash-apc").textContent = fmt(result.apc);
-        document.getElementById("dash-pdp").textContent = fmt(result.pdp);
-        document.getElementById("dash-adc").textContent = fmt(result.adc);
-        document.getElementById("dash-ndc").textContent = fmt(result.ndc);
-
-        const pctValue = ((result.verified_polling_units / nationalTotalPUs) * 100).toFixed(1);
-        const pctBadge = document.getElementById("dash-coverage-pct");
-        if (pctBadge) {
-            pctBadge.textContent = `${pctValue}%`;
-            const safeLeft = Math.min(Math.max(pctValue, 0), 95); 
-            pctBadge.style.left = `calc(${safeLeft}% - 16px)`;
-        }
-
-    } catch (err) {
-        console.error("Dashboard error", err);
-    }
-}
-
-// 2. Load States
-async function loadStates() {
-    try {
-        const data = await fetchSupabase("public_state_results");
+        // Setup States Dropdown
         stateSelect.innerHTML = '<option value="">Select a state</option>';
-        
-        // Sort states alphabetically
-        data.sort((a, b) => a.state_name.localeCompare(b.state_name));
+        stateData.sort((a, b) => a.state_name.localeCompare(b.state_name));
 
-        data.forEach(row => {
+        stateData.forEach(row => {
             const opt = document.createElement("option");
-            opt.value = row.state_name; // Keep raw value for Supabase query
-            opt.textContent = toTitleCase(row.state_name); // Title Case for display
+            opt.value = row.state_name; // e.g., "OSUN" or "Osun"
+            opt.textContent = toTitleCase(row.state_name); // Displays "Osun"
             stateSelect.appendChild(opt);
         });
+
     } catch (err) {
-        stateSelect.innerHTML = '<option value="">Error loading states</option>';
+        console.error("Initial load error", err);
+        stateSelect.innerHTML = '<option value="">Error loading data</option>';
     }
 }
 
-// 3. Handle State Change
-stateSelect.addEventListener("change", async () => {
+// 2. Handle State Change
+stateSelect.addEventListener("change", () => {
     const stateName = stateSelect.value;
     
     // Reset UI
     metricsBody.innerHTML = '';
     lgaSelect.innerHTML = '<option value="">Select a state first</option>';
     lgaSelect.disabled = true;
-    currentLgaData = [];
     
     if (!stateName) {
         dynamicTitle.textContent = 'State Estimates';
@@ -114,44 +107,44 @@ stateSelect.addEventListener("change", async () => {
 
     dynamicTitle.textContent = `${toTitleCase(stateName)} estimates`;
 
-    try {
-        // Note: Supabase .eq is case-sensitive, but since we use the exact value from the dropdown, it works.
-        const lgaData = await fetchSupabase(`public_lga_results?state_name=eq.${encodeURIComponent(stateName)}`);
-        
-        // Sort LGAs alphabetically
-        lgaData.sort((a, b) => a.lga_name.localeCompare(b.lga_name));
-        currentLgaData = lgaData;
-        
-        // Populate LGA Dropdown
-        lgaSelect.innerHTML = '<option value="">All LGAs</option>';
-        lgaData.forEach(lga => {
-            const opt = document.createElement("option");
-            opt.value = lga.lga_name;
-            opt.textContent = toTitleCase(lga.lga_name);
-            lgaSelect.appendChild(opt);
-        });
-        lgaSelect.disabled = false;
+    // FILTER LOCALLY (Case-Insensitive) to bypass any Supabase eq issues
+    const lgaData = allLgasData.filter(lga => 
+        lga.state_name.toLowerCase() === stateName.toLowerCase()
+    );
+    
+    // Sort LGAs alphabetically
+    lgaData.sort((a, b) => a.lga_name.localeCompare(b.lga_name));
+    
+    // Populate LGA Dropdown
+    lgaSelect.innerHTML = '<option value="">All LGAs</option>';
+    lgaData.forEach(lga => {
+        const opt = document.createElement("option");
+        opt.value = lga.lga_name;
+        opt.textContent = toTitleCase(lga.lga_name);
+        lgaSelect.appendChild(opt);
+    });
+    lgaSelect.disabled = false;
 
-        renderMetrics(currentLgaData);
-
-    } catch (err) {
-        console.error("State change error", err);
-        metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Error loading data.</td></tr>';
-    }
+    renderMetrics(lgaData);
 });
 
-// 4. Handle LGA Change (Filter Table)
+// 3. Handle LGA Change (Filter Table)
 lgaSelect.addEventListener("change", () => {
+    const stateName = stateSelect.value;
     const selectedLga = lgaSelect.value;
-    if (!selectedLga) {
-        renderMetrics(currentLgaData);
-    } else {
-        const filtered = currentLgaData.filter(lga => lga.lga_name === selectedLga);
-        renderMetrics(filtered);
-    }
+    
+    if (!stateName) return;
+
+    // Filter locally from the stored array
+    const lgaData = allLgasData.filter(lga => 
+        lga.state_name.toLowerCase() === stateName.toLowerCase() &&
+        (selectedLga === "" || lga.lga_name === selectedLga)
+    );
+    
+    renderMetrics(lgaData);
 });
 
-// 5. Render LGA Metrics Table
+// 4. Render LGA Metrics Table
 function renderMetrics(lgas) {
     if (!lgas || !lgas.length) {
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">No reviewed polling units found for this selection.</td></tr>';
@@ -184,14 +177,10 @@ function renderMetrics(lgas) {
     updateSummaryBlock(totalVerifiedPUs, totalStatePUs);
 }
 
-// 6. Update the Summary Block
+// 5. Update the Summary Block
 function updateSummaryBlock(verified, total) {
     if (!estCoverageText || !estCoveragePct || !estProgressFill) return;
 
-    // If All LGAs are selected, we need the total state PUs. 
-    // The view only returns PUs for LGAs that have results. 
-    // We use the sum of 'total_polling_units' for the selected LGAs.
-    
     estCoverageText.innerHTML = `${fmt(verified)} <span>of</span> ${fmt(total)}`;
     
     const percentage = total > 0 ? (verified / total) * 100 : 0;
@@ -202,5 +191,4 @@ function updateSummaryBlock(verified, total) {
 }
 
 // Initialize
-loadDashboard();
-loadStates();
+loadInitialData();
