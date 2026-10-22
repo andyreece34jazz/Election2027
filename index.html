@@ -21,6 +21,7 @@
             --accent-green: #10886E;
             --accent-green-hover: #0c6b56;
             --border-thick: 2px solid var(--ink);
+            --border-light: 1px solid #E5E7EB;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,7 +54,7 @@
         .hero-text p { font-size: 16px; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
         .hero-text p span { text-transform: uppercase; font-weight: 800; }
 
-        /* Button — no shadow */
+        /* Button */
         .btn-primary {
             background: var(--accent-green);
             color: white;
@@ -69,7 +70,7 @@
         }
         .btn-primary:hover { background: var(--accent-green-hover); transform: none; box-shadow: none; }
 
-        /* Hero Image — no shadow */
+        /* Hero Image */
         .hero-image-wrapper { position: relative; border: var(--border-thick); border-radius: 12px; overflow: hidden; box-shadow: none; }
         .hero-image { width: 100%; height: auto; display: block; box-shadow: none; filter: none; }
 
@@ -82,7 +83,7 @@
         .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
         .step-card p { font-size: 13px; color: var(--muted); font-weight: 500; }
 
-        /* Action Panels (Under How to Submit) */
+        /* Action Panels */
         .action-panels {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -97,21 +98,9 @@
             display: flex;
             flex-direction: column;
         }
-        .action-panel h3 {
-            font-size: 20px;
-            margin-bottom: 8px;
-            color: var(--ink);
-        }
-        .action-panel p {
-            font-size: 15px;
-            color: var(--muted);
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-        .action-panel p strong {
-            color: var(--ink);
-            font-weight: 700;
-        }
+        .action-panel h3 { font-size: 20px; margin-bottom: 8px; color: var(--ink); }
+        .action-panel p { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+        .action-panel p strong { color: var(--ink); font-weight: 700; }
         .btn-action {
             display: flex;
             align-items: center;
@@ -130,13 +119,7 @@
             width: 100%;
         }
         .btn-action:hover { background: var(--accent-green-hover); }
-        
-        /* Side-by-side button layout */
-        .action-buttons-row {
-            display: flex;
-            gap: 12px;
-            margin-top: auto; /* Pushes buttons to the bottom */
-        }
+        .action-buttons-row { display: flex; gap: 12px; margin-top: auto; }
 
         /* ---------------------------------------------------------
            FEDERAL ESTIMATES CARD SECTION
@@ -159,10 +142,7 @@
             gap: 12px;
             margin-bottom: 8px;
         }
-        .fed-card h3 {
-            font-size: 20px;
-            color: var(--ink);
-        }
+        .fed-card h3 { font-size: 20px; color: var(--ink); }
         .badge-not-official {
             background: #F97316;
             color: white;
@@ -172,164 +152,120 @@
             font-weight: 700;
             white-space: nowrap;
         }
-        .fed-subtext {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 16px;
-            font-weight: 500;
+        .fed-subtext { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-weight: 500; }
+        .fed-placeholder-bar { background: #F4F5F7; height: 48px; border-radius: 6px; width: 100%; }
+        .fed-big-number { font-size: 20px; font-weight: 500; margin: 12px 0 4px 0; color: var(--ink); line-height: 1.2; }
+        .fed-big-number span { font-size: 16px; font-weight: 500; color: var(--muted); }
+        .fed-progress-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+        .fed-progress-track { flex-grow: 1; height: 20px; background: #F3F4F6; border-radius: 4px; overflow: hidden; border: 1px solid #E5E7EB; }
+        .fed-progress-fill { height: 100%; background: #10B981; }
+        .fed-progress-label { font-size: 15px; font-weight: 700; color: #10B981; }
+        .fed-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        .fed-stat-box { background: #F9FAFB; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .fed-stat-box .label { font-size: 13px; color: var(--muted); font-weight: 500; }
+        .fed-stat-box .value { font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
+
+        /* ---------------------------------------------------------
+           NEW STATE & LGA ESTIMATES SECTION (Based on Screenshot)
+           --------------------------------------------------------- */
+        .dashboard-section { 
+            background: #FFFFFF; 
+            border: 1px solid #E5E7EB; 
+            border-radius: 12px; 
+            padding: 24px; 
+            margin-bottom: 40px; 
+            position: relative;
         }
-        .fed-placeholder-bar {
-            background: #F4F5F7;
-            height: 48px;
-            border-radius: 6px;
-            width: 100%;
-        }
-        .fed-big-number {
-            font-size: 20px;
-            font-weight: 500;
-            margin: 12px 0 4px 0;
-            color: var(--ink);
-            line-height: 1.2;
-        }
-        .fed-big-number span {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--muted);
-        }
-        .fed-progress-wrapper {
+
+        /* Header */
+        .est-header-row {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 16px;
+            margin-bottom: 8px;
         }
-        .fed-progress-track {
-            flex-grow: 1;
-            height: 20px;
-            background: #F3F4F6;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #E5E7EB;
+        .est-header-row h3 { font-size: 20px; color: var(--ink); }
+        .est-subtext { font-size: 13px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
+
+        /* Filters */
+        .est-filters { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-bottom: 24px; 
         }
-        .fed-progress-fill {
-            height: 100%;
-            background: #10B981;
+        .est-filters label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: block; color: var(--ink); }
+        .est-filters select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border: 1px solid #D1D5DB; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: 15px; 
+            font-weight: 500; 
+            background: white; 
+            outline: none; 
+            cursor: pointer; 
+            color: var(--ink);
         }
-        .fed-progress-label {
-            font-size: 15px;
-            font-weight: 700;
-            color: #10B981;
-        }
-        .fed-stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .fed-stat-box {
+        .est-filters select:disabled { opacity: 0.55; cursor: not-allowed; background: #F9FAFB; }
+
+        /* Summary Block */
+        .est-summary-block {
             background: #F9FAFB;
             border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .fed-stat-box .label {
-            font-size: 13px;
-            color: var(--muted);
-            font-weight: 500;
-        }
-        .fed-stat-box .value {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--ink);
-            line-height: 1.2;
-        }
-
-        /* ---------------------------------------------------------
-           DASHBOARD SECTION (State & LGA)
-           --------------------------------------------------------- */
-        .dashboard-section { border: var(--border-thick); border-radius: 16px; background: #EBECEF; padding: 24px; margin-bottom: 40px; position: relative; overflow: hidden; }
-        .dashboard-section::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(to right, #D1D5DB 1px, transparent 1px), linear-gradient(to bottom, #D1D5DB 1px, transparent 1px); background-size: 30px 30px; opacity: 0.4; pointer-events: none; }
-
-        .dash-header-top {
+            padding: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 24px;
+            gap: 20px;
         }
-        .dash-sub-title { font-size: 20px; font-weight: 700; }
+        .est-summary-left h4 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+        .est-summary-left p { font-size: 14px; color: var(--muted); font-weight: 500; }
+        
+        .est-summary-right { min-width: 250px; }
+        .est-summary-right h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .est-big-number { font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--ink); line-height: 1.1; }
+        .est-big-number span { font-size: 16px; font-weight: 500; color: var(--muted); }
+        .est-summary-right p { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+        
+        .est-progress-wrapper { display: flex; align-items: center; gap: 12px; }
+        .est-progress-track { flex-grow: 1; height: 16px; background: #E5E7EB; border-radius: 2px; overflow: hidden; }
+        .est-progress-fill { height: 100%; background: #10B981; border-radius: 2px; }
+        .est-progress-label { font-size: 15px; font-weight: 700; color: #10B981; }
 
-        .coverage-widget { text-align: right; }
-        .dash-coverage { font-weight: 800; font-size: 15px; margin-bottom: 8px; }
-        .dash-coverage span { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
-
-        /* Rectangle progress bar */
-        .progress-pill-container {
-            display: flex;
-            align-items: center;
-            border: 2px solid var(--accent-green);
-            border-radius: 0;
-            background: white;
-            height: 26px;
-            width: 252px;
-            max-width: 100%;
-            overflow: hidden;
-            margin-left: auto;
+        /* Metrics Table/Row */
+        .metrics-container {
+            overflow-x: auto;
         }
-        .progress-pill-label {
-            background: var(--accent-green);
-            color: white;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 700px;
+        }
+        .metrics-table th {
             font-size: 13px;
-            font-weight: 800;
-            border-radius: 0;
-            z-index: 2;
+            font-weight: 700;
+            color: var(--ink);
+            padding: 12px 8px;
+            border-bottom: 2px solid #E5E7EB;
             white-space: nowrap;
         }
-        .progress-pill-track {
-            flex-grow: 1;
-            height: 100%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding: 0;
+        .metrics-table td {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--ink);
+            padding: 16px 8px;
+            border-bottom: 1px solid #E5E7EB;
         }
-        .progress-pill-fill {
-            height: 100%;
-            background: var(--accent-green);
-            border-radius: 0;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .dash-hint { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 12px; position: relative; z-index: 1; }
-
-        .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 1; margin-bottom: 8px; }
-        .filters label { font-size: 13px; font-weight: 700; margin-bottom: 6px; display: block; }
-        .filters select { width: 100%; padding: 12px; border: var(--border-thick); border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; background: white; outline: none; cursor: pointer; }
-        .filters select:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 0; border-bottom: 2px solid #9CA3AF; margin: 16px 0; position: relative; z-index: 1; }
-        .stat-block .label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; }
-        .stat-block .value { font-size: 32px; font-weight: 900; line-height: 1; }
-
-        /* Party Grid */
-        .party-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; position: relative; z-index: 1; padding-bottom: 12px; }
-        .party-block .party-label { font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--ink); margin-bottom: 4px; }
-        .party-block .party-value { font-size: 28px; font-weight: 900; color: var(--ink); line-height: 1; }
-
-        /* LGA Table */
-        .lga-container { margin-top: 20px; background: white; border: var(--border-thick); border-radius: 8px; overflow: hidden; position: relative; z-index: 1; }
+        .metrics-table td.lga-name { font-weight: 700; font-size: 16px; }
+        
+        /* LGA Breakdown Table (for when a state is selected) */
+        .lga-container { margin-top: 24px; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; }
         .lga-table { width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 500; }
-        .lga-table th { background: #F3F4F6; color: var(--muted); text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase; border-bottom: var(--border-thick); font-weight: 700; }
+        .lga-table th { background: #F9FAFB; color: var(--muted); text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #E5E7EB; font-weight: 700; }
         .lga-table th.num { text-align: right; }
         .lga-table td { padding: 12px; border-bottom: 1px solid #E5E7EB; }
         .lga-table td.num { text-align: right; font-weight: 700; }
@@ -346,13 +282,10 @@
             .action-panels { grid-template-columns: 1fr; }
             .action-buttons-row { flex-direction: column; }
             .federal-container { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .party-grid { grid-template-columns: repeat(2, 1fr); }
-            .filters { grid-template-columns: 1fr; }
+            .est-filters { grid-template-columns: 1fr; }
+            .est-summary-block { flex-direction: column; align-items: flex-start; }
+            .est-summary-right { width: 100%; }
             .nav-links { display: none; }
-            .dash-header-top { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .progress-pill-container { margin-left: 0; }
-            .coverage-widget { text-align: left; }
         }
     </style>
 </head>
@@ -422,16 +355,14 @@
         </div>
     </div>
 
-    <!-- Action Panels (2 Separate Cards) -->
+    <!-- Action Panels -->
     <div class="action-panels">
-        <!-- Card 1: Search -->
         <div class="action-panel">
             <h3>Don't know your polling unit code?</h3>
             <p>Find your polling unit using our search tool to <strong>copy</strong> the code you need.</p>
             <a href="search.html" class="btn-action" style="margin-top: auto;">Find you Polling-Unit Code</a>
         </div>
         
-        <!-- Card 2: Contribute -->
         <div class="action-panel">
             <h3>Ready to contribute?</h3>
             <p>Pledge to send EC8A result form or submit results</p>
@@ -447,7 +378,6 @@
 
     <!-- FEDERAL ESTIMATES CARD SECTION -->
     <div class="federal-container">
-        <!-- Top Left -->
         <div class="fed-card">
             <div class="fed-header-row">
                 <h3>Federal Estimates</h3>
@@ -457,7 +387,6 @@
             <div class="fed-placeholder-bar"></div>
         </div>
 
-        <!-- Top Right -->
         <div class="fed-card">
             <h3>Polling Unit Coverage</h3>
             <div class="fed-big-number">1 <span>of</span> 176,846</div>
@@ -470,7 +399,6 @@
             </div>
         </div>
 
-        <!-- Bottom Left -->
         <div class="fed-card">
             <h3>Estimated votes by party</h3>
             <div class="fed-stat-grid">
@@ -481,7 +409,6 @@
             </div>
         </div>
 
-        <!-- Bottom Right -->
         <div class="fed-card">
             <h3>National voter statistics</h3>
             <div class="fed-stat-grid">
@@ -493,83 +420,86 @@
         </div>
     </div>
 
-    <!-- DASHBOARD SECTION (State & LGA) -->
+    <!-- NEW DASHBOARD SECTION (State & LGA Estimates from Screenshot) -->
     <div class="dashboard-section">
-        <div class="dash-header-top">
-            <div class="dash-sub-title">State and LGA Estimates</div>
-
-            <div class="coverage-widget">
-                <div class="dash-coverage">
-                    <div id="dash-coverage-text">1 of 3,763</div>
-                    <span>Polling units have been reviewed</span>
-                </div>
-
-                <div class="progress-pill-container">
-                    <div class="progress-pill-label" id="dash-coverage-pct">0.0%</div>
-                    <div class="progress-pill-track">
-                        <div class="progress-pill-fill" id="dash-progress-fill"></div>
-                    </div>
-                </div>
-            </div>
+        <!-- Header -->
+        <div class="est-header-row">
+            <h3>State and LGA Estimates</h3>
+            <span class="badge-not-official">Not Official</span>
         </div>
+        <p class="est-subtext">Select a state to view its estimates and coverage.</p>
 
-        <p class="dash-hint">Select a state to view aggregated estimates and coverage stats.</p>
-
-        <div class="filters">
+        <!-- Filters -->
+        <div class="est-filters">
             <div>
-                <label for="state-select">Select State</label>
+                <label for="state-select">State</label>
                 <select id="state-select">
-                    <option value="">Select State</option>
+                    <option value="">Select a state</option>
                 </select>
             </div>
             <div>
-                <label for="lga-select">Select LGA (Optional)</label>
+                <label for="lga-select">Local Government Area (optional)</label>
                 <select id="lga-select" disabled>
-                    <option value="">Select a State first</option>
+                    <option value="">Select an LGA</option>
                 </select>
             </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-block">
-                <div class="label">Registered Voters</div>
-                <div class="value" id="dash-registered">—</div>
+        <!-- Summary Block -->
+        <div class="est-summary-block">
+            <div class="est-summary-left">
+                <h4 id="dynamic-state-title">Osun estimates</h4>
+                <p>Figures from reviewed polling-unit records in the selected area.</p>
             </div>
-            <div class="stat-block">
-                <div class="label">Accredited Voters</div>
-                <div class="value" id="dash-accredited">—</div>
-            </div>
-            <div class="stat-block">
-                <div class="label">Valid Votes</div>
-                <div class="value" id="dash-valid">—</div>
-            </div>
-            <div class="stat-block">
-                <div class="label">Rejected Votes</div>
-                <div class="value" id="dash-rejected">—</div>
-            </div>
-        </div>
-
-        <div class="party-grid">
-            <div class="party-block">
-                <div class="party-label">APC</div>
-                <div class="party-value" id="dash-apc">—</div>
-            </div>
-            <div class="party-block">
-                <div class="party-label">PDP</div>
-                <div class="party-value" id="dash-pdp">—</div>
-            </div>
-            <div class="party-block">
-                <div class="party-label">ADC</div>
-                <div class="party-value" id="dash-adc">—</div>
-            </div>
-            <div class="party-block">
-                <div class="party-label">NDC</div>
-                <div class="party-value" id="dash-ndc">—</div>
+            <div class="est-summary-right">
+                <h4>Polling Unit Coverage</h4>
+                <div class="est-big-number">1 <span>of</span> 176,846</div>
+                <p>Polling units reviewed</p>
+                <div class="est-progress-wrapper">
+                    <div class="est-progress-track">
+                        <div class="est-progress-fill" style="width: 0.7%;"></div>
+                    </div>
+                    <div class="est-progress-label">0.7%</div>
+                </div>
             </div>
         </div>
 
-        <div class="lga-container" id="lga-breakdown" style="display: none;">
-            <div style="padding: 12px 16px; border-bottom: var(--border-thick); font-weight: 800; font-size: 14px;">LGA Breakdown</div>
+        <!-- Metrics Row -->
+        <div class="metrics-container">
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>LGA</th>
+                        <th>Registered voters</th>
+                        <th>Accredited voters</th>
+                        <th>Valid votes</th>
+                        <th>Rejected votes</th>
+                        <th>APC</th>
+                        <th>PDP</th>
+                        <th>ADC</th>
+                        <th>NDC</th>
+                    </tr>
+                </thead>
+                <tbody id="metrics-body">
+                    <!-- Placeholders populated via JS, or default empty state -->
+                    <tr>
+                        <td class="lga-name">—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Optional Detailed LGA Breakdown (kept here if they select an LGA, but table above is the new view) -->
+        <div class="lga-container" id="lga-breakdown" style="display: none; margin-top: 24px;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid #E5E7EB; font-weight: 700; font-size: 14px; background: #F9FAFB;">Detailed LGA Breakdown</div>
             <table class="lga-table">
                 <thead>
                     <tr>
@@ -598,7 +528,7 @@
 
 <script src="app.js"></script>
 
-<!-- LGA FIX: guarantees the state -> LGA dropdown and the LGA table always populate -->
+<!-- LGA FIX and Dynamic Title Update -->
 <script>
 (function () {
     var NG = {
@@ -637,7 +567,7 @@
         "Rivers": ["Abua/Odual","Ahoada East","Ahoada West","Akuku-Toru","Andoni","Asari-Toru","Bonny","Degema","Eleme","Emohua","Etche","Gokana","Ikwerre","Khana","Obio/Akpor","Ogba/Egbema/Ndoni","Ogu/Bolo","Okrika","Omuma","Opobo/Nkoro","Oyigbo","Port Harcourt","Tai"],
         "Sokoto": ["Binji","Bodinga","Dange Shuni","Gada","Goronyo","Gudu","Gwadabawa","Illela","Isa","Kebbe","Kware","Rabah","Sabon Birni","Shagari","Silame","Sokoto North","Sokoto South","Tambuwal","Tangaza","Tureta","Wamako","Wurno","Yabo"],
         "Taraba": ["Ardo Kola","Bali","Donga","Gashaka","Gassol","Ibi","Jalingo","Karim Lamido","Kumi","Lau","Sardauna","Takum","Ussa","Wukari","Yorro","Zing"],
-        "Yobe": ["Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko","Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmuwa","Yunusari","Yusufari"],
+        "Yobe": ["Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko","Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmuwa","Yunusuri","Yusufari"],
         "Zamfara": ["Anka","Bakura","Birnin Magaji/Kiyaw","Bukkuyum","Bungudu","Gummi","Gusau","Kaura Namoda","Maradun","Maru","Shinkafi","Talata Mafara","Tsafe","Zurmi"]
     };
 
@@ -645,8 +575,11 @@
     var lgaSel   = document.getElementById('lga-select');
     var tbody    = document.getElementById('lga-table-body');
     var wrap     = document.getElementById('lga-breakdown');
-    if (!stateSel || !lgaSel || !tbody || !wrap) return;
+    var titleEl  = document.getElementById('dynamic-state-title');
+    
+    if (!stateSel || !lgaSel) return;
 
+    // Populate states
     if (stateSel.options.length <= 1) {
         Object.keys(NG).sort().forEach(function (s) {
             var o = document.createElement('option');
@@ -656,52 +589,9 @@
         });
     }
 
-    function hash(str) {
-        var h = 2166136261;
-        for (var i = 0; i < str.length; i++) {
-            h ^= str.charCodeAt(i);
-            h = Math.imul(h, 16777619);
-        }
-        return h >>> 0;
-    }
-
-    function render(state, onlyLga) {
-        var list = (NG[state] || []).filter(function (l) {
-            return !onlyLga || l === onlyLga;
-        });
-
-        tbody.innerHTML = '';
-
-        list.forEach(function (name) {
-            var h   = hash(state + '|' + name);
-            var apc = 800 + (h % 5200);
-            var pdp = 700 + ((h >>> 3) % 4800);
-            var adc = 100 + ((h >>> 5) % 1600);
-            var ndc = 50  + ((h >>> 7) % 900);
-            var cov = 20  + ((h >>> 9) % 80);
-
-            var tr = document.createElement('tr');
-            tr.innerHTML =
-                '<td>' + name + '</td>' +
-                '<td class="num">' + apc.toLocaleString() + '</td>' +
-                '<td class="num">' + pdp.toLocaleString() + '</td>' +
-                '<td class="num">' + adc.toLocaleString() + '</td>' +
-                '<td class="num">' + ndc.toLocaleString() + '</td>' +
-                '<td class="num">' + cov + '%</td>';
-            tbody.appendChild(tr);
-        });
-
-        wrap.style.display = list.length ? 'block' : 'none';
-    }
-
     function buildLgas(state) {
         var lgas = NG[state] || [];
-        lgaSel.innerHTML = '';
-
-        var all = document.createElement('option');
-        all.value = '';
-        all.textContent = 'All LGAs';
-        lgaSel.appendChild(all);
+        lgaSel.innerHTML = '<option value="">Select an LGA</option>';
 
         lgas.forEach(function (l) {
             var o = document.createElement('option');
@@ -711,25 +601,25 @@
         });
 
         lgaSel.disabled = lgas.length === 0;
-        render(state, '');
     }
 
     stateSel.addEventListener('change', function (e) {
         var state = e.target.value;
         if (!state) {
-            lgaSel.innerHTML = '<option value="">Select a State first</option>';
+            lgaSel.innerHTML = '<option value="">Select an LGA</option>';
             lgaSel.disabled = true;
-            tbody.innerHTML = '';
-            wrap.style.display = 'none';
+            titleEl.textContent = '— estimates'; 
             return;
         }
+        titleEl.textContent = state + ' estimates'; // Updates the dynamic title
         buildLgas(state);
     });
 
-    lgaSel.addEventListener('change', function (e) {
-        if (!stateSel.value) return;
-        render(stateSel.value, e.target.value);
-    });
+    // Set initial title if a state is already selected (e.g. Osun in the example)
+    if (stateSel.value) {
+        titleEl.textContent = stateSel.value + ' estimates';
+        buildLgas(stateSel.value);
+    }
 })();
 </script>
 </body>
