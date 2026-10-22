@@ -20,7 +20,6 @@
             --accent-green: #10886E;
             --accent-green-hover: #0c6b56;
             
-            /* Updated Global Border */
             --border-subtle: 1px solid #DDE4DF;
         }
 
@@ -64,10 +63,13 @@
         .alert-pill span:first-child { font-size: 16px; line-height: 1; }
         .alert-pill strong { font-weight: 800; }
 
-        /* Hero Section */
-        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px; }
+        /* UPDATED Hero Section */
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch; margin-bottom: 40px; }
+        .hero-text { display: flex; flex-direction: column; justify-content: space-between; }
         .hero-text p { font-size: 16px; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
-        .hero-text p span { text-transform: uppercase; font-weight: 800; }
+        
+        /* Updated weight to 600 */
+        .hero-text p span { text-transform: uppercase; font-weight: 600; }
 
         /* Button */
         .btn-primary {
@@ -82,20 +84,24 @@
             border: var(--border-subtle);
             box-shadow: none;
             transition: background 0.15s;
+            align-self: flex-start; /* Keeps button from stretching */
         }
         .btn-primary:hover { background: var(--accent-green-hover); }
 
         /* Hero Image */
-        .hero-image-wrapper { position: relative; border: var(--border-subtle); border-radius: 12px; overflow: hidden; }
-        .hero-image { width: 100%; height: auto; display: block; }
+        .hero-image-wrapper { position: relative; border: var(--border-subtle); border-radius: 12px; overflow: hidden; height: 100%; }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* How to Submit */
         .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
         .step-card { background: var(--surface); border: var(--border-subtle); border-radius: 12px; padding: 20px; }
         .step-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .step-num { font-size: 20px; font-weight: 900; }
+        
+        /* Updated weights to 600 */
+        .step-num { font-size: 20px; font-weight: 600; }
         .step-icon { font-size: 24px; }
-        .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .step-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        
         .step-card p { font-size: 13px; color: var(--muted); font-weight: 500; }
 
         /* Action Panels */
@@ -115,7 +121,6 @@
         }
         .action-panel h3 { font-size: 20px; margin-bottom: 8px; color: var(--ink); }
         .action-panel p { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-        .action-panel p strong { color: var(--ink); font-weight: 700; }
         .btn-action {
             display: flex;
             align-items: center;
@@ -159,7 +164,6 @@
         }
         .fed-card h3 { font-size: 20px; color: var(--ink); }
         
-        /* UPDATED BADGE COLORS */
         .badge-not-official {
             background: #FFF3CD; 
             color: #664D03; 
@@ -277,18 +281,21 @@
         }
         .faq-item { border-bottom: var(--border-subtle); }
         .faq-item:last-child { border-bottom: none; }
+        
+        /* Updated weight to 600 */
         .faq-summary {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 24px;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 16px;
             color: var(--ink);
             cursor: pointer;
             list-style: none;
             transition: background 0.15s;
         }
+        
         .faq-summary::-webkit-details-marker { display: none; }
         .faq-summary:hover { background: #F9FAFB; }
         .faq-summary svg { width: 20px; height: 20px; color: #9CA3AF; transition: transform 0.2s ease; flex-shrink: 0; }
@@ -452,7 +459,7 @@
         </div>
     </nav>
 
-    <!-- UPDATED Alert (All in one line) -->
+    <!-- Alert -->
     <div class="alert-pill">
         <span>⚠️</span>
         <div>
@@ -460,7 +467,7 @@
         </div>
     </div>
 
-    <!-- Hero -->
+    <!-- Hero (Stretched to match image height) -->
     <section class="hero" id="submit">
         <div class="hero-text">
             <h1>Protect<br>Your Vote.</h1>
@@ -515,7 +522,8 @@
         
         <div class="action-panel">
             <h3>Ready to contribute?</h3>
-            <p>You can Pledge to send EC8A result form or Send a photo of results</p>
+            <!-- UPDATED TEXT HERE -->
+            <p>You can PLEDGE to send an EC8A result form or SEND a photo of the results.</p>
             <div class="action-buttons-row">
                 <a href="#" class="btn-action" target="_blank">Pledge to Send Results</a>
                 <a href="#" class="btn-action" target="_blank">Send Photo of Results</a>
@@ -595,6 +603,7 @@
 
         <div class="est-summary-block">
             <div class="est-summary-left">
+                <!-- Static default capitalized -->
                 <h4 id="dynamic-state-title">State Estimates</h4>
                 <p>Figures from reviewed polling-unit records in the selected area.</p>
             </div>
@@ -929,7 +938,7 @@
     </div>
 </dialog>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 
 <script>
     // 1. Exclusive Accordion Fallback
