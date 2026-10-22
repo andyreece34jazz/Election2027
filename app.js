@@ -1,18 +1,7 @@
 const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
 
-// UI Elements
-const stateSelect = document.getElementById("state-select");
-const lgaSelect = document.getElementById("lga-select");
-const metricsBody = document.getElementById("metrics-body");
-const dynamicTitle = document.getElementById("dynamic-state-title");
-
-// Summary Block Elements
-const estCoverageText = document.getElementById("est-coverage-text");
-const estCoveragePct = document.getElementById("est-coverage-pct");
-const estProgressFill = document.getElementById("est-progress-fill");
-
-let allLgasData = []; // Store all LGAs locally
+let allLgasData = []; 
 let nationalTotalPUs = 176846;
 
 // Helpers
@@ -33,9 +22,76 @@ async function fetchSupabase(view) {
     return response.json();
 }
 
-// 1. Load Everything Initially
+// Global function triggered by HTML onchange
+window.updateState = function() {
+    try {
+        const stateSelect = document.getElementById("state-select");
+        const lgaSelect = document.getElementById("lga-select");
+        const dynamicTitle = document.getElementById("dynamic-state-title");
+        const metricsBody = document.getElementById("metrics-body");
+        const stateName = stateSelect.value;
+
+        if (!stateName) {
+            dynamicTitle.textContent = 'State Estimates';
+            metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Select a state to view estimates</td></tr>';
+            lgaSelect.innerHTML = '<option value="">Select a state first</option>';
+            lgaSelect.disabled = true;
+            updateSummaryBlock(0, 0);
+            return;
+        }
+
+        // Update Title immediately
+        dynamicTitle.textContent = `${toTitleCase(stateName)} estimates`;
+        metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Loading data...</td></tr>';
+
+        // Filter locally (case insensitive)
+        const lgaData = allLgasData.filter(lga => 
+            (lga.state_name || "").toLowerCase() === stateName.toLowerCase()
+        );
+
+        lgaSelect.innerHTML = '<option value="">All LGAs</option>';
+        lgaSelect.disabled = false;
+        
+        // Populate dropdown
+        lgaData.sort((a,b) => (a.lga_name || "").localeCompare(b.lga_name || ""));
+        lgaData.forEach(lga => {
+            const opt = document.createElement("option");
+            opt.value = lga.lga_name;
+            opt.textContent = toTitleCase(lga.lga_name);
+            lgaSelect.appendChild(opt);
+        });
+
+        renderMetrics(lgaData);
+
+    } catch (err) {
+        console.error("State change error:", err);
+        alert("Error updating state: " + err.message);
+    }
+};
+
+// Global function triggered by HTML onchange
+window.updateLga = function() {
+    try {
+        const stateSelect = document.getElementById("state-select");
+        const lgaSelect = document.getElementById("lga-select");
+        const stateName = stateSelect.value;
+        const selectedLga = lgaSelect.value;
+
+        if (!stateName) return;
+
+        const lgaData = allLgasData.filter(lga => 
+            (lga.state_name || "").toLowerCase() === stateName.toLowerCase() &&
+            (selectedLga === "" || lga.lga_name === selectedLga)
+        );
+        
+        renderMetrics(lgaData);
+    } catch (err) {
+        console.error("LGA change error:", err);
+    }
+};
+
+// Initialize Dashboard
 async function init() {
-    console.log("App.js initialized. Fetching data...");
     try {
         const [nationalData, stateData, lgaData] = await Promise.all([
             fetchSupabase("public_national_results"),
@@ -43,27 +99,26 @@ async function init() {
             fetchSupabase("public_lga_results")
         ]);
 
-        allLgasData = lgaData; // Save for local filtering
-        console.log(`Loaded ${stateData.length} states and ${lgaData.length} LGA records.`);
+        allLgasData = lgaData || [];
 
-        // Setup National Dashboard
-        if (nationalData.length > 0) {
+        if (nationalData && nationalData.length > 0) {
             const result = nationalData[0];
-            if (stateData.length > 0) {
+            if (stateData && stateData.length > 0) {
                 const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
                 if (sum > 0) nationalTotalPUs = sum;
             }
 
-            document.getElementById("dash-coverage-text").textContent = `${fmt(result.verified_polling_units)} of ${fmt(nationalTotalPUs)}`;
-            document.getElementById("dash-registered").textContent = fmt(result.registered_voters);
-            document.getElementById("dash-accredited").textContent = fmt(result.accredited_voters);
-            document.getElementById("dash-valid").textContent = fmt(result.total_valid_votes);
-            document.getElementById("dash-rejected").textContent = fmt(result.rejected_votes);
+            const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
             
-            document.getElementById("dash-apc").textContent = fmt(result.apc);
-            document.getElementById("dash-pdp").textContent = fmt(result.pdp);
-            document.getElementById("dash-adc").textContent = fmt(result.adc);
-            document.getElementById("dash-ndc").textContent = fmt(result.ndc);
+            setTxt("dash-coverage-text", `${fmt(result.verified_polling_units)} of ${fmt(nationalTotalPUs)}`);
+            setTxt("dash-registered", fmt(result.registered_voters));
+            setTxt("dash-accredited", fmt(result.accredited_voters));
+            setTxt("dash-valid", fmt(result.total_valid_votes));
+            setTxt("dash-rejected", fmt(result.rejected_votes));
+            setTxt("dash-apc", fmt(result.apc));
+            setTxt("dash-pdp", fmt(result.pdp));
+            setTxt("dash-adc", fmt(result.adc));
+            setTxt("dash-ndc", fmt(result.ndc));
 
             const pctValue = ((result.verified_polling_units / nationalTotalPUs) * 100).toFixed(1);
             const pctBadge = document.getElementById("dash-coverage-pct");
@@ -74,83 +129,26 @@ async function init() {
             }
         }
 
-        // Setup States Dropdown
-        stateSelect.innerHTML = '<option value="">Select a state</option>';
-        stateData.sort((a, b) => a.state_name.localeCompare(b.state_name));
-
-        stateData.forEach(row => {
-            const opt = document.createElement("option");
-            opt.value = row.state_name; // The raw value from DB (e.g., "OSUN")
-            opt.textContent = toTitleCase(row.state_name); // Displays "Osun"
-            stateSelect.appendChild(opt);
-        });
-
+        const stateSelect = document.getElementById("state-select");
+        if (stateData && stateData.length > 0) {
+            stateSelect.innerHTML = '<option value="">Select a state</option>';
+            stateData.sort((a, b) => (a.state_name || "").localeCompare(b.state_name || ""));
+            stateData.forEach(row => {
+                const opt = document.createElement("option");
+                opt.value = row.state_name; 
+                opt.textContent = toTitleCase(row.state_name); 
+                stateSelect.appendChild(opt);
+            });
+        }
     } catch (err) {
         console.error("Initial load error:", err);
-        stateSelect.innerHTML = '<option value="">Error loading data</option>';
+        const stateSelect = document.getElementById("state-select");
+        if (stateSelect) stateSelect.innerHTML = '<option value="">Error loading states</option>';
     }
 }
 
-// 2. Handle State Change
-stateSelect.addEventListener("change", () => {
-    const stateName = stateSelect.value;
-    console.log("State selected:", stateName);
-
-    // Reset UI
-    metricsBody.innerHTML = '';
-    lgaSelect.innerHTML = '<option value="">Select a state first</option>';
-    lgaSelect.disabled = true;
-    
-    if (!stateName) {
-        dynamicTitle.textContent = 'State Estimates';
-        updateSummaryBlock(0, 0); 
-        return;
-    }
-
-    // Update Title Immediately
-    dynamicTitle.textContent = `${toTitleCase(stateName)} estimates`;
-
-    // Filter Locally (Case-Insensitive)
-    const lgaData = allLgasData.filter(lga => 
-        lga.state_name.toLowerCase() === stateName.toLowerCase()
-    );
-    
-    console.log(`Found ${lgaData.length} LGAs for ${stateName}`);
-    
-    // Sort LGAs alphabetically
-    lgaData.sort((a, b) => a.lga_name.localeCompare(b.lga_name));
-    
-    // Populate LGA Dropdown
-    lgaSelect.innerHTML = '<option value="">All LGAs</option>';
-    lgaData.forEach(lga => {
-        const opt = document.createElement("option");
-        opt.value = lga.lga_name;
-        opt.textContent = toTitleCase(lga.lga_name);
-        lgaSelect.appendChild(opt);
-    });
-    lgaSelect.disabled = false;
-
-    renderMetrics(lgaData);
-});
-
-// 3. Handle LGA Change (Filter Table)
-lgaSelect.addEventListener("change", () => {
-    const stateName = stateSelect.value;
-    const selectedLga = lgaSelect.value;
-    
-    if (!stateName) return;
-
-    // Filter locally
-    const lgaData = allLgasData.filter(lga => 
-        lga.state_name.toLowerCase() === stateName.toLowerCase() &&
-        (selectedLga === "" || lga.lga_name === selectedLga)
-    );
-    
-    renderMetrics(lgaData);
-});
-
-// 4. Render LGA Metrics Table
 function renderMetrics(lgas) {
+    const metricsBody = document.getElementById("metrics-body");
     if (!lgas || !lgas.length) {
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">No reviewed polling units found for this selection.</td></tr>';
         updateSummaryBlock(0, 0);
@@ -182,8 +180,11 @@ function renderMetrics(lgas) {
     updateSummaryBlock(totalVerifiedPUs, totalStatePUs);
 }
 
-// 5. Update the Summary Block
 function updateSummaryBlock(verified, total) {
+    const estCoverageText = document.getElementById("est-coverage-text");
+    const estCoveragePct = document.getElementById("est-coverage-pct");
+    const estProgressFill = document.getElementById("est-progress-fill");
+
     if (!estCoverageText || !estCoveragePct || !estProgressFill) return;
 
     estCoverageText.innerHTML = `${fmt(verified)} <span>of</span> ${fmt(total)}`;
@@ -195,5 +196,5 @@ function updateSummaryBlock(verified, total) {
     estProgressFill.style.width = `${Math.min(percentage, 100)}%`;
 }
 
-// Initialize
+// Run initialization
 init();
