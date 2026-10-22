@@ -36,7 +36,9 @@
         h1 { font-size: 52px; margin-bottom: 16px; text-transform: uppercase; }
         
         .section-title { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; }
-        .section-title-center { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; text-align: center; }
+        
+        /* UPDATED: Increased bottom margin for more space above cards */
+        .section-title-center { font-size: 24px; text-transform: uppercase; margin: 64px 0 40px; text-align: center; }
 
         /* Navigation */
         .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
@@ -57,18 +59,17 @@
             gap: 12px; 
             font-size: 14px; 
             font-weight: 500; 
-            margin-bottom: 30px; 
+            margin-bottom: 56px; /* UPDATED: Increased space below alert */
             line-height: 1.5;
         }
         .alert-pill span:first-child { font-size: 16px; line-height: 1; }
         .alert-pill strong { font-weight: 800; }
 
-        /* UPDATED Hero Section */
+        /* Hero Section */
         .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: stretch; margin-bottom: 40px; }
         .hero-text { display: flex; flex-direction: column; justify-content: space-between; }
         .hero-text p { font-size: 16px; font-weight: 500; margin-bottom: 24px; line-height: 1.5; }
         
-        /* Updated weight to 600 */
         .hero-text p span { text-transform: uppercase; font-weight: 600; }
 
         /* Button */
@@ -84,7 +85,7 @@
             border: var(--border-subtle);
             box-shadow: none;
             transition: background 0.15s;
-            align-self: flex-start; /* Keeps button from stretching */
+            align-self: flex-start; 
         }
         .btn-primary:hover { background: var(--accent-green-hover); }
 
@@ -97,7 +98,6 @@
         .step-card { background: var(--surface); border: var(--border-subtle); border-radius: 12px; padding: 20px; }
         .step-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         
-        /* Updated weights to 600 */
         .step-num { font-size: 20px; font-weight: 600; }
         .step-icon { font-size: 24px; }
         .step-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
@@ -282,7 +282,6 @@
         .faq-item { border-bottom: var(--border-subtle); }
         .faq-item:last-child { border-bottom: none; }
         
-        /* Updated weight to 600 */
         .faq-summary {
             display: flex;
             justify-content: space-between;
@@ -429,7 +428,7 @@
             .est-summary-block { flex-direction: column; align-items: flex-start; }
             .est-summary-right { width: 100%; }
             .nav-links { display: none; }
-            .section-title, .section-title-center { margin: 48px 0 20px; }
+            .section-title, .section-title-center { margin: 48px 0 24px; }
             .dashboard-section { margin-top: 48px; }
             
             /* Footer mobile */
@@ -439,7 +438,7 @@
             .btn-cookie { flex: 1; }
             
             /* Make alert text wrap nicely on mobile */
-            .alert-pill { flex-direction: column; gap: 8px; }
+            .alert-pill { flex-direction: column; gap: 8px; margin-bottom: 40px; }
             .alert-pill span:first-child { font-size: 20px; }
         }
     </style>
@@ -467,12 +466,13 @@
         </div>
     </div>
 
-    <!-- Hero (Stretched to match image height) -->
+    <!-- Hero -->
     <section class="hero" id="submit">
         <div class="hero-text">
             <h1>Protect<br>Your Vote.</h1>
+            <!-- Added <br><br> for spacing -->
             <p>
-                Help to ensure the integrity of our elections.<br>
+                Help to ensure the integrity of our elections.<br><br>
                 <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
             </p>
             <a href="#" class="btn-primary" target="_blank">Pledge to Send Results</a>
@@ -483,7 +483,7 @@
         </div>
     </section>
 
-    <!-- How to Submit (Centered) -->
+    <!-- How to Submit (Centered, with updated margin spacing) -->
     <h2 class="section-title-center">How to Submit Your Polling Results</h2>
     <div class="steps-grid">
         <div class="step-card">
@@ -522,7 +522,6 @@
         
         <div class="action-panel">
             <h3>Ready to contribute?</h3>
-            <!-- UPDATED TEXT HERE -->
             <p>You can PLEDGE to send an EC8A result form or SEND a photo of the results.</p>
             <div class="action-buttons-row">
                 <a href="#" class="btn-action" target="_blank">Pledge to Send Results</a>
@@ -531,7 +530,7 @@
         </div>
     </div>
 
-    <!-- Dashboard Heading -->
+    <!-- Dashboard Heading (Centered, with updated margin spacing) -->
     <h2 class="section-title-center" id="dashboard">Public Results Dashboard</h2>
 
     <!-- FEDERAL ESTIMATES CARD SECTION -->
@@ -603,7 +602,6 @@
 
         <div class="est-summary-block">
             <div class="est-summary-left">
-                <!-- Static default capitalized -->
                 <h4 id="dynamic-state-title">State Estimates</h4>
                 <p>Figures from reviewed polling-unit records in the selected area.</p>
             </div>
