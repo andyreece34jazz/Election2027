@@ -12,7 +12,7 @@ const estCoverageText = document.getElementById("est-coverage-text");
 const estCoveragePct = document.getElementById("est-coverage-pct");
 const estProgressFill = document.getElementById("est-progress-fill");
 
-let allLgasData = []; // Store all LGAs globally so we don't have to keep querying
+let currentLgaData = []; 
 let nationalTotalPUs = 176846;
 
 // Helpers
@@ -33,21 +33,17 @@ async function fetchSupabase(view) {
     return response.json();
 }
 
-// 1. Load Everything Initially
-async function loadInitialData() {
+// 1. Load Federal Dashboard & State Dropdown
+async function loadDashboardAndStates() {
     try {
-        // Fetch National, State, and ALL LGA data in parallel
-        const [nationalData, stateData, lgaData] = await Promise.all([
+        const [data, stateData] = await Promise.all([
             fetchSupabase("public_national_results"),
-            fetchSupabase("public_state_results"),
-            fetchSupabase("public_lga_results")
+            fetchSupabase("public_state_results")
         ]);
         
-        allLgasData = lgaData; // Save all LGAs to memory
-
         // Setup National Dashboard
-        if (nationalData.length > 0) {
-            const result = nationalData[0];
+        if (data.length > 0) {
+            const result = data[0];
             if (stateData.length > 0) {
                 const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
                 if (sum > 0) nationalTotalPUs = sum;
@@ -79,69 +75,73 @@ async function loadInitialData() {
 
         stateData.forEach(row => {
             const opt = document.createElement("option");
-            opt.value = row.state_name; // e.g., "OSUN" or "Osun"
-            opt.textContent = toTitleCase(row.state_name); // Displays "Osun"
+            opt.value = row.state_name; // Keep the raw value (e.g. "OSUN")
+            opt.textContent = toTitleCase(row.state_name); // Display "Osun"
             stateSelect.appendChild(opt);
         });
 
     } catch (err) {
-        console.error("Initial load error", err);
-        stateSelect.innerHTML = '<option value="">Error loading data</option>';
+        console.error("Dashboard/State load error", err);
+        stateSelect.innerHTML = '<option value="">Error loading states</option>';
     }
 }
 
 // 2. Handle State Change
-stateSelect.addEventListener("change", () => {
+stateSelect.addEventListener("change", async () => {
     const stateName = stateSelect.value;
     
-    // Reset UI
-    metricsBody.innerHTML = '';
-    lgaSelect.innerHTML = '<option value="">Select a state first</option>';
+    // Reset UI immediately so it doesn't look frozen
+    metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Loading data...</td></tr>';
+    lgaSelect.innerHTML = '<option value="">Loading...</option>';
     lgaSelect.disabled = true;
     
     if (!stateName) {
         dynamicTitle.textContent = 'State Estimates';
+        metricsBody.innerHTML = '';
+        lgaSelect.innerHTML = '<option value="">Select a state first</option>';
         updateSummaryBlock(0, 0); 
         return;
     }
 
+    // Update title immediately so the user knows it worked
     dynamicTitle.textContent = `${toTitleCase(stateName)} estimates`;
 
-    // FILTER LOCALLY (Case-Insensitive) to bypass any Supabase eq issues
-    const lgaData = allLgasData.filter(lga => 
-        lga.state_name.toLowerCase() === stateName.toLowerCase()
-    );
-    
-    // Sort LGAs alphabetically
-    lgaData.sort((a, b) => a.lga_name.localeCompare(b.lga_name));
-    
-    // Populate LGA Dropdown
-    lgaSelect.innerHTML = '<option value="">All LGAs</option>';
-    lgaData.forEach(lga => {
-        const opt = document.createElement("option");
-        opt.value = lga.lga_name;
-        opt.textContent = toTitleCase(lga.lga_name);
-        lgaSelect.appendChild(opt);
-    });
-    lgaSelect.disabled = false;
+    try {
+        // Fetch LGAs specifically for this state
+        const lgaData = await fetchSupabase(`public_lga_results?state_name=eq.${encodeURIComponent(stateName)}`);
+        
+        // Sort LGAs alphabetically
+        lgaData.sort((a, b) => a.lga_name.localeCompare(b.lga_name));
+        currentLgaData = lgaData; // Save to global for filtering
+        
+        // Populate LGA Dropdown
+        lgaSelect.innerHTML = '<option value="">All LGAs</option>';
+        lgaData.forEach(lga => {
+            const opt = document.createElement("option");
+            opt.value = lga.lga_name;
+            opt.textContent = toTitleCase(lga.lga_name);
+            lgaSelect.appendChild(opt);
+        });
+        lgaSelect.disabled = false;
 
-    renderMetrics(lgaData);
+        // Render Table
+        renderMetrics(currentLgaData);
+
+    } catch (err) {
+        console.error("Error loading LGAs", err);
+        metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: red;">Error connecting to database.</td></tr>';
+    }
 });
 
 // 3. Handle LGA Change (Filter Table)
 lgaSelect.addEventListener("change", () => {
-    const stateName = stateSelect.value;
     const selectedLga = lgaSelect.value;
-    
-    if (!stateName) return;
-
-    // Filter locally from the stored array
-    const lgaData = allLgasData.filter(lga => 
-        lga.state_name.toLowerCase() === stateName.toLowerCase() &&
-        (selectedLga === "" || lga.lga_name === selectedLga)
-    );
-    
-    renderMetrics(lgaData);
+    if (!selectedLga) {
+        renderMetrics(currentLgaData);
+    } else {
+        const filtered = currentLgaData.filter(lga => lga.lga_name === selectedLga);
+        renderMetrics(filtered);
+    }
 });
 
 // 4. Render LGA Metrics Table
@@ -191,4 +191,4 @@ function updateSummaryBlock(verified, total) {
 }
 
 // Initialize
-loadInitialData();
+loadDashboardAndStates();
