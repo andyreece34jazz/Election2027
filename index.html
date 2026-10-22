@@ -27,7 +27,7 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.4; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
 
-        /* Typography — Updated to Weight 700, Line-height 1.2 */
+        /* Typography — Updated */
         h1, h2, h3, .heavy-text {
             font-weight: 700;
             letter-spacing: -0.02em;
@@ -69,47 +69,57 @@
         }
         .btn-primary:hover { background: var(--accent-green-hover); transform: none; box-shadow: none; }
 
-        /* Search tool — now sits under the hero button */
-        .hero-search {
-            margin-top: 20px;
-            max-width: 420px;
-            background: var(--surface);
-            border: var(--border-thick);
-            border-radius: 8px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .search-btn {
-            flex: 0 0 auto;
-            background: #F3F4F6;
-            border: 1px solid #D1D5DB;
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
         /* Hero Image — no shadow */
         .hero-image-wrapper { position: relative; border: var(--border-thick); border-radius: 12px; overflow: hidden; box-shadow: none; }
         .hero-image { width: 100%; height: auto; display: block; box-shadow: none; filter: none; }
 
         /* How to Submit */
-        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
         .step-card { background: var(--surface); border: var(--border-thick); border-radius: 12px; padding: 20px; }
         .step-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .step-num { font-size: 20px; font-weight: 900; }
         .step-icon { font-size: 24px; }
-        .step-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+        .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
         .step-card p { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+        /* NEW: Action Panels (Under How to Submit) */
+        .action-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 48px;
+            padding-top: 10px;
+        }
+        .action-panel h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--ink);
+        }
+        .action-panel p {
+            font-size: 16px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .action-panel p strong {
+            color: var(--ink);
+            font-weight: 700;
+        }
+        .btn-action {
+            display: block;
+            background: var(--accent-green);
+            color: white;
+            text-align: center;
+            padding: 16px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: background 0.15s;
+        }
+        .btn-action:hover { background: var(--accent-green-hover); }
+        .action-panel .btn-action:last-child { margin-bottom: 0; }
 
         /* ---------------------------------------------------------
            NEW FEDERAL ESTIMATES CARD SECTION
@@ -133,7 +143,7 @@
             margin-bottom: 8px;
         }
         .fed-card h3 {
-            font-size: 18px;
+            font-size: 20px;
             color: var(--ink);
         }
         .badge-not-official {
@@ -157,15 +167,16 @@
             border-radius: 6px;
             width: 100%;
         }
+        /* Updated Font Size and Weight for the Estimates */
         .fed-big-number {
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 500;
             margin: 12px 0 4px 0;
             color: var(--ink);
-            line-height: 1;
+            line-height: 1.2;
         }
         .fed-big-number span {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--muted);
         }
@@ -211,11 +222,12 @@
             color: var(--muted);
             font-weight: 500;
         }
+        /* Updated Font Size and Weight for the Stats */
         .fed-stat-box .value {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 500;
             color: var(--ink);
-            line-height: 1;
+            line-height: 1.2;
         }
 
         /* ---------------------------------------------------------
@@ -240,7 +252,7 @@
         .dash-coverage { font-weight: 800; font-size: 15px; margin-bottom: 8px; }
         .dash-coverage span { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
 
-        /* Rectangle progress bar — 40% longer (180px -> 252px) */
+        /* Rectangle progress bar — 40% longer */
         .progress-pill-container {
             display: flex;
             align-items: center;
@@ -318,6 +330,7 @@
             .hero { grid-template-columns: 1fr; }
             h1 { font-size: 38px; } /* Updated Mobile Size */
             .steps-grid { grid-template-columns: 1fr; }
+            .action-panels { grid-template-columns: 1fr; gap: 32px; }
             .federal-container { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .party-grid { grid-template-columns: repeat(2, 1fr); }
@@ -350,7 +363,7 @@
         <div><span style="color: var(--ink);">ESTIMATED FIGURES — NOT OFFICIAL.</span> Driven by independently checked polling units.</div>
     </div>
 
-    <!-- Hero -->
+    <!-- Hero (Search removed) -->
     <section class="hero" id="submit">
         <div class="hero-text">
             <h1>Protect<br>Your Vote.</h1>
@@ -359,14 +372,8 @@
                 <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
             </p>
             <a href="https://wa.me/YOUR_NUMBER" class="btn-primary" target="_blank">Pledge to Send Results</a>
-
-            <!-- Search tool moved directly under the hero button -->
-            <div class="hero-search">
-                <div>Don't know your code? Find your polling unit using our search tool to generate the code.</div>
-                <a href="pledge.html" class="search-btn" aria-label="Find your polling unit">🔍</a>
-            </div>
         </div>
-
+        
         <div class="hero-image-wrapper">
             <img src="hero.jpg" alt="Citizen taking photo" class="hero-image">
         </div>
@@ -401,12 +408,26 @@
         </div>
     </div>
 
+    <!-- NEW: Action Panels (Under How to Submit) -->
+    <div class="action-panels">
+        <div class="action-panel">
+            <h3>Don't know your polling unit code?</h3>
+            <p>Find your polling unit using our search tool to <strong>copy</strong> the code you need.</p>
+            <a href="search.html" class="btn-action">Find you Polling-Unit Code</a>
+        </div>
+        <div class="action-panel">
+            <h3>Ready to contribute?</h3>
+            <div style="margin-top: 44px;"> <!-- Alignment spacer -->
+                <a href="https://wa.me/YOUR_NUMBER" class="btn-action" target="_blank">Pledge to Send Results</a>
+                <a href="https://wa.me/YOUR_NUMBER" class="btn-action" target="_blank">Send Photo Result</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Heading (Centered Outside Card) -->
     <h2 class="section-title-center" id="dashboard">Public Results Dashboard</h2>
 
-    <!-- ---------------------------------------------------------
-         NEW FEDERAL ESTIMATES CARD STRUCTURE
-         --------------------------------------------------------- -->
+    <!-- NEW FEDERAL ESTIMATES CARD STRUCTURE -->
     <div class="federal-container">
         <!-- Top Left -->
         <div class="fed-card">
@@ -446,7 +467,7 @@
         <div class="fed-card">
             <h3>National voter statistics</h3>
             <div class="fed-stat-grid">
-                <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value">173</span></div>
                 <div class="fed-stat-box"><span class="label">Accredited voters</span><span class="value">—</span></div>
                 <div class="fed-stat-box"><span class="label">Valid votes</span><span class="value">—</span></div>
                 <div class="fed-stat-box"><span class="label">Rejected votes</span><span class="value">—</span></div>
@@ -454,9 +475,7 @@
         </div>
     </div>
 
-    <!-- ---------------------------------------------------------
-         EXISTING DASHBOARD SECTION (State & LGA)
-         --------------------------------------------------------- -->
+    <!-- EXISTING DASHBOARD SECTION (State & LGA) -->
     <div class="dashboard-section">
 
         <!-- TOP OF CARD: "State and LGA Estimates" aligned with the polling-unit number -->
@@ -465,7 +484,7 @@
 
             <div class="coverage-widget">
                 <div class="dash-coverage">
-                    <div id="dash-coverage-text">0 of 176,846</div>
+                    <div id="dash-coverage-text">1 of 3,763</div>
                     <span>Polling units have been reviewed</span>
                 </div>
 
