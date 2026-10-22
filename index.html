@@ -238,9 +238,31 @@
         /* Metrics Table */
         .metrics-container { overflow-x: auto; }
         .metrics-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
-        .metrics-table th { font-size: 13px; font-weight: 700; color: var(--ink); padding: 12px 8px; border-bottom: 2px solid #E5E7EB; white-space: nowrap; }
-        .metrics-table td { font-size: 20px; font-weight: 500; color: var(--ink); padding: 16px 8px; border-bottom: 1px solid #E5E7EB; }
-        .metrics-table td.lga-name { font-weight: 700; font-size: 16px; }
+        
+        /* UPDATED HEADERS: 16px / 500 weight */
+        .metrics-table th { 
+            font-size: 16px; 
+            font-weight: 500; 
+            color: var(--ink); 
+            padding: 12px 8px; 
+            border-bottom: 2px solid #E5E7EB; 
+            white-space: nowrap; 
+        }
+        
+        /* UPDATED VALUES: 14px / 400 weight */
+        .metrics-table td { 
+            font-size: 14px; 
+            font-weight: 400; 
+            color: var(--ink); 
+            padding: 16px 8px; 
+            border-bottom: 1px solid #E5E7EB; 
+        }
+        
+        /* UPDATED LGA NAME: 14px / 400 weight */
+        .metrics-table td.lga-name { 
+            font-size: 14px;
+            font-weight: 400; 
+        }
         
         /* FAQ Footer */
         .faq-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
@@ -400,7 +422,7 @@
         </div>
         <p class="est-subtext">Select a state to view its estimates and coverage.</p>
 
-        <!-- Filters (ADDED onchange) -->
+        <!-- Filters -->
         <div class="est-filters">
             <div>
                 <label for="state-select">State</label>
