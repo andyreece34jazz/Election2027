@@ -37,7 +37,7 @@
         h1 { font-size: 52px; margin-bottom: 16px; text-transform: uppercase; }
         
         .section-title { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; }
-        .section-title-center { font-size: 26px; text-transform: uppercase; margin: 64px 0 32px; text-align: center; }
+        .section-title-center { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; text-align: center; }
 
         /* Navigation */
         .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
@@ -50,19 +50,19 @@
         .alert-pill { 
             background: #FFF3CD; 
             color: #664D03; 
-            border: var(--border-subtle); 
+            border: 1px solid #FFE69C; 
             border-radius: 8px; 
             padding: 12px 16px; 
             display: flex; 
-            align-items: flex-start; 
+            align-items: center; 
             gap: 12px; 
             font-size: 14px; 
             font-weight: 500; 
             margin-bottom: 30px; 
             line-height: 1.5;
         }
-        .alert-pill span:first-child { font-size: 16px; line-height: 1.2; }
-        .alert-pill strong { font-weight: 800; display: block; margin-bottom: 2px; }
+        .alert-pill span:first-child { font-size: 16px; line-height: 1; }
+        .alert-pill strong { font-weight: 800; }
 
         /* Hero Section */
         .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px; }
@@ -158,15 +158,19 @@
             margin-bottom: 8px;
         }
         .fed-card h3 { font-size: 20px; color: var(--ink); }
+        
+        /* UPDATED BADGE COLORS */
         .badge-not-official {
-            background: #F97316;
-            color: white;
+            background: #FFF3CD; 
+            color: #664D03; 
+            border: 1px solid #FFE69C; 
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 700;
             white-space: nowrap;
         }
+        
         .fed-subtext { font-size: 13px; color: var(--muted); margin-bottom: 16px; font-weight: 500; }
         .fed-placeholder-bar { background: #F4F5F7; height: 48px; border-radius: 6px; width: 100%; }
         .fed-big-number { font-size: 20px; font-weight: 500; margin: 12px 0 4px 0; color: var(--ink); line-height: 1.2; }
@@ -426,6 +430,10 @@
             .cookie-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
             .cookie-buttons { width: 100%; }
             .btn-cookie { flex: 1; }
+            
+            /* Make alert text wrap nicely on mobile */
+            .alert-pill { flex-direction: column; gap: 8px; }
+            .alert-pill span:first-child { font-size: 20px; }
         }
     </style>
 </head>
@@ -444,12 +452,11 @@
         </div>
     </nav>
 
-    <!-- Alert -->
+    <!-- UPDATED Alert (All in one line) -->
     <div class="alert-pill">
         <span>⚠️</span>
         <div>
-            <strong>ESTIMATED FIGURES — NOT OFFICIAL</strong>
-            Based on polling-unit evidence reviewed by the platform.
+            <strong>ESTIMATED FIGURES — NOT OFFICIAL</strong> : Based on polling-unit evidence reviewed by the platform.
         </div>
     </div>
 
@@ -469,8 +476,8 @@
         </div>
     </section>
 
-    <!-- How to Submit -->
-    <h2 class="section-title">How to Submit Your Polling Results</h2>
+    <!-- How to Submit (Centered) -->
+    <h2 class="section-title-center">How to Submit Your Polling Results</h2>
     <div class="steps-grid">
         <div class="step-card">
             <div class="step-top">
