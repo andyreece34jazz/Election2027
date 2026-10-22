@@ -239,7 +239,7 @@
         .metrics-container { overflow-x: auto; }
         .metrics-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
         
-        /* UPDATED HEADERS: 16px / 500 weight */
+        /* UPDATED HEADERS: 16px / 500 weight & Centered */
         .metrics-table th { 
             font-size: 16px; 
             font-weight: 500; 
@@ -247,15 +247,23 @@
             padding: 12px 8px; 
             border-bottom: 2px solid #E5E7EB; 
             white-space: nowrap; 
+            text-align: center;
+        }
+        .metrics-table th:first-child {
+            text-align: left; /* Keep LGA header left aligned */
         }
         
-        /* UPDATED VALUES: 14px / 400 weight */
+        /* UPDATED VALUES: 14px / 400 weight & Centered */
         .metrics-table td { 
             font-size: 14px; 
             font-weight: 400; 
             color: var(--ink); 
             padding: 16px 8px; 
             border-bottom: 1px solid #E5E7EB; 
+            text-align: center;
+        }
+        .metrics-table td:first-child {
+            text-align: left; /* Keep LGA name left aligned */
         }
         
         /* UPDATED LGA NAME: 14px / 400 weight */
@@ -393,7 +401,7 @@
         </div>
 
         <div class="fed-card">
-            <h3>Estimated votes by party</h3>
+            <h3>Estimated Votes by Party</h3>
             <div class="fed-stat-grid">
                 <div class="fed-stat-box"><span class="label">APC</span><span class="value" id="dash-apc">—</span></div>
                 <div class="fed-stat-box"><span class="label">PDP</span><span class="value" id="dash-pdp">—</span></div>
@@ -403,7 +411,7 @@
         </div>
 
         <div class="fed-card">
-            <h3>National voter statistics</h3>
+            <h3>National Voter Statistics</h3>
             <div class="fed-stat-grid">
                 <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value" id="dash-registered">—</span></div>
                 <div class="fed-stat-box"><span class="label">Accredited voters</span><span class="value" id="dash-accredited">—</span></div>
@@ -463,10 +471,10 @@
                 <thead>
                     <tr>
                         <th>LGA</th>
-                        <th>Registered voters</th>
-                        <th>Accredited voters</th>
-                        <th>Valid votes</th>
-                        <th>Rejected votes</th>
+                        <th>Registered Voters</th>
+                        <th>Accredited Voters</th>
+                        <th>Valid Votes</th>
+                        <th>Rejected Votes</th>
                         <th>APC</th>
                         <th>PDP</th>
                         <th>ADC</th>
@@ -488,7 +496,7 @@
 
 </div>
 
-<!-- ADDED ?v=5 TO PREVENT BROWSER CACHING -->
-<script src="app.js?v=5"></script>
+<!-- ADDED ?v=6 TO PREVENT BROWSER CACHING -->
+<script src="app.js?v=6"></script>
 </body>
 </html>
