@@ -27,8 +27,12 @@
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.4; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
 
-        /* Typography */
-        h1, h2, h3, .heavy-text { font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+        /* Typography — Updated to Weight 700, Line-height 1.2 */
+        h1, h2, h3, .heavy-text {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
         h1 { font-size: 52px; margin-bottom: 16px; text-transform: uppercase; }
         .section-title { font-size: 24px; text-transform: uppercase; margin: 40px 0 20px; }
         .section-title-center { font-size: 26px; text-transform: uppercase; margin: 40px 0 20px; text-align: center; }
@@ -107,7 +111,116 @@
         .step-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
         .step-card p { font-size: 13px; color: var(--muted); font-weight: 500; }
 
-        /* Dashboard Section */
+        /* ---------------------------------------------------------
+           NEW FEDERAL ESTIMATES CARD SECTION
+           --------------------------------------------------------- */
+        .federal-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .fed-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .fed-header-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .fed-card h3 {
+            font-size: 18px;
+            color: var(--ink);
+        }
+        .badge-not-official {
+            background: #F97316;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .fed-subtext {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .fed-placeholder-bar {
+            background: #F4F5F7;
+            height: 48px;
+            border-radius: 6px;
+            width: 100%;
+        }
+        .fed-big-number {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 12px 0 4px 0;
+            color: var(--ink);
+            line-height: 1;
+        }
+        .fed-big-number span {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+        .fed-progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .fed-progress-track {
+            flex-grow: 1;
+            height: 20px;
+            background: #F3F4F6;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+        }
+        .fed-progress-fill {
+            height: 100%;
+            background: #10B981;
+        }
+        .fed-progress-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #10B981;
+        }
+        .fed-stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .fed-stat-box {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .fed-stat-box .label {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        .fed-stat-box .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        /* ---------------------------------------------------------
+           EXISTING DASHBOARD SECTION (State & LGA)
+           --------------------------------------------------------- */
         .dashboard-section { border: var(--border-thick); border-radius: 16px; background: #EBECEF; padding: 24px; margin-bottom: 40px; position: relative; overflow: hidden; }
         .dashboard-section::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(to right, #D1D5DB 1px, transparent 1px), linear-gradient(to bottom, #D1D5DB 1px, transparent 1px); background-size: 30px 30px; opacity: 0.4; pointer-events: none; }
 
@@ -121,7 +234,7 @@
             position: relative;
             z-index: 1;
         }
-        .dash-sub-title { font-size: 20px; font-weight: 900; }
+        .dash-sub-title { font-size: 20px; font-weight: 700; }
 
         .coverage-widget { text-align: right; }
         .dash-coverage { font-weight: 800; font-size: 15px; margin-bottom: 8px; }
@@ -203,8 +316,9 @@
 
         @media (max-width: 768px) {
             .hero { grid-template-columns: 1fr; }
-            h1 { font-size: 40px; }
+            h1 { font-size: 38px; } /* Updated Mobile Size */
             .steps-grid { grid-template-columns: 1fr; }
+            .federal-container { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .party-grid { grid-template-columns: repeat(2, 1fr); }
             .filters { grid-template-columns: 1fr; }
@@ -290,7 +404,59 @@
     <!-- Dashboard Heading (Centered Outside Card) -->
     <h2 class="section-title-center" id="dashboard">Public Results Dashboard</h2>
 
-    <!-- Dashboard Card -->
+    <!-- ---------------------------------------------------------
+         NEW FEDERAL ESTIMATES CARD STRUCTURE
+         --------------------------------------------------------- -->
+    <div class="federal-container">
+        <!-- Top Left -->
+        <div class="fed-card">
+            <div class="fed-header-row">
+                <h3>Federal Estimates</h3>
+                <span class="badge-not-official">Not Official</span>
+            </div>
+            <p class="fed-subtext">National overview of submitted and reviewed polling-unit figures</p>
+            <div class="fed-placeholder-bar"></div>
+        </div>
+
+        <!-- Top Right -->
+        <div class="fed-card">
+            <h3>Polling Unit Coverage</h3>
+            <div class="fed-big-number">1 <span>of</span> 176,846</div>
+            <p class="fed-subtext">Polling units reviewed</p>
+            <div class="fed-progress-wrapper">
+                <div class="fed-progress-track">
+                    <div class="fed-progress-fill" style="width: 0.7%;"></div>
+                </div>
+                <div class="fed-progress-label">0.7%</div>
+            </div>
+        </div>
+
+        <!-- Bottom Left -->
+        <div class="fed-card">
+            <h3>Estimated votes by party</h3>
+            <div class="fed-stat-grid">
+                <div class="fed-stat-box"><span class="label">APC</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">PDP</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">ADC</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">NDC</span><span class="value">—</span></div>
+            </div>
+        </div>
+
+        <!-- Bottom Right -->
+        <div class="fed-card">
+            <h3>National voter statistics</h3>
+            <div class="fed-stat-grid">
+                <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">Accredited voters</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">Valid votes</span><span class="value">—</span></div>
+                <div class="fed-stat-box"><span class="label">Rejected votes</span><span class="value">—</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ---------------------------------------------------------
+         EXISTING DASHBOARD SECTION (State & LGA)
+         --------------------------------------------------------- -->
     <div class="dashboard-section">
 
         <!-- TOP OF CARD: "State and LGA Estimates" aligned with the polling-unit number -->
