@@ -37,7 +37,7 @@
         
         .section-title { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; }
         
-        /* UPDATED: Increased bottom margin for more space above cards */
+        /* Increased bottom margin for more space above cards */
         .section-title-center { font-size: 24px; text-transform: uppercase; margin: 64px 0 40px; text-align: center; }
 
         /* Navigation */
@@ -59,7 +59,7 @@
             gap: 12px; 
             font-size: 14px; 
             font-weight: 500; 
-            margin-bottom: 56px; /* UPDATED: Increased space below alert */
+            margin-bottom: 56px; /* Increased space below alert */
             line-height: 1.5;
         }
         .alert-pill span:first-child { font-size: 16px; line-height: 1; }
@@ -470,12 +470,12 @@
     <section class="hero" id="submit">
         <div class="hero-text">
             <h1>Protect<br>Your Vote.</h1>
-            <!-- Added <br><br> for spacing -->
             <p>
                 Help to ensure the integrity of our elections.<br><br>
                 <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
             </p>
-            <a href="#" class="btn-primary" target="_blank">Pledge to Send Results</a>
+            <!-- Link now points to your pledge.html page -->
+            <a href="pledge.html" class="btn-primary">Pledge to Send Results</a>
         </div>
         
         <div class="hero-image-wrapper">
@@ -483,7 +483,7 @@
         </div>
     </section>
 
-    <!-- How to Submit (Centered, with updated margin spacing) -->
+    <!-- How to Submit (Centered) -->
     <h2 class="section-title-center">How to Submit Your Polling Results</h2>
     <div class="steps-grid">
         <div class="step-card">
@@ -517,20 +517,23 @@
         <div class="action-panel">
             <h3>Don't know your polling unit code?</h3>
             <p>Find your polling unit using our search tool to <strong>copy</strong> the code you need.</p>
-            <a href="search.html" class="btn-action" style="margin-top: auto;">Find you Polling-Unit Code</a>
+            <!-- UPDATED: Link to search.html and fixed typo in button text -->
+            <a href="search.html" class="btn-action" style="margin-top: auto;">Find Your Polling Unit Code</a>
         </div>
         
         <div class="action-panel">
             <h3>Ready to contribute?</h3>
             <p>You can PLEDGE to send an EC8A result form or SEND a photo of the results.</p>
             <div class="action-buttons-row">
-                <a href="#" class="btn-action" target="_blank">Pledge to Send Results</a>
+                <!-- Link now points to your pledge.html page -->
+                <a href="pledge.html" class="btn-action">Pledge to Send Results</a>
+                <!-- NOTE: Replace # with your actual WhatsApp link -->
                 <a href="#" class="btn-action" target="_blank">Send Photo of Results</a>
             </div>
         </div>
     </div>
 
-    <!-- Dashboard Heading (Centered, with updated margin spacing) -->
+    <!-- Dashboard Heading -->
     <h2 class="section-title-center" id="dashboard">Public Results Dashboard</h2>
 
     <!-- FEDERAL ESTIMATES CARD SECTION -->
