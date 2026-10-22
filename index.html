@@ -236,30 +236,10 @@
         .est-progress-label { font-size: 15px; font-weight: 700; color: #10B981; }
 
         /* Metrics Table */
-        .metrics-container {
-            overflow-x: auto;
-        }
-        .metrics-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 700px;
-        }
-        .metrics-table th {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--ink);
-            padding: 12px 8px;
-            border-bottom: 2px solid #E5E7EB;
-            white-space: nowrap;
-        }
-        .metrics-table td {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--ink);
-            padding: 16px 8px;
-            border-bottom: 1px solid #E5E7EB;
-        }
+        .metrics-container { overflow-x: auto; }
+        .metrics-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
+        .metrics-table th { font-size: 13px; font-weight: 700; color: var(--ink); padding: 12px 8px; border-bottom: 2px solid #E5E7EB; white-space: nowrap; }
+        .metrics-table td { font-size: 20px; font-weight: 500; color: var(--ink); padding: 16px 8px; border-bottom: 1px solid #E5E7EB; }
         .metrics-table td.lga-name { font-weight: 700; font-size: 16px; }
         
         /* FAQ Footer */
@@ -380,7 +360,6 @@
 
         <div class="fed-card">
             <h3>Polling Unit Coverage</h3>
-            <!-- IDs added for app.js -->
             <div class="fed-big-number" id="dash-coverage-text">0 <span>of</span> 176,846</div>
             <p class="fed-subtext">Polling units reviewed</p>
             <div class="fed-progress-wrapper">
@@ -394,7 +373,6 @@
         <div class="fed-card">
             <h3>Estimated votes by party</h3>
             <div class="fed-stat-grid">
-                <!-- IDs added for app.js -->
                 <div class="fed-stat-box"><span class="label">APC</span><span class="value" id="dash-apc">—</span></div>
                 <div class="fed-stat-box"><span class="label">PDP</span><span class="value" id="dash-pdp">—</span></div>
                 <div class="fed-stat-box"><span class="label">ADC</span><span class="value" id="dash-adc">—</span></div>
@@ -405,7 +383,6 @@
         <div class="fed-card">
             <h3>National voter statistics</h3>
             <div class="fed-stat-grid">
-                <!-- IDs added for app.js -->
                 <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value" id="dash-registered">—</span></div>
                 <div class="fed-stat-box"><span class="label">Accredited voters</span><span class="value" id="dash-accredited">—</span></div>
                 <div class="fed-stat-box"><span class="label">Valid votes</span><span class="value" id="dash-valid">—</span></div>
@@ -423,17 +400,17 @@
         </div>
         <p class="est-subtext">Select a state to view its estimates and coverage.</p>
 
-        <!-- Filters -->
+        <!-- Filters (ADDED onchange) -->
         <div class="est-filters">
             <div>
                 <label for="state-select">State</label>
-                <select id="state-select">
+                <select id="state-select" onchange="updateState()">
                     <option value="">Select a state</option>
                 </select>
             </div>
             <div>
                 <label for="lga-select">Local Government Area (optional)</label>
-                <select id="lga-select" disabled>
+                <select id="lga-select" disabled onchange="updateLga()">
                     <option value="">Select a state first</option>
                 </select>
             </div>
@@ -447,7 +424,6 @@
             </div>
             <div class="est-summary-right">
                 <h4>Polling Unit Coverage</h4>
-                <!-- IDs added for app.js -->
                 <div class="est-big-number" id="est-coverage-text">0 <span>of</span> 0</div>
                 <p>Polling units reviewed</p>
                 <div class="est-progress-wrapper">
@@ -476,7 +452,7 @@
                     </tr>
                 </thead>
                 <tbody id="metrics-body">
-                    <!-- Populated via app.js -->
+                    <tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Select a state to view estimates</td></tr>
                 </tbody>
             </table>
         </div>
@@ -490,7 +466,7 @@
 
 </div>
 
-<!-- ONLY app.js runs here. The old mock script has been removed. -->
-<script src="app.js"></script>
+<!-- ADDED ?v=5 TO PREVENT BROWSER CACHING -->
+<script src="app.js?v=5"></script>
 </body>
 </html>
