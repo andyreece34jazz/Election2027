@@ -41,7 +41,7 @@ window.updateState = function() {
         }
 
         // Update Title immediately
-        dynamicTitle.textContent = `${toTitleCase(stateName)} estimates`;
+        dynamicTitle.textContent = `${toTitleCase(stateName)} Estimates`;
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Loading data...</td></tr>';
 
         // Filter locally (case insensitive)
