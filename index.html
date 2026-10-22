@@ -237,9 +237,9 @@
 
         /* Metrics Table */
         .metrics-container { overflow-x: auto; }
-        .metrics-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
+        .metrics-table { width: 100%; border-collapse: collapse; min-width: 700px; }
         
-        /* UPDATED HEADERS: 16px / 500 weight & Centered */
+        /* Headers: Centered */
         .metrics-table th { 
             font-size: 16px; 
             font-weight: 500; 
@@ -249,11 +249,12 @@
             white-space: nowrap; 
             text-align: center;
         }
+        /* Keep LGA header left-aligned */
         .metrics-table th:first-child {
-            text-align: left; /* Keep LGA header left aligned */
+            text-align: left;
         }
         
-        /* UPDATED VALUES: 14px / 400 weight & Centered */
+        /* Values: Centered */
         .metrics-table td { 
             font-size: 14px; 
             font-weight: 400; 
@@ -262,11 +263,12 @@
             border-bottom: 1px solid #E5E7EB; 
             text-align: center;
         }
+        /* Keep LGA name left-aligned */
         .metrics-table td:first-child {
-            text-align: left; /* Keep LGA name left aligned */
+            text-align: left;
         }
         
-        /* UPDATED LGA NAME: 14px / 400 weight */
+        /* LGA Name styling */
         .metrics-table td.lga-name { 
             font-size: 14px;
             font-weight: 400; 
@@ -366,10 +368,10 @@
         
         <div class="action-panel">
             <h3>Ready to contribute?</h3>
-            <p>Pledge to send EC8A result form or submit results</p>
+            <p>You can Pledge to send EC8A result form or Send a photo of results</p>
             <div class="action-buttons-row">
                 <a href="https://wa.me/YOUR_NUMBER" class="btn-action" target="_blank">Pledge to Send Results</a>
-                <a href="https://wa.me/YOUR_NUMBER" class="btn-action" target="_blank">Send Photo Result</a>
+                <a href="https://wa.me/YOUR_NUMBER" class="btn-action" target="_blank">Send Photo of Results</a>
             </div>
         </div>
     </div>
@@ -413,10 +415,10 @@
         <div class="fed-card">
             <h3>National Voter Statistics</h3>
             <div class="fed-stat-grid">
-                <div class="fed-stat-box"><span class="label">Registered voters</span><span class="value" id="dash-registered">—</span></div>
-                <div class="fed-stat-box"><span class="label">Accredited voters</span><span class="value" id="dash-accredited">—</span></div>
-                <div class="fed-stat-box"><span class="label">Valid votes</span><span class="value" id="dash-valid">—</span></div>
-                <div class="fed-stat-box"><span class="label">Rejected votes</span><span class="value" id="dash-rejected">—</span></div>
+                <div class="fed-stat-box"><span class="label">Registered Voters</span><span class="value" id="dash-registered">—</span></div>
+                <div class="fed-stat-box"><span class="label">Accredited Voters</span><span class="value" id="dash-accredited">—</span></div>
+                <div class="fed-stat-box"><span class="label">Valid Votes</span><span class="value" id="dash-valid">—</span></div>
+                <div class="fed-stat-box"><span class="label">Rejected Votes</span><span class="value" id="dash-rejected">—</span></div>
             </div>
         </div>
     </div>
@@ -496,7 +498,7 @@
 
 </div>
 
-<!-- ADDED ?v=6 TO PREVENT BROWSER CACHING -->
-<script src="app.js?v=6"></script>
+<!-- UPDATED VERSION TO PREVENT BROWSER CACHING -->
+<script src="app.js?v=8"></script>
 </body>
 </html>
