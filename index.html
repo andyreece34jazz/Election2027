@@ -166,7 +166,7 @@
         .fed-stat-box .value { font-size: 20px; font-weight: 500; color: var(--ink); line-height: 1.2; }
 
         /* ---------------------------------------------------------
-           NEW STATE & LGA ESTIMATES SECTION (Based on Screenshot)
+           STATE & LGA ESTIMATES SECTION
            --------------------------------------------------------- */
         .dashboard-section { 
             background: #FFFFFF; 
@@ -235,7 +235,7 @@
         .est-progress-fill { height: 100%; background: #10B981; border-radius: 2px; }
         .est-progress-label { font-size: 15px; font-weight: 700; color: #10B981; }
 
-        /* Metrics Table/Row */
+        /* Metrics Table */
         .metrics-container {
             overflow-x: auto;
         }
@@ -262,15 +262,6 @@
         }
         .metrics-table td.lga-name { font-weight: 700; font-size: 16px; }
         
-        /* LGA Breakdown Table (for when a state is selected) */
-        .lga-container { margin-top: 24px; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; }
-        .lga-table { width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 500; }
-        .lga-table th { background: #F9FAFB; color: var(--muted); text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #E5E7EB; font-weight: 700; }
-        .lga-table th.num { text-align: right; }
-        .lga-table td { padding: 12px; border-bottom: 1px solid #E5E7EB; }
-        .lga-table td.num { text-align: right; font-weight: 700; }
-        .lga-table tr:last-child td { border-bottom: none; }
-
         /* FAQ Footer */
         .faq-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .faq-footer a { color: var(--ink); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -420,7 +411,7 @@
         </div>
     </div>
 
-    <!-- NEW DASHBOARD SECTION (State & LGA Estimates from Screenshot) -->
+    <!-- STATE & LGA ESTIMATES SECTION -->
     <div class="dashboard-section">
         <!-- Header -->
         <div class="est-header-row">
@@ -440,7 +431,7 @@
             <div>
                 <label for="lga-select">Local Government Area (optional)</label>
                 <select id="lga-select" disabled>
-                    <option value="">Select an LGA</option>
+                    <option value="">Select a state first</option>
                 </select>
             </div>
         </div>
@@ -448,7 +439,7 @@
         <!-- Summary Block -->
         <div class="est-summary-block">
             <div class="est-summary-left">
-                <h4 id="dynamic-state-title">Osun estimates</h4>
+                <h4 id="dynamic-state-title">State Estimates</h4>
                 <p>Figures from reviewed polling-unit records in the selected area.</p>
             </div>
             <div class="est-summary-right">
@@ -481,38 +472,7 @@
                     </tr>
                 </thead>
                 <tbody id="metrics-body">
-                    <!-- Placeholders populated via JS, or default empty state -->
-                    <tr>
-                        <td class="lga-name">—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Optional Detailed LGA Breakdown (kept here if they select an LGA, but table above is the new view) -->
-        <div class="lga-container" id="lga-breakdown" style="display: none; margin-top: 24px;">
-            <div style="padding: 12px 16px; border-bottom: 1px solid #E5E7EB; font-weight: 700; font-size: 14px; background: #F9FAFB;">Detailed LGA Breakdown</div>
-            <table class="lga-table">
-                <thead>
-                    <tr>
-                        <th>LGA</th>
-                        <th class="num">APC</th>
-                        <th class="num">PDP</th>
-                        <th class="num">ADC</th>
-                        <th class="num">NDC</th>
-                        <th class="num">Coverage</th>
-                    </tr>
-                </thead>
-                <tbody id="lga-table-body">
-                    <!-- Rows injected by JS -->
+                    <!-- Populated via JS -->
                 </tbody>
             </table>
         </div>
@@ -528,7 +488,7 @@
 
 <script src="app.js"></script>
 
-<!-- LGA FIX and Dynamic Title Update -->
+<!-- Dynamic State/LGA logic -->
 <script>
 (function () {
     var NG = {
@@ -567,59 +527,120 @@
         "Rivers": ["Abua/Odual","Ahoada East","Ahoada West","Akuku-Toru","Andoni","Asari-Toru","Bonny","Degema","Eleme","Emohua","Etche","Gokana","Ikwerre","Khana","Obio/Akpor","Ogba/Egbema/Ndoni","Ogu/Bolo","Okrika","Omuma","Opobo/Nkoro","Oyigbo","Port Harcourt","Tai"],
         "Sokoto": ["Binji","Bodinga","Dange Shuni","Gada","Goronyo","Gudu","Gwadabawa","Illela","Isa","Kebbe","Kware","Rabah","Sabon Birni","Shagari","Silame","Sokoto North","Sokoto South","Tambuwal","Tangaza","Tureta","Wamako","Wurno","Yabo"],
         "Taraba": ["Ardo Kola","Bali","Donga","Gashaka","Gassol","Ibi","Jalingo","Karim Lamido","Kumi","Lau","Sardauna","Takum","Ussa","Wukari","Yorro","Zing"],
-        "Yobe": ["Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko","Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmuwa","Yunusuri","Yusufari"],
+        "Yobe": ["Bade","Bursari","Damaturu","Fika","Fune","Geidam","Gujba","Gulani","Jakusko","Karasuwa","Machina","Nangere","Nguru","Potiskum","Tarmuwa","Yunusari","Yusufari"],
         "Zamfara": ["Anka","Bakura","Birnin Magaji/Kiyaw","Bukkuyum","Bungudu","Gummi","Gusau","Kaura Namoda","Maradun","Maru","Shinkafi","Talata Mafara","Tsafe","Zurmi"]
     };
 
     var stateSel = document.getElementById('state-select');
     var lgaSel   = document.getElementById('lga-select');
-    var tbody    = document.getElementById('lga-table-body');
-    var wrap     = document.getElementById('lga-breakdown');
+    var tbody    = document.getElementById('metrics-body');
     var titleEl  = document.getElementById('dynamic-state-title');
     
-    if (!stateSel || !lgaSel) return;
+    if (!stateSel || !lgaSel || !tbody || !titleEl) return;
 
     // Populate states
-    if (stateSel.options.length <= 1) {
-        Object.keys(NG).sort().forEach(function (s) {
-            var o = document.createElement('option');
-            o.value = s;
-            o.textContent = s;
-            stateSel.appendChild(o);
+    Object.keys(NG).sort().forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s;
+        o.textContent = s;
+        stateSel.appendChild(o);
+    });
+
+    // Deterministic mock data generator
+    function hash(str) {
+        var h = 2166136261;
+        for (var i = 0; i < str.length; i++) {
+            h ^= str.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+    }
+
+    function renderTable(state, selectedLga) {
+        tbody.innerHTML = '';
+        
+        if (!state) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px;">Select a state to view estimates</td></tr>';
+            return;
+        }
+
+        var lgas = NG[state] || [];
+        if (selectedLga && selectedLga !== "") {
+            lgas = [selectedLga]; // Only show the specific selected LGA
+        }
+
+        lgas.forEach(function(lga) {
+            var h = hash(state + '|' + lga);
+            
+            // Generate realistic mock numbers
+            var reg = 1000 + (h % 4000);
+            var acc = Math.floor(reg * (0.3 + ((h >>> 2) % 30) / 100)); 
+            var valid = Math.floor(acc * (0.90 + ((h >>> 4) % 8) / 100)); 
+            var rejected = acc - valid;
+
+            var remaining = valid;
+            var apc = Math.floor(remaining * (0.2 + ((h >>> 6) % 20) / 100));
+            remaining -= apc;
+            var pdp = Math.floor(remaining * (0.2 + ((h >>> 8) % 20) / 100));
+            remaining -= pdp;
+            var adc = Math.floor(remaining * (0.1 + ((h >>> 10) % 20) / 100));
+            remaining -= adc;
+            var ndc = remaining; 
+
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td class="lga-name">' + lga + '</td>' +
+                '<td>' + reg.toLocaleString() + '</td>' +
+                '<td>' + acc.toLocaleString() + '</td>' +
+                '<td>' + valid.toLocaleString() + '</td>' +
+                '<td>' + rejected.toLocaleString() + '</td>' +
+                '<td>' + apc.toLocaleString() + '</td>' +
+                '<td>' + pdp.toLocaleString() + '</td>' +
+                '<td>' + adc.toLocaleString() + '</td>' +
+                '<td>' + ndc.toLocaleString() + '</td>';
+            tbody.appendChild(tr);
         });
     }
 
-    function buildLgas(state) {
+    function updateLgaDropdown(state) {
+        lgaSel.innerHTML = '<option value="">All LGAs</option>';
+        if (!state) {
+            lgaSel.disabled = true;
+            return;
+        }
         var lgas = NG[state] || [];
-        lgaSel.innerHTML = '<option value="">Select an LGA</option>';
-
-        lgas.forEach(function (l) {
+        lgas.forEach(function(l) {
             var o = document.createElement('option');
             o.value = l;
             o.textContent = l;
             lgaSel.appendChild(o);
         });
-
-        lgaSel.disabled = lgas.length === 0;
+        lgaSel.disabled = false;
     }
 
-    stateSel.addEventListener('change', function (e) {
+    stateSel.addEventListener('change', function(e) {
         var state = e.target.value;
         if (!state) {
-            lgaSel.innerHTML = '<option value="">Select an LGA</option>';
-            lgaSel.disabled = true;
-            titleEl.textContent = '— estimates'; 
+            titleEl.textContent = 'State Estimates';
+            updateLgaDropdown('');
+            renderTable('');
             return;
         }
-        titleEl.textContent = state + ' estimates'; // Updates the dynamic title
-        buildLgas(state);
+        titleEl.textContent = state + ' estimates';
+        updateLgaDropdown(state);
+        renderTable(state, '');
     });
 
-    // Set initial title if a state is already selected (e.g. Osun in the example)
-    if (stateSel.value) {
-        titleEl.textContent = stateSel.value + ' estimates';
-        buildLgas(stateSel.value);
-    }
+    lgaSel.addEventListener('change', function(e) {
+        var state = stateSel.value;
+        var lga = e.target.value;
+        if (state) {
+            renderTable(state, lga);
+        }
+    });
+
+    // Initial state load
+    renderTable('');
 })();
 </script>
 </body>
