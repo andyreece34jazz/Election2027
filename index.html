@@ -36,18 +36,8 @@
         }
         h1 { font-size: 52px; margin-bottom: 16px; text-transform: uppercase; }
         
-        /* UPDATED MARGINS FOR CLEAN SECTIONS */
-        .section-title { 
-            font-size: 24px; 
-            text-transform: uppercase; 
-            margin: 64px 0 24px; /* Increased top & bottom spacing */
-        }
-        .section-title-center { 
-            font-size: 26px; 
-            text-transform: uppercase; 
-            margin: 64px 0 32px; /* Increased top & bottom spacing */
-            text-align: center; 
-        }
+        .section-title { font-size: 24px; text-transform: uppercase; margin: 64px 0 24px; }
+        .section-title-center { font-size: 26px; text-transform: uppercase; margin: 64px 0 32px; text-align: center; }
 
         /* Navigation */
         .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
@@ -250,41 +240,11 @@
         /* Metrics Table */
         .metrics-container { overflow-x: auto; }
         .metrics-table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        
-        /* Headers: Centered */
-        .metrics-table th { 
-            font-size: 16px; 
-            font-weight: 500; 
-            color: var(--ink); 
-            padding: 12px 8px; 
-            border-bottom: 2px solid #E5E7EB; 
-            white-space: nowrap; 
-            text-align: center;
-        }
-        /* Keep LGA header left-aligned */
-        .metrics-table th:first-child {
-            text-align: left;
-        }
-        
-        /* Values: Centered */
-        .metrics-table td { 
-            font-size: 14px; 
-            font-weight: 400; 
-            color: var(--ink); 
-            padding: 16px 8px; 
-            border-bottom: 1px solid #E5E7EB; 
-            text-align: center;
-        }
-        /* Keep LGA name left-aligned */
-        .metrics-table td:first-child {
-            text-align: left;
-        }
-        
-        /* LGA Name styling */
-        .metrics-table td.lga-name { 
-            font-size: 14px;
-            font-weight: 400; 
-        }
+        .metrics-table th { font-size: 16px; font-weight: 500; color: var(--ink); padding: 12px 8px; border-bottom: 2px solid #E5E7EB; white-space: nowrap; text-align: center; }
+        .metrics-table th:first-child { text-align: left; }
+        .metrics-table td { font-size: 14px; font-weight: 400; color: var(--ink); padding: 16px 8px; border-bottom: 1px solid #E5E7EB; text-align: center; }
+        .metrics-table td:first-child { text-align: left; }
+        .metrics-table td.lga-name { font-size: 14px; font-weight: 400; }
 
         /* ---------------------------------------------------------
            FAQ ACCORDION STYLES
@@ -293,15 +253,11 @@
             border: 1px solid #E5E7EB;
             border-radius: 8px;
             background: var(--surface);
-            margin-bottom: 64px;
+            margin-bottom: 24px;
             overflow: hidden;
         }
-        .faq-item {
-            border-bottom: 1px solid #E5E7EB;
-        }
-        .faq-item:last-child {
-            border-bottom: none;
-        }
+        .faq-item { border-bottom: 1px solid #E5E7EB; }
+        .faq-item:last-child { border-bottom: none; }
         .faq-summary {
             display: flex;
             justify-content: space-between;
@@ -311,47 +267,148 @@
             font-size: 16px;
             color: var(--ink);
             cursor: pointer;
-            list-style: none; /* Hides default browser triangle */
+            list-style: none;
             transition: background 0.15s;
         }
-        .faq-summary::-webkit-details-marker {
-            display: none; /* Hides triangle in Safari */
+        .faq-summary::-webkit-details-marker { display: none; }
+        .faq-summary:hover { background: #F9FAFB; }
+        .faq-summary svg { width: 20px; height: 20px; color: #9CA3AF; transition: transform 0.2s ease; flex-shrink: 0; }
+        .faq-item[open] .faq-summary svg { transform: rotate(180deg); }
+        .faq-content { padding: 0 24px 24px 24px; font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+        /* ---------------------------------------------------------
+           NEW: FOOTER STYLES
+           --------------------------------------------------------- */
+        .site-footer {
+            border-top: var(--border-thick);
+            padding: 48px 0;
+            background: var(--surface);
+            margin-top: 64px;
         }
-        .faq-summary:hover {
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .footer-brand h3 { font-size: 20px; margin-bottom: 12px; text-transform: uppercase; }
+        .footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 300px; }
+        
+        .footer-links h4, .footer-legal h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; color: var(--ink); }
+        .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.15s; cursor: pointer; }
+        .footer-links a:hover { color: var(--accent-green); }
+        
+        .footer-legal p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; font-weight: 500; }
+        .footer-legal .copyright { font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 24px; }
+
+        /* ---------------------------------------------------------
+           NEW: COOKIE BANNER STYLES
+           --------------------------------------------------------- */
+        .cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: var(--border-thick);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+        }
+        .cookie-banner.show { transform: translateY(0); }
+        .cookie-banner p { font-size: 14px; font-weight: 500; color: var(--ink); }
+        .cookie-buttons { display: flex; gap: 12px; flex-shrink: 0; }
+        .btn-cookie {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: var(--border-thick);
+            transition: all 0.15s;
+        }
+        .btn-accept { background: var(--accent-green); color: white; }
+        .btn-accept:hover { background: var(--accent-green-hover); }
+        .btn-decline { background: transparent; color: var(--ink); }
+        .btn-decline:hover { background: #F3F4F6; }
+
+        /* ---------------------------------------------------------
+           NEW: MODAL STYLES (Privacy & Terms)
+           --------------------------------------------------------- */
+        dialog.modal {
+            border: var(--border-thick);
+            border-radius: 12px;
+            padding: 0;
+            background: var(--surface);
+            max-width: 800px;
+            width: 90%;
+            margin: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        dialog.modal::backdrop {
+            background: rgba(10, 25, 47, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: var(--border-thick);
             background: #F9FAFB;
         }
-        .faq-summary svg {
-            width: 20px;
-            height: 20px;
-            color: #9CA3AF;
-            transition: transform 0.2s ease;
-            flex-shrink: 0;
+        .modal-header h2 { font-size: 22px; text-transform: uppercase; }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink);
+            cursor: pointer;
+            line-height: 1;
         }
-        .faq-item[open] .faq-summary svg {
-            transform: rotate(180deg);
-        }
-        .faq-content {
-            padding: 0 24px 24px 24px;
+        .close-btn:hover { color: #EF4444; }
+        .modal-content {
+            padding: 32px 24px;
+            max-height: 60vh;
+            overflow-y: auto;
             font-size: 15px;
             color: var(--muted);
             line-height: 1.6;
         }
+        .modal-content h3 { font-size: 18px; color: var(--ink); margin: 24px 0 12px 0; }
+        .modal-content h3:first-child { margin-top: 0; }
+        .modal-content p { margin-bottom: 16px; }
+        .modal-content ul { margin-left: 20px; margin-bottom: 16px; }
 
         @media (max-width: 768px) {
             .hero { grid-template-columns: 1fr; }
             h1 { font-size: 38px; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .action-panels { grid-template-columns: 1fr; }
+            .steps-grid, .action-panels, .federal-container, .est-filters { grid-template-columns: 1fr; }
             .action-buttons-row { flex-direction: column; }
-            .federal-container { grid-template-columns: 1fr; }
-            .est-filters { grid-template-columns: 1fr; }
             .est-summary-block { flex-direction: column; align-items: flex-start; }
             .est-summary-right { width: 100%; }
             .nav-links { display: none; }
-            
-            /* Adjust spacing for mobile */
             .section-title, .section-title-center { margin: 48px 0 20px; }
             .dashboard-section { margin-top: 48px; }
+            
+            /* Footer mobile */
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .cookie-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .cookie-buttons { width: 100%; }
+            .btn-cookie { flex: 1; }
         }
     </style>
 </head>
@@ -384,7 +441,6 @@
                 Help to ensure the integrity of our elections.<br>
                 <span>SNAP</span> the results. <span>SEND</span> the photo. <span>COMPARE</span> the figures.
             </p>
-            <!-- REPLACE # WITH YOUR PLEDGE FORM LINK -->
             <a href="#" class="btn-primary" target="_blank">Pledge to Send Results</a>
         </div>
         
@@ -427,7 +483,6 @@
         <div class="action-panel">
             <h3>Don't know your polling unit code?</h3>
             <p>Find your polling unit using our search tool to <strong>copy</strong> the code you need.</p>
-            <!-- UPDATE href IF NEEDED -->
             <a href="search.html" class="btn-action" style="margin-top: auto;">Find you Polling-Unit Code</a>
         </div>
         
@@ -435,9 +490,7 @@
             <h3>Ready to contribute?</h3>
             <p>You can Pledge to send EC8A result form or Send a photo of results</p>
             <div class="action-buttons-row">
-                <!-- REPLACE # WITH YOUR PLEDGE FORM LINK -->
                 <a href="#" class="btn-action" target="_blank">Pledge to Send Results</a>
-                <!-- REPLACE # WITH YOUR WHATSAPP LINK (e.g. https://wa.me/234...) -->
                 <a href="#" class="btn-action" target="_blank">Send Photo of Results</a>
             </div>
         </div>
@@ -492,14 +545,12 @@
 
     <!-- STATE & LGA ESTIMATES SECTION -->
     <div class="dashboard-section">
-        <!-- Header -->
         <div class="est-header-row">
             <h3>State and LGA Estimates</h3>
             <span class="badge-not-official">Not Official</span>
         </div>
         <p class="est-subtext">Select a state to view its estimates and coverage.</p>
 
-        <!-- Filters -->
         <div class="est-filters">
             <div>
                 <label for="state-select">State</label>
@@ -515,7 +566,6 @@
             </div>
         </div>
 
-        <!-- Summary Block -->
         <div class="est-summary-block">
             <div class="est-summary-left">
                 <h4 id="dynamic-state-title">State Estimates</h4>
@@ -534,7 +584,6 @@
             </div>
         </div>
 
-        <!-- Metrics Row -->
         <div class="metrics-container">
             <table class="metrics-table">
                 <thead>
@@ -557,12 +606,10 @@
         </div>
     </div>
 
-    <!-- FAQ SECTION (Redesigned Accordion with exclusive open) -->
-    <h2 class="section-title" id="methodology">Methodology & FAQ</h2>
+    <!-- FAQ SECTION -->
+    <h2 class="section-title" id="methodology">Methodology & FAQs</h2>
     
     <div class="faq-container">
-        
-        <!-- Note: Added name="faq" attribute for modern browsers -->
         <details class="faq-item" name="faq">
             <summary class="faq-summary">
                 1. Is this an official INEC website?
@@ -639,18 +686,115 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </summary>
             <div class="faq-content">
-                We prioritize the privacy of our submitters. Access to private submission details is strictly restricted. Please read our <a href="privacy.html" style="color: var(--accent-green); font-weight: 700; text-decoration: none;">Privacy Policy</a> to understand what data we collect, how it is used, and how to raise a privacy concern.
+                We prioritize the privacy of our submitters. Access to private submission details is strictly restricted. Please read our <a href="#" onclick="openModal('privacy-modal'); return false;" style="color: var(--accent-green); font-weight: 700; text-decoration: none;">Privacy Policy</a> to understand what data we collect, how it is used, and how to raise a privacy concern.
             </div>
         </details>
-
     </div>
-
 </div>
+
+<!-- NEW: FOOTER -->
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <h3>Protect Your Vote</h3>
+            <p>Independent public evidence platform supporting transparency through polling-unit result evidence.</p>
+        </div>
+        
+        <div class="footer-links">
+            <h4>Links</h4>
+            <ul>
+                <li><a href="#methodology">Methodology & FAQs</a></li>
+                <li><a href="#" onclick="openModal('privacy-modal'); return false;">Privacy Policy</a></li>
+                <li><a href="#" onclick="openModal('terms-modal'); return false;">Terms of Use</a></li>
+                <li><a href="mailto:contact@protectyourvote.org">Contact</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-legal">
+            <p>Independent platform. Estimates are not official election results and do not replace the legally designated electoral process.</p>
+            <p class="copyright">&copy; 2026 Protect Your Vote. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- NEW: COOKIE BANNER -->
+<div id="cookie-banner" class="cookie-banner">
+    <p>We use cookies (and local storage) to manage your preferences and ensure the platform runs securely. Read our <a href="#" onclick="openModal('privacy-modal'); return false;" style="color: var(--accent-green); font-weight: 700; text-decoration: underline;">Privacy Policy</a>.</p>
+    <div class="cookie-buttons">
+        <button class="btn-cookie btn-decline" onclick="handleCookies('declined')">Decline</button>
+        <button class="btn-cookie btn-accept" onclick="handleCookies('accepted')">Accept</button>
+    </div>
+</div>
+
+<!-- NEW: PRIVACY POLICY MODAL -->
+<dialog id="privacy-modal" class="modal">
+    <div class="modal-header">
+        <h2>Privacy Policy</h2>
+        <button class="close-btn" onclick="closeModal('privacy-modal')">&times;</button>
+    </div>
+    <div class="modal-content">
+        <p><strong>Last Updated: October 2026</strong></p>
+        <p>This Privacy Policy explains how Protect Your Vote ("we", "us", or "our") collects, uses, and protects your personal data when you use our platform. We are committed to complying with data protection laws, including the GDPR.</p>
+        
+        <h3>1. Data We Collect</h3>
+        <p>We are a civic evidence platform. We only collect the minimum data required to verify election results:</p>
+        <ul>
+            <li><strong>Submission Data:</strong> Photographs of EC8A forms and polling unit codes.</li>
+            <li><strong>Communications:</strong> Your WhatsApp number (for submitting evidence).</li>
+            <li><strong>Technical Data:</strong> Essential cookies/local storage to manage site preferences.</li>
+        </ul>
+
+        <h3>2. How We Use Your Data</h3>
+        <p>We use the data solely to verify, aggregate, and display polling unit results on our public dashboard. We do <strong>not</strong> sell your data to third parties, nor do we use it for targeted advertising.</p>
+
+        <h3>3. Data Retention and Security</h3>
+        <p>We implement strict security measures to protect your submissions. All evidence is reviewed manually. To protect the privacy of our citizen volunteers, we anonymize submitter information before publishing dashboard figures.</p>
+
+        <h3>4. Your Rights (GDPR)</h3>
+        <p>If you are in the European Economic Area (or other jurisdictions with similar laws), you have the right to:</p>
+        <ul>
+            <li>Request access to the data we hold about you.</li>
+            <li>Request the deletion of your personal data (e.g., your WhatsApp number).</li>
+            <li>Object to or restrict certain processing.</li>
+        </ul>
+        <p>To exercise these rights, please contact us at <strong>privacy@protectyourvote.org</strong>. We will respond within 30 days.</p>
+    </div>
+</dialog>
+
+<!-- NEW: TERMS OF USE MODAL -->
+<dialog id="terms-modal" class="modal">
+    <div class="modal-header">
+        <h2>Terms of Use</h2>
+        <button class="close-btn" onclick="closeModal('terms-modal')">&times;</button>
+    </div>
+    <div class="modal-content">
+        <p><strong>Last Updated: October 2026</strong></p>
+        
+        <h3>1. Acceptance of Terms</h3>
+        <p>By accessing this platform, you agree to these Terms of Use. If you do not agree, please do not use the site.</p>
+        
+        <h3>2. Nature of the Platform</h3>
+        <p>Protect Your Vote is an independent, non-partisan citizen platform. <strong>We are not INEC.</strong> All figures displayed are estimates based on public submissions and do not constitute legally binding election results.</p>
+        
+        <h3>3. User Submissions</h3>
+        <p>By submitting evidence (EC8A forms), you affirm that:</p>
+        <ul>
+            <li>The image is authentic, unaltered, and accurately reflects the polling unit count.</li>
+            <li>You have the right to share the image.</li>
+            <li>You will not submit false, misleading, or manipulated data.</li>
+        </ul>
+        <p>We reserve the right to discard or reject any submission that appears manipulated or fraudulent.</p>
+
+        <h3>4. Limitation of Liability</h3>
+        <p>The platform is provided "as is". We make no warranties regarding the accuracy or completeness of the data. In no event shall Protect Your Vote be liable for any damages arising from the use of or reliance on this platform.</p>
+    </div>
+</dialog>
 
 <script src="app.js?v=8"></script>
 
-<!-- Fallback Script to ensure exclusive accordion behavior on older browsers -->
+<!-- Custom Scripts for FAQ, Modals, and Cookies -->
 <script>
+    // 1. Exclusive Accordion Fallback
     document.addEventListener('DOMContentLoaded', () => {
         const faqItems = document.querySelectorAll('.faq-item');
         faqItems.forEach((targetDetail) => {
@@ -664,6 +808,39 @@
                 }
             });
         });
+    });
+
+    // 2. Modal Controls
+    function openModal(id) {
+        document.getElementById(id).showModal();
+    }
+    function closeModal(id) {
+        document.getElementById(id).close();
+    }
+    // Close modal when clicking outside content
+    document.querySelectorAll('dialog').forEach(dialog => {
+        dialog.addEventListener('click', (e) => {
+            const rect = dialog.getBoundingClientRect();
+            const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+                rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+            if (!isInDialog) dialog.close();
+        });
+    });
+
+    // 3. Cookie Banner Logic
+    function handleCookies(choice) {
+        localStorage.setItem('cookieConsent', choice);
+        document.getElementById('cookie-banner').classList.remove('show');
+    }
+
+    // Check if user already chose
+    window.addEventListener('load', () => {
+        if (!localStorage.getItem('cookieConsent')) {
+            // Show banner after a slight delay for smooth animation
+            setTimeout(() => {
+                document.getElementById('cookie-banner').classList.add('show');
+            }, 1000);
+        }
     });
 </script>
 </body>
