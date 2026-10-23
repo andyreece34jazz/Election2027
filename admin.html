@@ -3,22 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campaign Monitoring Dashboard</title>
+    <title>Campaign Monitoring & Verification</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        body { padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { padding: 10px; border: 1px solid var(--line); text-align: left; }
+        body { padding: 20px; font-family: 'Inter', sans-serif; background: #F4F5F7; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; background: white; }
+        th, td { padding: 12px; border: 1px solid #DDE4DF; text-align: left; }
         th { background: #f0f2f6; font-weight: 600; }
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
+        
+        /* Button Styles */
+        .btn-manage { background: #0A192F; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        .btn-manage:hover { background: #1f3a5f; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 24px; border-radius: 8px; width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #DDE4DF; padding-bottom: 12px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #0A192F; }
+        
+        /* Inner Table */
+        .inner-table th, .inner-table td { padding: 8px; font-size: 13px; }
+        .btn-edit { background: #F59E0B; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 4px; }
+        .btn-recall { background: #EF4444; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        
+        /* Edit Form */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .form-group input { width: 100%; padding: 8px; border: 1px solid #DDE4DF; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Campaign Monitoring</h1>
-    <p>Live data pulled from Supabase. <a href="index.html">Return to Public Site</a></p>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Campaign Monitoring</h1>
+            <p>Live data pulled from Supabase. <a href="index.html">Return to Public Site</a></p>
+        </div>
+    </div>
     
     <div style="overflow-x: auto;">
         <table id="data-table">
@@ -31,58 +55,249 @@
                     <th>Pledge %</th>
                     <th>Images Received</th>
                     <th>Verified</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="table-body">
-                <tr><td colspan="7">Loading data...</td></tr>
+                <tr><td colspan="8">Loading data...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<script>
-const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
-
-async function loadDashboard() {
-    try {
-        // Fetch from the view we created in SQL
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=pledged_pus.desc`, {
-            headers: {
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-            }
-        });
-        const data = await res.json();
+<!-- LGA Management Modal -->
+<div id="manageModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Manage Records: LGA Name</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
         
-        const tbody = document.getElementById("table-body");
-        tbody.innerHTML = "";
+        <div id="modal-view-list">
+            <p style="font-size: 13px; color: #4B5563; margin-bottom: 12px;">Select a polling unit to edit or recall its record.</p>
+            <div style="overflow-x: auto;">
+                <table class="inner-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>PU Code</th>
+                            <th>PU Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pu-list-body">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        data.forEach(row => {
-            const tr = document.createElement("tr");
-            // Highlight rows where pledges are high but no images have come in yet
-            if (row.pledged_pus > 5 && row.images_received === 0) {
-                tr.className = "highlight";
-            }
+        <!-- Edit Form (Hidden by default) -->
+        <div id="modal-view-edit" style="display: none;">
+            <h3 id="edit-pu-title" style="margin-bottom: 16px; color: #087443;"></h3>
+            <div class="form-grid">
+                <div class="form-group"><label>Registered Voters</label><input type="number" id="edit-registered"></div>
+                <div class="form-group"><label>Accredited Voters</label><input type="number" id="edit-accredited"></div>
+                <div class="form-group"><label>Valid Votes</label><input type="number" id="edit-valid"></div>
+                <div class="form-group"><label>Rejected Votes</label><input type="number" id="edit-rejected"></div>
+                <div class="form-group"><label>APC</label><input type="number" id="edit-apc"></div>
+                <div class="form-group"><label>PDP</label><input type="number" id="edit-pdp"></div>
+                <div class="form-group"><label>ADC</label><input type="number" id="edit-adc"></div>
+                <div class="form-group"><label>NDC</label><input type="number" id="edit-ndc"></div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 16px;">
+                <button style="background: #E5E7EB; color: #0A192F; padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1;" onclick="backToList()">Cancel</button>
+                <button style="background: #087443; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1;" onclick="saveEdit()">Save Correction</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
+    
+    const headers = {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
+    };
+
+    let currentRecordId = null;
+    let currentState = "";
+    let currentLga = "";
+
+    async function loadDashboard() {
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=pledged_pus.desc`, { headers });
+            const data = await res.json();
             
-            tr.innerHTML = `
-                <td>${row.state_name}</td>
-                <td>${row.lga_name}</td>
-                <td>${row.total_pus}</td>
-                <td><strong>${row.pledged_pus}</strong></td>
-                <td>${row.pledge_coverage_pct}%</td>
-                <td>${row.images_received}</td>
-                <td>${row.results_verified}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    } catch (err) {
-        console.error(err);
-        document.getElementById("table-body").innerHTML = `<tr><td colspan="7">Error loading data. Did you create the SQL view?</td></tr>`;
-    }
-}
+            const tbody = document.getElementById("table-body");
+            tbody.innerHTML = "";
 
-loadDashboard();
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                if (row.pledged_pus > 5 && row.images_received === 0) {
+                    tr.className = "highlight";
+                }
+                
+                tr.innerHTML = `
+                    <td>${row.state_name}</td>
+                    <td>${row.lga_name}</td>
+                    <td>${row.total_pus}</td>
+                    <td><strong>${row.pledged_pus}</strong></td>
+                    <td>${row.pledge_coverage_pct}%</td>
+                    <td>${row.images_received}</td>
+                    <td>${row.results_verified}</td>
+                    <td><button class="btn-manage" onclick="openManageModal('${row.state_name}', '${row.lga_name}')">Manage Records</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+            document.getElementById("table-body").innerHTML = `<tr><td colspan="8">Error loading data. Did you create the SQL view?</td></tr>`;
+        }
+    }
+
+    // 1. Open Modal & Fetch Polling Units for LGA
+    async function openManageModal(state, lga) {
+        currentState = state;
+        currentLga = lga;
+        
+        document.getElementById("modalTitle").innerText = `Manage Records: ${lga}, ${state}`;
+        document.getElementById("modal-view-list").style.display = "block";
+        document.getElementById("modal-view-edit").style.display = "none";
+        document.getElementById("manageModal").style.display = "flex";
+        
+        const tbody = document.getElementById("pu-list-body");
+        tbody.innerHTML = `<tr><td colspan="4">Loading polling units...</td></tr>`;
+
+        try {
+            // Fetch polling units and join with publishable_results
+            const url = `${SUPABASE_URL}/rest/v1/polling_units?state_name=eq.${encodeURIComponent(state)}&lga_name=eq.${encodeURIComponent(lga)}&select=id,full_code,pu_name,publishable_results(*)`;
+            const res = await fetch(url, { headers });
+            const data = await res.json();
+
+            tbody.innerHTML = "";
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4">No polling units found for this LGA.</td></tr>`;
+                return;
+            }
+
+            data.forEach(pu => {
+                const record = pu.publishable_results && pu.publishable_results.length > 0 ? pu.publishable_results[0] : null;
+                
+                let statusBadge = `<span style="color: #9CA3AF;">No Data</span>`;
+                let actions = `<span style="color: #9CA3AF;">-</span>`;
+                
+                if (record) {
+                    if (record.is_valid === false) {
+                        statusBadge = `<span style="color: #EF4444; font-weight: bold;">Recalled</span>`;
+                    } else {
+                        statusBadge = `<span style="color: #10B981; font-weight: bold;">Published</span>`;
+                        actions = `
+                            <button class="btn-edit" onclick='editRecord(${JSON.stringify(record).replace(/'/g, "&#39;")}, "${pu.full_code}")'>Edit</button>
+                            <button class="btn-recall" onclick="recallRecord('${record.id}')">Recall</button>
+                        `;
+                    }
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${pu.full_code}</strong></td>
+                    <td>${pu.pu_name}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actions}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="4">Error loading polling units.</td></tr>`;
+        }
+    }
+
+    // 2. Switch to Edit View
+    function editRecord(record, puCode) {
+        currentRecordId = record.id;
+        document.getElementById("edit-pu-title").innerText = `Correcting: ${puCode}`;
+        
+        document.getElementById("edit-registered").value = record.registered_voters_value ?? "";
+        document.getElementById("edit-accredited").value = record.accredited_voters_value ?? "";
+        document.getElementById("edit-valid").value = record.valid_votes_value ?? "";
+        document.getElementById("edit-rejected").value = record.rejected_votes_value ?? "";
+        document.getElementById("edit-apc").value = record.apc_value ?? "";
+        document.getElementById("edit-pdp").value = record.pdp_value ?? "";
+        document.getElementById("edit-adc").value = record.adc_value ?? "";
+        document.getElementById("edit-ndc").value = record.ndc_value ?? "";
+
+        document.getElementById("modal-view-list").style.display = "none";
+        document.getElementById("modal-view-edit").style.display = "block";
+    }
+
+    // 3. Go Back to List
+    function backToList() {
+        document.getElementById("modal-view-edit").style.display = "none";
+        document.getElementById("modal-view-list").style.display = "block";
+    }
+
+    // 4. Save Edit
+    async function saveEdit() {
+        if (!currentRecordId) return;
+
+        const payload = {
+            registered_voters_value: Number(document.getElementById("edit-registered").value) || 0,
+            accredited_voters_value: Number(document.getElementById("edit-accredited").value) || 0,
+            valid_votes_value: Number(document.getElementById("edit-valid").value) || 0,
+            rejected_votes_value: Number(document.getElementById("edit-rejected").value) || 0,
+            apc_value: Number(document.getElementById("edit-apc").value) || 0,
+            pdp_value: Number(document.getElementById("edit-pdp").value) || 0,
+            adc_value: Number(document.getElementById("edit-adc").value) || 0,
+            ndc_value: Number(document.getElementById("edit-ndc").value) || 0
+        };
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${currentRecordId}`, {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("Record corrected successfully! The dashboard will reflect these changes.");
+            backToList();
+            openManageModal(currentState, currentLga); // Refresh the list
+        } else {
+            alert("Error updating record. Check console.");
+            console.error(await res.text());
+        }
+    }
+
+    // 5. Recall Record
+    async function recallRecord(recordId) {
+        if (!confirm("Are you sure you want to recall this record? It will be hidden from the public dashboard.")) return;
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${recordId}`, {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify({ is_valid: false })
+        });
+
+        if (res.ok) {
+            alert("Record recalled.");
+            openManageModal(currentState, currentLga); // Refresh the list
+        } else {
+            alert("Error recalling record. Ensure 'is_valid' column exists.");
+        }
+    }
+
+    function closeModal() {
+        document.getElementById("manageModal").style.display = "none";
+    }
+
+    // Init
+    loadDashboard();
 </script>
 </body>
 </html>
