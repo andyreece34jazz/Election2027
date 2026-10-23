@@ -2,10 +2,9 @@ const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
 
 let allLgasData = []; 
-let allStatesData = []; // Added to store state-level totals
-let nationalTotalPUs = 176846;
+let allStatesData = []; 
+let nationalTotalPUs = 176846; 
 
-// Helpers
 const fmt = (num) => (num === null || num === undefined) ? "—" : Number(num).toLocaleString("en-GB");
 const toTitleCase = (str) => {
     if (!str) return "";
@@ -23,7 +22,6 @@ async function fetchSupabase(view) {
     return response.json();
 }
 
-// Global function triggered by HTML onchange
 window.updateState = function() {
     try {
         const stateSelect = document.getElementById("state-select");
@@ -41,11 +39,9 @@ window.updateState = function() {
             return;
         }
 
-        // Update Title immediately
         dynamicTitle.textContent = `${toTitleCase(stateName)} Estimates`;
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">Loading data...</td></tr>';
 
-        // Filter locally (case insensitive)
         const lgaData = allLgasData.filter(lga => 
             (lga.state_name || "").toLowerCase() === stateName.toLowerCase()
         );
@@ -53,7 +49,6 @@ window.updateState = function() {
         lgaSelect.innerHTML = '<option value="">All LGAs</option>';
         lgaSelect.disabled = false;
         
-        // Populate dropdown
         lgaData.sort((a,b) => (a.lga_name || "").localeCompare(b.lga_name || ""));
         lgaData.forEach(lga => {
             const opt = document.createElement("option");
@@ -62,11 +57,9 @@ window.updateState = function() {
             lgaSelect.appendChild(opt);
         });
 
-        // Find the true state total from the state results array
         const stateInfo = allStatesData.find(s => (s.state_name || "").toLowerCase() === stateName.toLowerCase());
         const trueStateTotal = stateInfo ? (stateInfo.total_polling_units || 0) : 0;
 
-        // Pass the true state total to the render function
         renderMetrics(lgaData, trueStateTotal);
 
     } catch (err) {
@@ -75,7 +68,6 @@ window.updateState = function() {
     }
 };
 
-// Global function triggered by HTML onchange
 window.updateLga = function() {
     try {
         const stateSelect = document.getElementById("state-select");
@@ -90,14 +82,20 @@ window.updateLga = function() {
             (selectedLga === "" || lga.lga_name === selectedLga)
         );
         
-        // If a specific LGA is selected, we calculate the total based on that LGA alone (null override)
-        renderMetrics(lgaData, null);
+        // FIX: If "All LGAs" is selected, revert to the true state total
+        if (selectedLga === "") {
+            const stateInfo = allStatesData.find(s => (s.state_name || "").toLowerCase() === stateName.toLowerCase());
+            const trueStateTotal = stateInfo ? (stateInfo.total_polling_units || 0) : 0;
+            renderMetrics(lgaData, trueStateTotal);
+        } else {
+            // If a specific LGA is selected, calculate the total based on that LGA alone
+            renderMetrics(lgaData, null);
+        }
     } catch (err) {
         console.error("LGA change error:", err);
     }
 };
 
-// Initialize Dashboard
 async function init() {
     try {
         const [nationalData, stateData, lgaData] = await Promise.all([
@@ -107,13 +105,13 @@ async function init() {
         ]);
 
         allLgasData = lgaData || [];
-        allStatesData = stateData || []; // Store states globally
+        allStatesData = stateData || []; 
 
         if (nationalData && nationalData.length > 0) {
             const result = nationalData[0];
-            if (stateData && stateData.length > 0) {
-                const sum = stateData.reduce((acc, curr) => acc + (curr.total_polling_units || 0), 0);
-                if (sum > 0) nationalTotalPUs = sum;
+            
+            if (result.total_polling_units) {
+                nationalTotalPUs = result.total_polling_units;
             }
 
             const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
@@ -169,7 +167,6 @@ function renderMetrics(lgas, stateTotalOverride = null) {
     metricsBody.innerHTML = lgas.map(r => {
         totalVerifiedPUs += (r.verified_polling_units || 0);
         
-        // If no override is provided, sum the LGA totals (for specific LGA views)
         if (stateTotalOverride === null) {
             totalStatePUs += (r.total_polling_units || 0);
         }
@@ -208,5 +205,4 @@ function updateSummaryBlock(verified, total) {
     estProgressFill.style.width = `${Math.min(percentage, 100)}%`;
 }
 
-// Run initialization
 init();
