@@ -336,10 +336,13 @@ async function checkCoverage() {
 
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges?polling_unit_id=eq.${selectedPUData.id}&select=phone_number`, { headers });
+        
+        // FIX: Ensure the response is actually an array before counting
         const pledges = await res.json();
+        const isArray = Array.isArray(pledges);
+        const pledgeCount = (isArray && pledges.length > 0) ? pledges.length : 0;
 
         resultArea.style.display = "block";
-        const pledgeCount = pledges ? pledges.length : 0;
 
         let titleText = "";
         let headerText = "";
