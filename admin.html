@@ -42,6 +42,12 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; display: none; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
         .form-group input { width: 100%; padding: 8px; border: 1px solid #DDE4DF; border-radius: 4px; }
+
+        /* NEW: Toast Notification Styles */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #087443; color: white; padding: 14px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .toast.error { background: #EF4444; }
+        .toast.show { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
@@ -136,6 +142,9 @@
     </div>
 </div>
 
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
 <script>
     const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
@@ -149,6 +158,24 @@
     let currentRecordId = null;
     let currentState = "";
     let currentLga = "";
+
+    // --- TOAST NOTIFICATION HELPER ---
+    function showToast(message, isError = false) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = "toast" + (isError ? " error" : "");
+        toast.innerHTML = (isError ? "❌ " : "✅ ") + message;
+        container.appendChild(toast);
+        
+        // Trigger animation
+        setTimeout(() => toast.classList.add("show"), 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300); // Wait for fade out
+        }, 3000);
+    }
 
     // 1. Load Main Dashboard
     async function loadDashboard() {
@@ -208,10 +235,9 @@
     // 3. Search for a Specific PU
     async function searchPU() {
         const code = document.getElementById("searchPUCode").value.trim();
-        if (!code) return alert("Please enter a polling unit code.");
+        if (!code) return showToast("Please enter a polling unit code.", true);
 
         try {
-            // Fetch the polling unit ID
             const puRes = await fetch(`${SUPABASE_URL}/rest/v1/polling_units?full_code=eq.${encodeURIComponent(code)}&select=id,pu_name,state_name,lga_name`, { headers });
             
             if (!puRes.ok) {
@@ -222,24 +248,22 @@
             const puData = await puRes.json();
             
             if (puData.length === 0) {
-                return alert("Polling unit code not found in the database.");
+                return showToast("Polling unit code not found in the database.", true);
             }
 
             const pu = puData[0];
             
-            // Verify it belongs to the LGA we opened (Using toLowerCase for safe comparison)
             const puState = (pu.state_name || "").toLowerCase().trim();
             const puLga = (pu.lga_name || "").toLowerCase().trim();
             const currState = (currentState || "").toLowerCase().trim();
             const currLga = (currentLga || "").toLowerCase().trim();
 
             if (puState !== currState || puLga !== currLga) {
-                return alert(`Warning: This PU (${code}) belongs to ${pu.lga_name}, ${pu.state_name}, not ${currentLga}.`);
+                return showToast(`Warning: This PU belongs to ${pu.lga_name}, ${pu.state_name}.`, true);
             }
 
             document.getElementById("result-pu-title").innerText = `${pu.pu_name} (${code})`;
 
-            // Fetch the record (From the view so we only see valid records)
             const resRes = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?polling_unit_id=eq.${pu.id}&select=*`, { headers });
             
             if (!resRes.ok) {
@@ -250,7 +274,7 @@
             const resData = await resRes.json();
 
             if (resData.length === 0) {
-                alert("No submitted results found for this polling unit.");
+                showToast("No valid result found for this polling unit (it may be recalled).", true);
                 document.getElementById("search-result-box").style.display = "none";
                 return;
             }
@@ -258,7 +282,6 @@
             const record = resData[0];
             currentRecordId = record.id;
 
-            // Populate UI
             document.getElementById("val-registered").innerText = record.registered_voters_value ?? "—";
             document.getElementById("val-accredited").innerText = record.accredited_voters_value ?? "—";
             document.getElementById("val-valid").innerText = record.valid_votes_value ?? "—";
@@ -271,13 +294,12 @@
             document.getElementById("search-result-box").style.display = "block";
         } catch (err) {
             console.error(err);
-            alert("Error searching for polling unit: " + err.message);
+            showToast("Error searching: " + err.message, true);
         }
     }
 
     // 4. Show Edit Form
     function showEditForm() {
-        // Populate inputs from the search result view
         document.getElementById("edit-pu-title").innerText = document.getElementById("result-pu-title").innerText;
         document.getElementById("edit-registered").value = document.getElementById("val-registered").innerText;
         document.getElementById("edit-accredited").value = document.getElementById("val-accredited").innerText;
@@ -301,6 +323,12 @@
     async function saveEdit() {
         if (!currentRecordId) return;
 
+        // Change button text to show loading state
+        const btn = document.querySelector('button[onclick="saveEdit()"]');
+        const originalText = btn.innerText;
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
         const payload = {
             registered_voters_value: Number(document.getElementById("edit-registered").value) || 0,
             accredited_voters_value: Number(document.getElementById("edit-accredited").value) || 0,
@@ -312,45 +340,66 @@
             ndc_value: Number(document.getElementById("edit-ndc").value) || 0
         };
 
-        // FIXED: Pointing to the base table 'result_extractions'
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
-            method: "PATCH",
-            headers: headers,
-            body: JSON.stringify(payload)
-        });
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
+                method: "PATCH",
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
 
-        if (res.ok) {
-            alert("Record corrected successfully!");
-            backToSearch();
-            searchPU(); // Refresh the searched record
-            loadDashboard(); // Refresh background totals
-        } else {
-            const errText = await res.text();
-            alert("Error updating record. Check console.");
-            console.error("Update failed:", errText);
+            if (res.ok) {
+                showToast("Record corrected successfully!");
+                backToSearch();
+                searchPU(); // Refresh the searched record
+                loadDashboard(); // Refresh background totals
+            } else {
+                const errText = await res.text();
+                console.error("Update failed:", errText);
+                showToast("Error updating record.", true);
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Network error. Please try again.", true);
+        } finally {
+            // Restore button
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
     }
 
     // 6. Recall Record
     async function recallRecord() {
         if (!currentRecordId) return;
+        
         if (!confirm("Are you sure you want to recall this record? It will be hidden from the public dashboard.")) return;
 
-        // FIXED: Pointing to the base table 'result_extractions'
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
-            method: "PATCH",
-            headers: headers,
-            body: JSON.stringify({ is_valid: false })
-        });
+        const btn = document.querySelector('.btn-recall');
+        const originalText = btn.innerText;
+        btn.innerText = "Recalling...";
+        btn.disabled = true;
 
-        if (res.ok) {
-            alert("Record recalled.");
-            closeModal();
-            loadDashboard();
-        } else {
-            const errText = await res.text();
-            alert("Error recalling record. Ensure 'is_valid' column exists in your table.");
-            console.error("Recall failed:", errText);
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
+                method: "PATCH",
+                headers: headers,
+                body: JSON.stringify({ is_valid: false })
+            });
+
+            if (res.ok) {
+                showToast("Record recalled and hidden from public.");
+                closeModal();
+                loadDashboard();
+            } else {
+                const errText = await res.text();
+                console.error("Recall failed:", errText);
+                showToast("Error recalling record.", true);
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Network error. Please try again.", true);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
     }
 
