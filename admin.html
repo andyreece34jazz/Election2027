@@ -9,7 +9,11 @@
         body { padding: 20px; font-family: 'Inter', sans-serif; background: #F4F5F7; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; background: white; }
         th, td { padding: 12px; border: 1px solid #DDE4DF; text-align: left; }
-        th { background: #f0f2f6; font-weight: 600; }
+        
+        /* Clickable headers for sorting */
+        th { background: #f0f2f6; font-weight: 600; cursor: pointer; user-select: none; transition: background 0.15s; }
+        th:hover { background: #e5e7eb; }
+        
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
@@ -168,13 +172,13 @@
         <table id="data-table">
             <thead>
                 <tr>
-                    <th>State</th>
-                    <th>LGA</th>
-                    <th>Total PUs</th>
-                    <th>Pledged PUs</th>
-                    <th>Pledge %</th>
-                    <th>Images Received</th>
-                    <th>Verified</th>
+                    <th onclick="sortTable('state_name', false)">State</th>
+                    <th onclick="sortTable('lga_name', false)">LGA</th>
+                    <th onclick="sortTable('total_pus', true)">Total PUs</th>
+                    <th onclick="sortTable('pledged_pus', true)">Pledged PUs</th>
+                    <th onclick="sortTable('pledge_coverage_pct', true)">Pledge %</th>
+                    <th onclick="sortTable('images_received', true)">Images Received</th>
+                    <th onclick="sortTable('results_verified', true)">Verified</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -263,6 +267,10 @@
     let currentState = "";
     let currentLga = "";
     let globalDashboardData = []; 
+    
+    // Sorting state
+    let currentSortKey = 'state_name';
+    let currentSortAsc = true;
 
     // --- TOAST NOTIFICATION HELPER ---
     function showToast(message, isError = false) {
@@ -326,7 +334,9 @@
             
             globalDashboardData = await res.json();
             populateStateFilter(globalDashboardData);
-            renderTable(globalDashboardData);
+            
+            // Initial sort
+            sortTable(currentSortKey, false); 
 
         } catch (err) {
             console.error(err);
@@ -360,7 +370,42 @@
         }
     }
 
-    // 4. Render Table (and calculate summary totals)
+    // 4. Sort Table Logic
+    function sortTable(key, isNumeric) {
+        if (currentSortKey === key) {
+            currentSortAsc = !currentSortAsc;
+        } else {
+            currentSortKey = key;
+            currentSortAsc = true;
+        }
+
+        globalDashboardData.sort((a, b) => {
+            let valA = isNumeric ? (Number(a[key]) || 0) : String(a[key] || "").toLowerCase();
+            let valB = isNumeric ? (Number(b[key]) || 0) : String(b[key] || "").toLowerCase();
+
+            if (valA < valB) return currentSortAsc ? -1 : 1;
+            if (valA > valB) return currentSortAsc ? 1 : -1;
+            return 0;
+        });
+
+        // Update headers with arrows
+        const cols = ['state_name', 'lga_name', 'total_pus', 'pledged_pus', 'pledge_coverage_pct', 'images_received', 'results_verified'];
+        const names = ['State', 'LGA', 'Total PUs', 'Pledged PUs', 'Pledge %', 'Images Received', 'Verified'];
+        
+        cols.forEach((col, i) => {
+            const th = document.querySelectorAll('th')[i];
+            if (!th) return;
+            let text = names[i];
+            if (col === currentSortKey) {
+                text += currentSortAsc ? ' ▲' : ' ▼';
+            }
+            th.innerText = text;
+        });
+
+        filterTable();
+    }
+
+    // 5. Render Table (and calculate summary totals)
     function renderTable(data) {
         const tbody = document.getElementById("table-body");
         tbody.innerHTML = "";
@@ -378,7 +423,6 @@
         }
 
         data.forEach(row => {
-            // Calculate totals
             totalPledged += Number(row.pledged_pus) || 0;
             totalImages += Number(row.images_received) || 0;
             totalVerified += Number(row.results_verified) || 0;
@@ -401,13 +445,12 @@
             tbody.appendChild(tr);
         });
 
-        // Update Summary Totals UI
         document.getElementById("sum-pledged").innerText = totalPledged;
         document.getElementById("sum-images").innerText = totalImages;
         document.getElementById("sum-verified").innerText = totalVerified;
     }
 
-    // 5. Open Modal
+    // 6. Open Modal
     function openManageModal(state, lga) {
         currentState = state;
         currentLga = lga;
@@ -420,7 +463,7 @@
         document.getElementById("manageModal").style.display = "flex";
     }
 
-    // 6. Search for a Specific PU
+    // 7. Search for a Specific PU
     async function searchPU() {
         const code = document.getElementById("searchPUCode").value.trim();
         if (!code) return showToast("Please enter a polling unit code.", true);
@@ -485,7 +528,7 @@
         }
     }
 
-    // 7. Show Edit Form
+    // 8. Show Edit Form
     function showEditForm() {
         document.getElementById("edit-pu-title").innerText = document.getElementById("result-pu-title").innerText;
         document.getElementById("edit-registered").value = document.getElementById("val-registered").innerText;
@@ -506,7 +549,7 @@
         document.getElementById("modal-view-search").style.display = "block";
     }
 
-    // 8. Save Edit
+    // 9. Save Edit
     async function saveEdit() {
         if (!currentRecordId) return;
 
@@ -552,7 +595,7 @@
         }
     }
 
-    // 9. Recall Record
+    // 10. Recall Record
     async function recallRecord() {
         if (!currentRecordId) return;
         
