@@ -19,21 +19,29 @@
 
         /* Modal Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: white; padding: 24px; border-radius: 8px; width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: white; padding: 24px; border-radius: 8px; width: 95%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #DDE4DF; padding-bottom: 12px; }
         .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #0A192F; }
         
-        /* Inner Table (Polling Units) */
-        .inner-table th, .inner-table td { padding: 8px; font-size: 13px; }
-        .btn-edit { background: #F59E0B; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 4px; }
-        .btn-recall { background: #EF4444; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        /* Search Bar inside Modal */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-bar input { flex: 1; padding: 10px; border: 1px solid #DDE4DF; border-radius: 6px; font-size: 14px; }
+        .search-bar button { background: #087443; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* Record Details */
+        .record-box { border: 1px solid #DDE4DF; border-radius: 8px; padding: 16px; background: #F9FAFB; margin-bottom: 16px; display: none; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #E5E7EB; font-size: 14px; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-weight: 600; color: #4B5563; }
+        .detail-value { font-weight: 700; color: #0A192F; }
+        
+        .btn-edit { background: #F59E0B; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; margin-bottom: 8px; }
+        .btn-recall { background: #EF4444; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; }
         
         /* Edit Form */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; display: none; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
         .form-group input { width: 100%; padding: 8px; border: 1px solid #DDE4DF; border-radius: 4px; }
-        
-        .error-box { color: #b91c1c; background: #fee2e2; padding: 12px; border-radius: 6px; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -75,30 +83,42 @@
             <button class="close-btn" onclick="closeModal()">&times;</button>
         </div>
         
-        <!-- View 1: List of Polling Units -->
-        <div id="modal-view-list">
-            <p style="font-size: 13px; color: #4B5563; margin-bottom: 12px;">Select a polling unit to edit or recall its record.</p>
-            <div style="overflow-x: auto;">
-                <table class="inner-table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>PU Code</th>
-                            <th>PU Name</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pu-list-body">
-                        <!-- Populated via JS -->
-                    </tbody>
-                </table>
+        <!-- View 1: Search for PU -->
+        <div id="modal-view-search">
+            <p style="font-size: 13px; color: #4B5563; margin-bottom: 12px;">Enter a specific Polling Unit Code to view, edit, or recall its record.</p>
+            
+            <div class="search-bar">
+                <input type="text" id="searchPUCode" placeholder="e.g., 13/15/06/008">
+                <button onclick="searchPU()">Search</button>
+            </div>
+
+            <!-- Search Results Box -->
+            <div id="search-result-box" class="record-box">
+                <h4 id="result-pu-title" style="margin-bottom: 12px; color: #087443;"></h4>
+                
+                <div class="detail-row"><span class="detail-label">Registered Voters</span><span class="detail-value" id="val-registered">--</span></div>
+                <div class="detail-row"><span class="detail-label">Accredited Voters</span><span class="detail-value" id="val-accredited">--</span></div>
+                <div class="detail-row"><span class="detail-label">Valid Votes</span><span class="detail-value" id="val-valid">--</span></div>
+                <div class="detail-row"><span class="detail-label">Rejected Votes</span><span class="detail-value" id="val-rejected">--</span></div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+                    <div class="detail-row"><span class="detail-label">APC</span><span class="detail-value" id="val-apc">--</span></div>
+                    <div class="detail-row"><span class="detail-label">PDP</span><span class="detail-value" id="val-pdp">--</span></div>
+                    <div class="detail-row"><span class="detail-label">ADC</span><span class="detail-value" id="val-adc">--</span></div>
+                    <div class="detail-row"><span class="detail-label">NDC</span><span class="detail-value" id="val-ndc">--</span></div>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <button class="btn-edit" onclick="showEditForm()">Edit / Correct Figures</button>
+                    <button class="btn-recall" onclick="recallRecord()">Recall Record (Mark Invalid)</button>
+                </div>
             </div>
         </div>
 
         <!-- View 2: Edit Form (Hidden by default) -->
         <div id="modal-view-edit" style="display: none;">
             <h3 id="edit-pu-title" style="margin-bottom: 16px; color: #087443;"></h3>
-            <div class="form-grid">
+            <div class="form-grid" id="edit-form-grid" style="display: grid;">
                 <div class="form-group"><label>Registered Voters</label><input type="number" id="edit-registered"></div>
                 <div class="form-group"><label>Accredited Voters</label><input type="number" id="edit-accredited"></div>
                 <div class="form-group"><label>Valid Votes</label><input type="number" id="edit-valid"></div>
@@ -109,7 +129,7 @@
                 <div class="form-group"><label>NDC</label><input type="number" id="edit-ndc"></div>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 16px;">
-                <button style="background: #E5E7EB; color: #0A192F; padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1;" onclick="backToList()">Cancel</button>
+                <button style="background: #E5E7EB; color: #0A192F; padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1;" onclick="backToSearch()">Cancel</button>
                 <button style="background: #087443; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1;" onclick="saveEdit()">Save Correction</button>
             </div>
         </div>
@@ -130,21 +150,15 @@
     let currentState = "";
     let currentLga = "";
 
-    // 1. Load the Main Monitoring Dashboard
+    // 1. Load Main Dashboard
     async function loadDashboard() {
         try {
             const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=pledged_pus.desc`, { headers });
-            
             if (!res.ok) throw new Error(`Supabase Error (${res.status})`);
             const data = await res.json();
             
             const tbody = document.getElementById("table-body");
             tbody.innerHTML = "";
-
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No data found.</td></tr>`;
-                return;
-            }
 
             data.forEach(row => {
                 const tr = document.createElement("tr");
@@ -166,97 +180,97 @@
             });
         } catch (err) {
             console.error(err);
-            document.getElementById("table-body").innerHTML = `
-                <tr><td colspan="8"><div class="error-box"><strong>Error loading data:</strong><br>${err.message}</div></td></tr>`;
+            document.getElementById("table-body").innerHTML = `<tr><td colspan="8">Error loading data.</td></tr>`;
         }
     }
 
-    // 2. Open Modal & Fetch Polling Units for specific LGA
-    async function openManageModal(state, lga) {
+    // 2. Open Modal
+    function openManageModal(state, lga) {
         currentState = state;
         currentLga = lga;
         
         document.getElementById("modalTitle").innerText = `Manage Records: ${lga}, ${state}`;
-        document.getElementById("modal-view-list").style.display = "block";
+        document.getElementById("modal-view-search").style.display = "block";
         document.getElementById("modal-view-edit").style.display = "none";
+        document.getElementById("search-result-box").style.display = "none";
+        document.getElementById("searchPUCode").value = "";
         document.getElementById("manageModal").style.display = "flex";
-        
-        const tbody = document.getElementById("pu-list-body");
-        tbody.innerHTML = `<tr><td colspan="4">Loading polling units...</td></tr>`;
+    }
+
+    // 3. Search for a Specific PU
+    async function searchPU() {
+        const code = document.getElementById("searchPUCode").value.trim();
+        if (!code) return alert("Please enter a polling unit code.");
 
         try {
-            // Fetch polling units and their associated result records
-            const url = `${SUPABASE_URL}/rest/v1/polling_units?state_name=eq.${encodeURIComponent(state)}&lga_name=eq.${encodeURIComponent(lga)}&select=id,full_code,pu_name,publishable_results(*)`;
-            const res = await fetch(url, { headers });
-            const data = await res.json();
-
-            tbody.innerHTML = "";
+            // Fetch the polling unit ID
+            const puRes = await fetch(`${SUPABASE_URL}/rest/v1/polling_units?full_code=eq.${encodeURIComponent(code)}&select=id,pu_name,state_name,lga_name`, { headers });
+            const puData = await puRes.json();
             
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4">No polling units found for this LGA.</td></tr>`;
+            if (puData.length === 0) return alert("Polling unit code not found.");
+
+            const pu = puData[0];
+            
+            // Verify it belongs to the LGA we opened
+            if (pu.state_name !== currentState || pu.lga_name !== currentLga) {
+                return alert(`Warning: This PU (${code}) belongs to ${pu.lga_name}, ${pu.state_name}, not ${currentLga}.`);
+            }
+
+            document.getElementById("result-pu-title").innerText = `${pu.pu_name} (${code})`;
+
+            // Fetch the record
+            const resRes = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?polling_unit_id=eq.${pu.id}&select=*`, { headers });
+            const resData = await resRes.json();
+
+            if (resData.length === 0) {
+                alert("No submitted results found for this polling unit.");
+                document.getElementById("search-result-box").style.display = "none";
                 return;
             }
 
-            data.forEach(pu => {
-                const record = pu.publishable_results && pu.publishable_results.length > 0 ? pu.publishable_results[0] : null;
-                
-                let statusBadge = `<span style="color: #9CA3AF;">No Data</span>`;
-                let actions = `<span style="color: #9CA3AF;">-</span>`;
-                
-                if (record) {
-                    // Note: If you successfully added 'is_valid', you can check: record.is_valid === false
-                    if (record.is_valid === false) {
-                        statusBadge = `<span style="color: #EF4444; font-weight: bold;">Recalled</span>`;
-                    } else {
-                        statusBadge = `<span style="color: #10B981; font-weight: bold;">Published</span>`;
-                        actions = `
-                            <button class="btn-edit" onclick='editRecord(${JSON.stringify(record).replace(/'/g, "&#39;")}, "${pu.full_code}")'>Edit</button>
-                            <button class="btn-recall" onclick="recallRecord('${record.id}')">Recall</button>
-                        `;
-                    }
-                }
+            const record = resData[0];
+            currentRecordId = record.id;
 
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td><strong>${pu.full_code}</strong></td>
-                    <td>${pu.pu_name}</td>
-                    <td>${statusBadge}</td>
-                    <td>${actions}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+            // Populate UI
+            document.getElementById("val-registered").innerText = record.registered_voters_value ?? "—";
+            document.getElementById("val-accredited").innerText = record.accredited_voters_value ?? "—";
+            document.getElementById("val-valid").innerText = record.valid_votes_value ?? "—";
+            document.getElementById("val-rejected").innerText = record.rejected_votes_value ?? "—";
+            document.getElementById("val-apc").innerText = record.apc_value ?? "—";
+            document.getElementById("val-pdp").innerText = record.pdp_value ?? "—";
+            document.getElementById("val-adc").innerText = record.adc_value ?? "—";
+            document.getElementById("val-ndc").innerText = record.ndc_value ?? "—";
 
+            document.getElementById("search-result-box").style.display = "block";
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="4">Error loading polling units.</td></tr>`;
+            alert("Error searching for polling unit.");
         }
     }
 
-    // 3. Switch to Edit Form
-    function editRecord(record, puCode) {
-        currentRecordId = record.id;
-        document.getElementById("edit-pu-title").innerText = `Correcting: ${puCode}`;
-        
-        document.getElementById("edit-registered").value = record.registered_voters_value ?? "";
-        document.getElementById("edit-accredited").value = record.accredited_voters_value ?? "";
-        document.getElementById("edit-valid").value = record.valid_votes_value ?? "";
-        document.getElementById("edit-rejected").value = record.rejected_votes_value ?? "";
-        document.getElementById("edit-apc").value = record.apc_value ?? "";
-        document.getElementById("edit-pdp").value = record.pdp_value ?? "";
-        document.getElementById("edit-adc").value = record.adc_value ?? "";
-        document.getElementById("edit-ndc").value = record.ndc_value ?? "";
+    // 4. Show Edit Form
+    function showEditForm() {
+        // Populate inputs from the search result view
+        document.getElementById("edit-pu-title").innerText = document.getElementById("result-pu-title").innerText;
+        document.getElementById("edit-registered").value = document.getElementById("val-registered").innerText;
+        document.getElementById("edit-accredited").value = document.getElementById("val-accredited").innerText;
+        document.getElementById("edit-valid").value = document.getElementById("val-valid").innerText;
+        document.getElementById("edit-rejected").value = document.getElementById("val-rejected").innerText;
+        document.getElementById("edit-apc").value = document.getElementById("val-apc").innerText;
+        document.getElementById("edit-pdp").value = document.getElementById("val-pdp").innerText;
+        document.getElementById("edit-adc").value = document.getElementById("val-adc").innerText;
+        document.getElementById("edit-ndc").value = document.getElementById("val-ndc").innerText;
 
-        document.getElementById("modal-view-list").style.display = "none";
+        document.getElementById("modal-view-search").style.display = "none";
         document.getElementById("modal-view-edit").style.display = "block";
     }
 
-    // 4. Go back to List
-    function backToList() {
+    function backToSearch() {
         document.getElementById("modal-view-edit").style.display = "none";
-        document.getElementById("modal-view-list").style.display = "block";
+        document.getElementById("modal-view-search").style.display = "block";
     }
 
-    // 5. Save Edited Record
+    // 5. Save Edit
     async function saveEdit() {
         if (!currentRecordId) return;
 
@@ -271,8 +285,7 @@
             ndc_value: Number(document.getElementById("edit-ndc").value) || 0
         };
 
-        // NOTE: If publishable_results is a View, this update might fail. 
-        // If it fails, change 'publishable_results' to your base table name (e.g., 'submissions').
+        // If publishable_results is a view, change this URL to your base table!
         const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${currentRecordId}`, {
             method: "PATCH",
             headers: headers,
@@ -280,31 +293,32 @@
         });
 
         if (res.ok) {
-            alert("Record corrected successfully! The public dashboard will reflect these changes.");
-            backToList();
-            openManageModal(currentState, currentLga); // Refresh the list
-            loadDashboard(); // Refresh background numbers
+            alert("Record corrected successfully!");
+            backToSearch();
+            searchPU(); // Refresh the searched record
+            loadDashboard(); // Refresh background totals
         } else {
             alert("Error updating record. Check console.");
             console.error(await res.text());
         }
     }
 
-    // 6. Recall Record (Set is_valid to false)
-    async function recallRecord(recordId) {
+    // 6. Recall Record
+    async function recallRecord() {
+        if (!currentRecordId) return;
         if (!confirm("Are you sure you want to recall this record? It will be hidden from the public dashboard.")) return;
 
-        // NOTE: Change 'publishable_results' to your base table name if this fails.
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${recordId}`, {
+        // If publishable_results is a view, change this URL to your base table!
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${currentRecordId}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify({ is_valid: false })
         });
 
         if (res.ok) {
-            alert("Record recalled. It will no longer appear on the public dashboard.");
-            openManageModal(currentState, currentLga); // Refresh the list
-            loadDashboard(); // Refresh background numbers
+            alert("Record recalled.");
+            closeModal();
+            loadDashboard();
         } else {
             alert("Error recalling record. Ensure 'is_valid' column exists in your table.");
         }
