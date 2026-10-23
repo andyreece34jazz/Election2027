@@ -17,7 +17,7 @@
         .code-display-box .code { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: 1px; }
         .code-display-box .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
         
-        /* UPDATED & FORCED: Check Button Styles */
+        /* Check Button */
         .check-btn { 
             width: 100%; 
             padding: 14px; 
@@ -34,14 +34,77 @@
         .check-btn:hover { background-color: #065C35 !important; }
         .check-btn:disabled { background-color: #9aa5b1 !important; color: white !important; cursor: not-allowed; }
         
-        /* Result Box Styles */
-        .result-box { margin-top: 24px; padding: 20px; border-radius: 6px; display: none; }
-        .result-success { background: #eaf7ee; border: 1px solid #a3dfb8; color: #1e6b3a; }
-        .result-warning { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber-ink); }
-        .result-box h3 { font-size: 18px; margin-top: 0; margin-bottom: 8px; }
-        .result-box input[type="tel"] { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px; border: 1px solid #cbd3da; border-radius: 6px; font-size: 16px; }
-        .result-box button { width: 100%; padding: 14px; background: var(--ink); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .result-box button:hover { background: #2c3e50; }
+        /* ---------------------------------------------------------
+           NEW PLEDGE RESULT STRUCTURE (Matching Screenshot)
+           --------------------------------------------------------- */
+        .result-box { margin-top: 24px; display: none; }
+        
+        .result-title { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #1e6b3a; /* Deep green text */
+            margin-bottom: 16px; 
+            line-height: 1.3;
+        }
+
+        .champion-box {
+            background: #eaf7ee;
+            border: 1px solid #a3dfb8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .champion-header {
+            font-weight: 700;
+            color: #1e6b3a;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .champion-subtext {
+            color: #4B5563;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .phone-label { 
+            display: block; 
+            font-weight: 700; 
+            font-size: 15px; 
+            margin-bottom: 8px; 
+            color: #1f2937;
+        }
+
+        .phone-input {
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid #cbd3da; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .phone-input:focus { outline: 2px solid #087443; border-color: transparent; }
+
+        .pledge-submit-btn { 
+            width: 100%; 
+            padding: 16px; 
+            background-color: #087443; 
+            color: #FFFFFF; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: background-color 0.2s ease;
+        }
+
+        .pledge-submit-btn:hover { background-color: #065C35; }
     </style>
 </head>
 <body>
@@ -98,12 +161,12 @@
             <div class="hint">Use this exact code as the caption when sending your image on WhatsApp.</div>
         </div>
 
-        <!-- Added inline styles to force the color -->
-        <button id="check-btn" class="check-btn" style="background-color: #087443 !important; color: #FFFFFF !important;" onclick="checkCoverage()">
+        <button id="check-btn" class="check-btn" onclick="checkCoverage()">
             Check Coverage
         </button>
 
-        <div id="result-area" style="margin-top: 24px;"></div>
+        <!-- Result Area -->
+        <div id="result-area" class="result-box"></div>
 
         <hr style="border: 0; border-top: 1px solid var(--line); margin: 30px 0 20px;">
 
@@ -144,7 +207,7 @@ const headers = {
     "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
 };
 
-// 1. Load States on page load (Using all_states view)
+// 1. Load States on page load
 async function loadStates() {
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/all_states?select=state_name&order=state_name.asc`, { headers });
@@ -163,7 +226,7 @@ async function loadStates() {
     }
 }
 
-// 2. Load LGAs when State changes (Using all_lgas view)
+// 2. Load LGAs when State changes
 async function loadLGAs() {
     const state = stateSelect.value;
     
@@ -263,7 +326,7 @@ function onPUChange() {
     checkBtn.style.display = "block";
 }
 
-// 5. Check Coverage (Allows unlimited contributors)
+// 5. Check Coverage
 async function checkCoverage() {
     if (!selectedPUData) return;
 
@@ -278,36 +341,39 @@ async function checkCoverage() {
         resultArea.style.display = "block";
         const pledgeCount = pledges ? pledges.length : 0;
 
-        if (pledgeCount > 0) {
-            // Scenario 2: Already has contributors
-            resultArea.className = "result-box result-success";
-            resultArea.innerHTML = `
-                <h3>This polling unit already has ${pledgeCount} contributor(s). Add support.</h3>
-                <p>🏅 It's your turn to become a champion contributor. We need backups to ensure the result is captured!</p>
-                
-                <label style="display:block; margin-top: 16px; font-weight: 600;">📱 Enter Your WhatsApp Number</label>
-                <input type="tel" id="phone" placeholder="e.g., 2348012345678">
-                
-                <button onclick="submitPledge()">Pledge to Send Result Photo</button>
-            `;
+        let titleText = "";
+        let headerText = "";
+        let subtext = "";
+
+        if (pledgeCount === 0) {
+            titleText = "This polling unit is ready for its first contributor.";
+            headerText = "🎖️ It's your turn to be the first champion contributor";
+            subtext = "Pledge now. Help contribute polling-unit results";
         } else {
-            // Scenario 1: First contributor
-            resultArea.className = "result-box result-warning";
-            resultArea.innerHTML = `
-                <h3>This polling unit is ready for its first contributor. Pledge Now.</h3>
-                <p>🎖️ It's your turn to be the first champion contributor.</p>
-                
-                <label style="display:block; margin-top: 16px; font-weight: 600;">📱 Enter Your WhatsApp Number</label>
-                <input type="tel" id="phone" placeholder="e.g., 2348012345678">
-                
-                <button onclick="submitPledge()">Pledge to Send Result Photo</button>
-            `;
+            titleText = `This polling unit already has ${pledgeCount} contributor(s).`;
+            headerText = "🏅 It's your turn to become a champion contributor";
+            subtext = "Add your support as a backup to ensure the result is captured.";
         }
+
+        // Render the new structure matching the screenshot
+        resultArea.innerHTML = `
+            <h3 class="result-title">${titleText}</h3>
+            
+            <div class="champion-box">
+                <div class="champion-header">${headerText}</div>
+                <p class="champion-subtext">${subtext}</p>
+            </div>
+            
+            <label class="phone-label">📱 Enter Your WhatsApp Number</label>
+            <input type="tel" id="phone" class="phone-input" placeholder="Enter WhatsApp number">
+            
+            <button class="pledge-submit-btn" onclick="submitPledge()">Pledge to Send Result Photo</button>
+        `;
+
     } catch (err) {
         console.error(err);
-        resultArea.className = "result-box result-warning";
         resultArea.style.display = "block";
-        resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+        resultArea.innerHTML = `<div style="color: #9b1c1c; padding: 16px; background: #fff1f1; border-radius: 6px;">Something went wrong. Please try again.</div>`;
     } finally {
         checkBtn.disabled = false;
         checkBtn.textContent = "Check Coverage";
@@ -317,12 +383,15 @@ async function checkCoverage() {
 // 6. Submit Pledge
 async function submitPledge() {
     const phoneInput = document.getElementById("phone").value.trim();
-    const resultArea = document.getElementById("result-area");
-
+    
     if (!phoneInput || phoneInput.length < 10) {
         alert("Please enter a valid WhatsApp number (include country code, e.g., 234...).");
         return;
     }
+
+    const btn = document.querySelector('.pledge-submit-btn');
+    btn.textContent = "Saving...";
+    btn.disabled = true;
 
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/pledges`, {
@@ -336,17 +405,24 @@ async function submitPledge() {
         });
 
         if (res.ok) {
-            resultArea.className = "result-box result-success";
+            // Display final success message matching the green scheme
             resultArea.innerHTML = `
-                <h3>Pledge Confirmed!</h3>
-                <p style="margin-bottom:0;">Thank you! You are now a champion contributor. We will send a reminder to your WhatsApp on election day.</p>
+                <h3 class="result-title">Pledge Confirmed!</h3>
+                <div class="champion-box">
+                    <div class="champion-header">✅ Thank you, Champion!</div>
+                    <p class="champion-subtext">You have successfully pledged to cover this polling unit. We will send a reminder to your WhatsApp on election day.</p>
+                </div>
             `;
         } else {
-            resultArea.innerHTML = `<div class="error" style="padding:10px; background:#fff1f1; color:#9b1c1c; border-radius:4px;">Could not save pledge. That number may already be registered for this polling unit.</div>`;
+            alert("Could not save pledge. That number may already be registered for this polling unit.");
+            btn.textContent = "Pledge to Send Result Photo";
+            btn.disabled = false;
         }
     } catch (err) {
         console.error(err);
-        resultArea.innerHTML = `<div class="error">Something went wrong. Please try again.</div>`;
+        alert("Something went wrong. Please try again.");
+        btn.textContent = "Pledge to Send Result Photo";
+        btn.disabled = false;
     }
 }
 
