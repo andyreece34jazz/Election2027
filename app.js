@@ -3,7 +3,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let allLgasData = []; 
 let allStatesData = []; 
-let nationalTotalPUs = 176846; 
+let nationalTotalPUs = 176846; // Default true national total
 
 const fmt = (num) => (num === null || num === undefined) ? "—" : Number(num).toLocaleString("en-GB");
 const toTitleCase = (str) => {
@@ -82,13 +82,13 @@ window.updateLga = function() {
             (selectedLga === "" || lga.lga_name === selectedLga)
         );
         
-        // FIX: If "All LGAs" is selected, revert to the true state total
         if (selectedLga === "") {
+            // Revert to true state total
             const stateInfo = allStatesData.find(s => (s.state_name || "").toLowerCase() === stateName.toLowerCase());
             const trueStateTotal = stateInfo ? (stateInfo.total_polling_units || 0) : 0;
             renderMetrics(lgaData, trueStateTotal);
         } else {
-            // If a specific LGA is selected, calculate the total based on that LGA alone
+            // Calculate total from just the selected LGA
             renderMetrics(lgaData, null);
         }
     } catch (err) {
@@ -110,7 +110,8 @@ async function init() {
         if (nationalData && nationalData.length > 0) {
             const result = nationalData[0];
             
-            if (result.total_polling_units) {
+            // DO NOT sum the states. Only use the DB value if it's explicitly provided and realistic.
+            if (result.total_polling_units && result.total_polling_units > 10000) {
                 nationalTotalPUs = result.total_polling_units;
             }
 
