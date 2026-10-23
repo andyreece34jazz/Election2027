@@ -13,8 +13,8 @@
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
-        /* Filter Bar Styles */
-        .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; background: white; padding: 12px 16px; border: 1px solid #DDE4DF; border-radius: 8px; }
+        /* Filter Bar Styles (Updated to group items together) */
+        .filter-bar { display: flex; justify-content: flex-start; align-items: center; margin-top: 24px; background: white; padding: 12px 16px; border: 1px solid #DDE4DF; border-radius: 8px; }
         .filter-group { display: flex; align-items: center; gap: 12px; }
         .filter-group label { font-weight: 700; font-size: 14px; color: #0A192F; }
         .filter-group select { padding: 8px 12px; border: 1px solid #DDE4DF; border-radius: 4px; font-size: 14px; font-weight: 500; outline: none; cursor: pointer; min-width: 200px; }
@@ -78,11 +78,11 @@
                 <option value="ALL">All States</option>
                 <!-- Populated via JS -->
             </select>
+            
+            <button class="btn-export" onclick="exportTableToCSV('campaign_monitoring.csv')">
+                ⬇️ Export to CSV
+            </button>
         </div>
-        
-        <button class="btn-export" onclick="exportTableToCSV('campaign_monitoring.csv')">
-            Export to CSV
-        </button>
     </div>
 
     <div style="overflow-x: auto;">
@@ -205,34 +205,30 @@
         const csv = [];
         const rows = document.querySelectorAll("#data-table tr");
         
-        // Loop through all rows (headers and body)
         rows.forEach((row, index) => {
             const rowData = [];
             const cols = row.querySelectorAll("th, td");
             
             // Skip the "Actions" column (the last one)
             for (let i = 0; i < cols.length - 1; i++) {
-                // Clean up text and wrap in quotes to handle commas in names
                 let text = cols[i].innerText.trim();
-                // If it's the "Manage Records" button column, skip
                 if (text === "Manage Records") continue; 
                 
+                // Wrap in quotes to handle commas in names
                 rowData.push(`"${text.replace(/"/g, '""')}"`);
             }
             
-            // Only add row if it has data (prevents adding empty rows if table is empty)
             if (rowData.length > 0) {
                 csv.push(rowData.join(","));
             }
         });
 
-        // Create Blob and trigger download
         const csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
         const downloadLink = document.createElement("a");
         document.body.appendChild(downloadLink);
         
         if (navigator.msSaveOrOpenBlob) {
-            navigator.msSaveOrOpenBlob(csvFile, filename); // For IE/Edge
+            navigator.msSaveOrOpenBlob(csvFile, filename); 
         } else {
             downloadLink.href = URL.createObjectURL(csvFile);
             downloadLink.download = filename;
