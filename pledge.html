@@ -35,14 +35,14 @@
         .check-btn:disabled { background-color: #9aa5b1 !important; color: white !important; cursor: not-allowed; }
         
         /* ---------------------------------------------------------
-           NEW PLEDGE RESULT STRUCTURE (Matching Screenshot)
+           PLEDGE RESULT STRUCTURE (Matching Screenshots)
            --------------------------------------------------------- */
         .result-box { margin-top: 24px; display: none; }
         
         .result-title { 
             font-size: 20px; 
             font-weight: 700; 
-            color: #1e6b3a; /* Deep green text */
+            color: #0f5132; /* Deep green text matching screenshot */
             margin-bottom: 16px; 
             line-height: 1.3;
         }
@@ -57,7 +57,7 @@
 
         .champion-header {
             font-weight: 700;
-            color: #1e6b3a;
+            color: #0f5132;
             font-size: 16px;
             margin-bottom: 8px;
             display: flex;
@@ -346,17 +346,18 @@ async function checkCoverage() {
         let subtext = "";
 
         if (pledgeCount === 0) {
+            // Text for First Contributor (Screenshot 1)
             titleText = "This polling unit is ready for its first contributor.";
             headerText = "🎖️ It's your turn to be the first champion contributor";
             subtext = "Pledge now. Help contribute polling-unit results";
         } else {
-            // UPDATED BACKUP MESSAGE
+            // Text for Additional Contributors (Screenshot 2)
             titleText = "This polling unit already has contributors.";
-            headerText = "🏅 Join to become a champion contributor";
-            subtext = "Help provide a photo of the polling-unit results.";
+            headerText = "🎖️ Join to become a champion contributor";
+            subtext = "Pledge now. Help contribute polling-unit results";
         }
 
-        // Render the new structure matching the screenshot
+        // Render the structure matching the screenshots
         resultArea.innerHTML = `
             <h3 class="result-title">${titleText}</h3>
             
