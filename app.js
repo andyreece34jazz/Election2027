@@ -2,6 +2,7 @@ const SUPABASE_URL = "https://slewytwwohwfxsyasorw.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsZXd5dHd3b2h3ZnhzeWFzb3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMDQ3NDcsImV4cCI6MjEwNTU4MDc0N30.MRBpz7VtXN1cv6tWet5BCSGBkO_USJpsVlCfn648GFc";
 
 let allLgasData = []; 
+let allStatesData = []; // Added to store state-level totals
 let nationalTotalPUs = 176846;
 
 // Helpers
@@ -61,7 +62,12 @@ window.updateState = function() {
             lgaSelect.appendChild(opt);
         });
 
-        renderMetrics(lgaData);
+        // Find the true state total from the state results array
+        const stateInfo = allStatesData.find(s => (s.state_name || "").toLowerCase() === stateName.toLowerCase());
+        const trueStateTotal = stateInfo ? (stateInfo.total_polling_units || 0) : 0;
+
+        // Pass the true state total to the render function
+        renderMetrics(lgaData, trueStateTotal);
 
     } catch (err) {
         console.error("State change error:", err);
@@ -84,7 +90,8 @@ window.updateLga = function() {
             (selectedLga === "" || lga.lga_name === selectedLga)
         );
         
-        renderMetrics(lgaData);
+        // If a specific LGA is selected, we calculate the total based on that LGA alone (null override)
+        renderMetrics(lgaData, null);
     } catch (err) {
         console.error("LGA change error:", err);
     }
@@ -100,6 +107,7 @@ async function init() {
         ]);
 
         allLgasData = lgaData || [];
+        allStatesData = stateData || []; // Store states globally
 
         if (nationalData && nationalData.length > 0) {
             const result = nationalData[0];
@@ -147,7 +155,7 @@ async function init() {
     }
 }
 
-function renderMetrics(lgas) {
+function renderMetrics(lgas, stateTotalOverride = null) {
     const metricsBody = document.getElementById("metrics-body");
     if (!lgas || !lgas.length) {
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">No reviewed polling units found for this selection.</td></tr>';
@@ -156,11 +164,15 @@ function renderMetrics(lgas) {
     }
 
     let totalVerifiedPUs = 0;
-    let totalStatePUs = 0;
+    let totalStatePUs = stateTotalOverride !== null ? stateTotalOverride : 0;
 
     metricsBody.innerHTML = lgas.map(r => {
         totalVerifiedPUs += (r.verified_polling_units || 0);
-        totalStatePUs += (r.total_polling_units || 0);
+        
+        // If no override is provided, sum the LGA totals (for specific LGA views)
+        if (stateTotalOverride === null) {
+            totalStatePUs += (r.total_polling_units || 0);
+        }
 
         return `
             <tr>
