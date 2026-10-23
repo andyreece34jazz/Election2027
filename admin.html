@@ -239,7 +239,7 @@
 
             document.getElementById("result-pu-title").innerText = `${pu.pu_name} (${code})`;
 
-            // Fetch the record
+            // Fetch the record (From the view so we only see valid records)
             const resRes = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?polling_unit_id=eq.${pu.id}&select=*`, { headers });
             
             if (!resRes.ok) {
@@ -312,8 +312,8 @@
             ndc_value: Number(document.getElementById("edit-ndc").value) || 0
         };
 
-        // IMPORTANT: If publishable_results is a view, change this URL to your base table name!
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${currentRecordId}`, {
+        // FIXED: Pointing to the base table 'result_extractions'
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify(payload)
@@ -336,8 +336,8 @@
         if (!currentRecordId) return;
         if (!confirm("Are you sure you want to recall this record? It will be hidden from the public dashboard.")) return;
 
-        // IMPORTANT: If publishable_results is a view, change this URL to your base table name!
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/publishable_results?id=eq.${currentRecordId}`, {
+        // FIXED: Pointing to the base table 'result_extractions'
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/result_extractions?id=eq.${currentRecordId}`, {
             method: "PATCH",
             headers: headers,
             body: JSON.stringify({ is_valid: false })
@@ -348,8 +348,9 @@
             closeModal();
             loadDashboard();
         } else {
+            const errText = await res.text();
             alert("Error recalling record. Ensure 'is_valid' column exists in your table.");
-            console.error(await res.text());
+            console.error("Recall failed:", errText);
         }
     }
 
