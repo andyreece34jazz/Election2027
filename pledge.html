@@ -17,21 +17,22 @@
         .code-display-box .code { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: 1px; }
         .code-display-box .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
         
-        /* UPDATED: Check Button Styles */
+        /* UPDATED & FORCED: Check Button Styles */
         .check-btn { 
             width: 100%; 
             padding: 14px; 
-            background: #087443; 
-            color: #FFFFFF; 
+            background-color: #087443 !important; 
+            color: #FFFFFF !important; 
             border: none; 
             border-radius: 6px; 
             font-weight: bold; 
             font-size: 16px; 
             cursor: pointer; 
             display: none; 
+            transition: background-color 0.2s ease;
         }
-        .check-btn:hover { background: #065C35; }
-        .check-btn:disabled { background: #9aa5b1; cursor: not-allowed; }
+        .check-btn:hover { background-color: #065C35 !important; }
+        .check-btn:disabled { background-color: #9aa5b1 !important; color: white !important; cursor: not-allowed; }
         
         /* Result Box Styles */
         .result-box { margin-top: 24px; padding: 20px; border-radius: 6px; display: none; }
@@ -97,7 +98,8 @@
             <div class="hint">Use this exact code as the caption when sending your image on WhatsApp.</div>
         </div>
 
-        <button id="check-btn" class="check-btn" onclick="checkCoverage()">
+        <!-- Added inline styles to force the color -->
+        <button id="check-btn" class="check-btn" style="background-color: #087443 !important; color: #FFFFFF !important;" onclick="checkCoverage()">
             Check Coverage
         </button>
 
