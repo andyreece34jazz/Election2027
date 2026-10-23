@@ -3,7 +3,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let allLgasData = []; 
 let allStatesData = []; 
-let nationalTotalPUs = 176846; // Default true national total
+let nationalTotalPUs = 176846; 
 
 const fmt = (num) => (num === null || num === undefined) ? "—" : Number(num).toLocaleString("en-GB");
 const toTitleCase = (str) => {
@@ -36,6 +36,7 @@ window.updateState = function() {
             lgaSelect.innerHTML = '<option value="">Select a state first</option>';
             lgaSelect.disabled = true;
             updateSummaryBlock(0, 0);
+            resetStateStats();
             return;
         }
 
@@ -83,12 +84,10 @@ window.updateLga = function() {
         );
         
         if (selectedLga === "") {
-            // Revert to true state total
             const stateInfo = allStatesData.find(s => (s.state_name || "").toLowerCase() === stateName.toLowerCase());
             const trueStateTotal = stateInfo ? (stateInfo.total_polling_units || 0) : 0;
             renderMetrics(lgaData, trueStateTotal);
         } else {
-            // Calculate total from just the selected LGA
             renderMetrics(lgaData, null);
         }
     } catch (err) {
@@ -110,7 +109,6 @@ async function init() {
         if (nationalData && nationalData.length > 0) {
             const result = nationalData[0];
             
-            // DO NOT sum the states. Only use the DB value if it's explicitly provided and realistic.
             if (result.total_polling_units && result.total_polling_units > 10000) {
                 nationalTotalPUs = result.total_polling_units;
             }
@@ -154,23 +152,46 @@ async function init() {
     }
 }
 
+function resetStateStats() {
+    const ids = ["est-registered", "est-accredited", "est-valid", "est-rejected", "est-apc", "est-pdp", "est-adc", "est-ndc"];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "—";
+    });
+}
+
 function renderMetrics(lgas, stateTotalOverride = null) {
     const metricsBody = document.getElementById("metrics-body");
     if (!lgas || !lgas.length) {
         metricsBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 32px; color: #9CA3AF;">No reviewed polling units found for this selection.</td></tr>';
         updateSummaryBlock(0, 0);
+        resetStateStats();
         return;
     }
 
     let totalVerifiedPUs = 0;
     let totalStatePUs = stateTotalOverride !== null ? stateTotalOverride : 0;
+    
+    // Aggregators for the state cards
+    let aggRegistered = 0, aggAccredited = 0, aggValid = 0, aggRejected = 0;
+    let aggApc = 0, aggPdp = 0, aggAdc = 0, aggNdc = 0;
 
     metricsBody.innerHTML = lgas.map(r => {
-        totalVerifiedPUs += (r.verified_polling_units || 0);
+        totalVerifiedPUs += (Number(r.verified_polling_units) || 0);
         
         if (stateTotalOverride === null) {
-            totalStatePUs += (r.total_polling_units || 0);
+            totalStatePUs += (Number(r.total_polling_units) || 0);
         }
+
+        // Aggregate stats for the state cards (Force Number conversion to prevent string concatenation bugs)
+        aggRegistered += (Number(r.registered_voters) || 0);
+        aggAccredited += (Number(r.accredited_voters) || 0);
+        aggValid += (Number(r.total_valid_votes) || 0);
+        aggRejected += (Number(r.rejected_votes) || 0);
+        aggApc += (Number(r.apc) || 0);
+        aggPdp += (Number(r.pdp) || 0);
+        aggAdc += (Number(r.adc) || 0);
+        aggNdc += (Number(r.ndc) || 0);
 
         return `
             <tr>
@@ -188,6 +209,21 @@ function renderMetrics(lgas, stateTotalOverride = null) {
     }).join("");
 
     updateSummaryBlock(totalVerifiedPUs, totalStatePUs);
+
+    // Update State Aggregated Cards Directly
+    const updateEl = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = fmt(val);
+    };
+
+    updateEl("est-registered", aggRegistered);
+    updateEl("est-accredited", aggAccredited);
+    updateEl("est-valid", aggValid);
+    updateEl("est-rejected", aggRejected);
+    updateEl("est-apc", aggApc);
+    updateEl("est-pdp", aggPdp);
+    updateEl("est-adc", aggAdc);
+    updateEl("est-ndc", aggNdc);
 }
 
 function updateSummaryBlock(verified, total) {
