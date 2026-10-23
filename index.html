@@ -232,32 +232,6 @@
         }
         .est-filters select:disabled { opacity: 0.55; cursor: not-allowed; background: #F9FAFB; }
 
-        /* Summary Block */
-        .est-summary-block {
-            background: #F9FAFB;
-            border-radius: 8px;
-            padding: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 20px;
-            border: var(--border-subtle);
-        }
-        .est-summary-left h4 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
-        .est-summary-left p { font-size: 14px; color: var(--muted); font-weight: 500; }
-        
-        .est-summary-right { min-width: 250px; }
-        .est-summary-right h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-        .est-big-number { font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--ink); line-height: 1.1; }
-        .est-big-number span { font-size: 16px; font-weight: 500; color: var(--muted); }
-        .est-summary-right p { font-size: 13px; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
-        
-        .est-progress-wrapper { display: flex; align-items: center; gap: 12px; }
-        .est-progress-track { flex-grow: 1; height: 16px; background: #E5E7EB; border-radius: 2px; overflow: hidden; border: var(--border-subtle); }
-        .est-progress-fill { height: 100%; background: #10B981; border-radius: 2px; width: 0%; transition: width 0.3s ease; }
-        .est-progress-label { font-size: 15px; font-weight: 700; color: #10B981; }
-
         /* Metrics Table */
         .metrics-container { overflow-x: auto; }
         .metrics-table { width: 100%; border-collapse: collapse; min-width: 700px; }
@@ -432,10 +406,8 @@
             .dashboard-section { margin-top: 48px; }
 
             /* 1. FIX: Progress bar aligns perfectly with text */
-            .est-summary-block { flex-direction: column; align-items: flex-start; }
-            .est-summary-right { width: 100%; min-width: 0; }
-            .est-progress-wrapper { width: 100%; margin-left: 0; }
-            .est-progress-track { flex-grow: 1; width: 100%; }
+            .fed-progress-wrapper { width: 100%; margin-left: 0; }
+            .fed-progress-track { flex-grow: 1; width: 100%; }
             
             /* 2. FIX: Stack the Table & Remove horizontal scroll */
             .metrics-container { overflow-x: hidden; }
@@ -444,9 +416,7 @@
                 display: block;
                 width: 100%;
             }
-            .metrics-table {
-                min-width: 0 !important;
-            }
+            .metrics-table { min-width: 0 !important; }
             .metrics-table thead { display: none; }
             
             .metrics-table tr {
@@ -470,10 +440,7 @@
                 box-sizing: border-box;
             }
             
-            /* Add padding to the right to pull numbers away from the edge */
-            .metrics-table td:not(:first-child) {
-                padding-right: 12px; 
-            }
+            .metrics-table td:not(:first-child) { padding-right: 12px; }
             
             .metrics-table td:first-child {
                 display: block;
@@ -486,7 +453,6 @@
                 color: var(--ink);
             }
             
-            /* Add labels before values for mobile */
             .metrics-table td:nth-child(2)::before { content: "Registered Voters"; font-weight: 500; color: var(--muted); text-align: left; }
             .metrics-table td:nth-child(3)::before { content: "Accredited Voters"; font-weight: 500; color: var(--muted); text-align: left; }
             .metrics-table td:nth-child(4)::before { content: "Valid Votes"; font-weight: 500; color: var(--muted); text-align: left; }
@@ -647,7 +613,7 @@
             <h3>State and LGA Estimates</h3>
             <span class="badge-not-official">Not Official</span>
         </div>
-        <p class="est-subtext">Select a state to view its estimates and coverage.</p>
+        <p class="est-subtext">Select a state to view its aggregated estimates and coverage.</p>
 
         <div class="est-filters">
             <div>
@@ -664,24 +630,53 @@
             </div>
         </div>
 
-        <div class="est-summary-block">
-            <div class="est-summary-left">
-                <h4 id="dynamic-state-title">State Estimates</h4>
-                <p>Figures from reviewed polling-unit records in the selected area.</p>
+        <!-- NEW: 2x2 Grid for State Aggregations (Matches your screenshot) -->
+        <div class="federal-container" style="margin-bottom: 32px;">
+            <!-- Top Left -->
+            <div class="fed-card" style="background: transparent; border: none; padding: 0;">
+                <div class="fed-header-row">
+                    <h3 id="dynamic-state-title">State Estimates</h3>
+                </div>
+                <p class="fed-subtext">Figures from reviewed polling-unit records in the selected area.</p>
             </div>
-            <div class="est-summary-right">
-                <h4>Polling Unit Coverage</h4>
-                <div class="est-big-number" id="est-coverage-text">0 <span>of</span> 0</div>
-                <p>Polling units reviewed</p>
-                <div class="est-progress-wrapper">
-                    <div class="est-progress-track">
-                        <div class="est-progress-fill" id="est-progress-fill"></div>
+
+            <!-- Top Right -->
+            <div class="fed-card">
+                <h3>Polling Unit Coverage</h3>
+                <div class="fed-big-number" id="est-coverage-text">0 <span>of</span> 0</div>
+                <p class="fed-subtext">Polling units reviewed</p>
+                <div class="fed-progress-wrapper">
+                    <div class="fed-progress-track">
+                        <div class="fed-progress-fill" id="est-progress-fill"></div>
                     </div>
-                    <div class="est-progress-label" id="est-coverage-pct">0.0%</div>
+                    <div class="fed-progress-label" id="est-coverage-pct">0.0%</div>
+                </div>
+            </div>
+
+            <!-- Bottom Left -->
+            <div class="fed-card">
+                <h3>Estimated Votes by Party</h3>
+                <div class="fed-stat-grid">
+                    <div class="fed-stat-box"><span class="label">APC</span><span class="value" id="est-apc">—</span></div>
+                    <div class="fed-stat-box"><span class="label">PDP</span><span class="value" id="est-pdp">—</span></div>
+                    <div class="fed-stat-box"><span class="label">ADC</span><span class="value" id="est-adc">—</span></div>
+                    <div class="fed-stat-box"><span class="label">NDC</span><span class="value" id="est-ndc">—</span></div>
+                </div>
+            </div>
+
+            <!-- Bottom Right -->
+            <div class="fed-card">
+                <h3>State Voter Statistics</h3>
+                <div class="fed-stat-grid">
+                    <div class="fed-stat-box"><span class="label">Registered Voters</span><span class="value" id="est-registered">—</span></div>
+                    <div class="fed-stat-box"><span class="label">Accredited Voters</span><span class="value" id="est-accredited">—</span></div>
+                    <div class="fed-stat-box"><span class="label">Valid Votes</span><span class="value" id="est-valid">—</span></div>
+                    <div class="fed-stat-box"><span class="label">Rejected Votes</span><span class="value" id="est-rejected">—</span></div>
                 </div>
             </div>
         </div>
 
+        <!-- Metrics Row (Table) -->
         <div class="metrics-container">
             <table class="metrics-table">
                 <thead>
@@ -1000,7 +995,7 @@
     </div>
 </dialog>
 
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 
 <script>
     // 1. Exclusive Accordion Fallback
