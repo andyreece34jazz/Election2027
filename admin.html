@@ -13,6 +13,11 @@
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
+        /* Filter Bar Styles */
+        .filter-bar { display: flex; align-items: center; gap: 12px; margin-top: 24px; background: white; padding: 12px 16px; border: 1px solid #DDE4DF; border-radius: 8px; }
+        .filter-bar label { font-weight: 700; font-size: 14px; color: #0A192F; }
+        .filter-bar select { padding: 8px 12px; border: 1px solid #DDE4DF; border-radius: 4px; font-size: 14px; font-weight: 500; outline: none; cursor: pointer; min-width: 200px; }
+
         /* Main Table Button */
         .btn-manage { background: #0A192F; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
         .btn-manage:hover { background: #1f3a5f; }
@@ -43,7 +48,7 @@
         .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
         .form-group input { width: 100%; padding: 8px; border: 1px solid #DDE4DF; border-radius: 4px; }
 
-        /* NEW: Toast Notification Styles */
+        /* Toast Notification Styles */
         #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: #087443; color: white; padding: 14px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
         .toast.error { background: #EF4444; }
@@ -60,6 +65,15 @@
         </div>
     </div>
     
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <label for="stateFilter">Filter by State:</label>
+        <select id="stateFilter" onchange="filterTable()">
+            <option value="ALL">All States</option>
+            <!-- Populated via JS -->
+        </select>
+    </div>
+
     <div style="overflow-x: auto;">
         <table id="data-table">
             <thead>
@@ -158,6 +172,7 @@
     let currentRecordId = null;
     let currentState = "";
     let currentLga = "";
+    let globalDashboardData = []; // Store data globally for filtering
 
     // --- TOAST NOTIFICATION HELPER ---
     function showToast(message, isError = false) {
@@ -167,59 +182,96 @@
         toast.innerHTML = (isError ? "❌ " : "✅ ") + message;
         container.appendChild(toast);
         
-        // Trigger animation
         setTimeout(() => toast.classList.add("show"), 10);
 
-        // Remove after 3 seconds
         setTimeout(() => {
             toast.classList.remove("show");
-            setTimeout(() => toast.remove(), 300); // Wait for fade out
+            setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
 
     // 1. Load Main Dashboard
     async function loadDashboard() {
         try {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=pledged_pus.desc`, { headers });
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/campaign_monitoring?order=state_name.asc,lga_name.asc`, { headers });
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.message || `HTTP Error ${res.status}`);
             }
-            const data = await res.json();
             
-            const tbody = document.getElementById("table-body");
-            tbody.innerHTML = "";
+            globalDashboardData = await res.json();
+            
+            populateStateFilter(globalDashboardData);
+            renderTable(globalDashboardData);
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No data found.</td></tr>`;
-                return;
-            }
-
-            data.forEach(row => {
-                const tr = document.createElement("tr");
-                if (row.pledged_pus > 5 && row.images_received === 0) {
-                    tr.className = "highlight";
-                }
-                
-                tr.innerHTML = `
-                    <td>${row.state_name}</td>
-                    <td>${row.lga_name}</td>
-                    <td>${row.total_pus}</td>
-                    <td><strong>${row.pledged_pus}</strong></td>
-                    <td>${row.pledge_coverage_pct}%</td>
-                    <td>${row.images_received}</td>
-                    <td>${row.results_verified}</td>
-                    <td><button class="btn-manage" onclick="openManageModal('${row.state_name}', '${row.lga_name}')">Manage Records</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
         } catch (err) {
             console.error(err);
             document.getElementById("table-body").innerHTML = `<tr><td colspan="8" style="color: red;">Error loading data: ${err.message}</td></tr>`;
         }
     }
 
-    // 2. Open Modal
+    // 2. Populate State Filter Dropdown
+    function populateStateFilter(data) {
+        const stateFilter = document.getElementById('stateFilter');
+        
+        // Get unique states and sort them
+        const uniqueStates = [...new Set(data.map(row => row.state_name))].sort();
+        
+        // Reset options
+        stateFilter.innerHTML = '<option value="ALL">All States</option>';
+        
+        uniqueStates.forEach(state => {
+            const option = document.createElement('option');
+            option.value = state;
+            option.textContent = state;
+            stateFilter.appendChild(option);
+        });
+    }
+
+    // 3. Filter Table based on Dropdown
+    function filterTable() {
+        const selectedState = document.getElementById('stateFilter').value;
+        
+        if (selectedState === 'ALL') {
+            renderTable(globalDashboardData);
+        } else {
+            const filteredData = globalDashboardData.filter(row => row.state_name === selectedState);
+            renderTable(filteredData);
+        }
+    }
+
+    // 4. Render Table
+    function renderTable(data) {
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No LGAs found for this state.</td></tr>`;
+            return;
+        }
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            // Highlight rows where pledges are high but no images have come in yet
+            if (row.pledged_pus > 5 && row.images_received === 0) {
+                tr.className = "highlight";
+            }
+            
+            tr.innerHTML = `
+                <td>${row.state_name}</td>
+                <td>${row.lga_name}</td>
+                <td>${row.total_pus}</td>
+                <td><strong>${row.pledged_pus}</strong></td>
+                <td>${row.pledge_coverage_pct}%</td>
+                <td>${row.images_received}</td>
+                <td>${row.results_verified}</td>
+                <td><button class="btn-manage" onclick="openManageModal('${row.state_name}', '${row.lga_name}')">Manage Records</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 5. Open Modal
     function openManageModal(state, lga) {
         currentState = state;
         currentLga = lga;
@@ -232,7 +284,7 @@
         document.getElementById("manageModal").style.display = "flex";
     }
 
-    // 3. Search for a Specific PU
+    // 6. Search for a Specific PU
     async function searchPU() {
         const code = document.getElementById("searchPUCode").value.trim();
         if (!code) return showToast("Please enter a polling unit code.", true);
@@ -274,7 +326,7 @@
             const resData = await resRes.json();
 
             if (resData.length === 0) {
-                showToast("No valid result found for this polling unit (it may be recalled).", true);
+                showToast("No valid result found for this polling unit.", true);
                 document.getElementById("search-result-box").style.display = "none";
                 return;
             }
@@ -298,7 +350,7 @@
         }
     }
 
-    // 4. Show Edit Form
+    // 7. Show Edit Form
     function showEditForm() {
         document.getElementById("edit-pu-title").innerText = document.getElementById("result-pu-title").innerText;
         document.getElementById("edit-registered").value = document.getElementById("val-registered").innerText;
@@ -319,11 +371,10 @@
         document.getElementById("modal-view-search").style.display = "block";
     }
 
-    // 5. Save Edit
+    // 8. Save Edit
     async function saveEdit() {
         if (!currentRecordId) return;
 
-        // Change button text to show loading state
         const btn = document.querySelector('button[onclick="saveEdit()"]');
         const originalText = btn.innerText;
         btn.innerText = "Saving...";
@@ -361,13 +412,12 @@
             console.error(err);
             showToast("Network error. Please try again.", true);
         } finally {
-            // Restore button
             btn.innerText = originalText;
             btn.disabled = false;
         }
     }
 
-    // 6. Recall Record
+    // 9. Recall Record
     async function recallRecord() {
         if (!currentRecordId) return;
         
