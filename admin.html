@@ -13,25 +13,40 @@
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
-        /* Filter Bar Styles (Centered, Wider Gap, Same Height) */
+        /* Filter Bar Styles (Strict Alignment) */
         .filter-bar { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 40px; /* Increased gap between dropdown and button */
+            gap: 40px; /* Wider gap */
             margin-top: 24px; 
             background: white; 
             padding: 16px; 
             border: 1px solid #DDE4DF; 
             border-radius: 8px; 
+            height: 76px; /* Fixed height for the bar */
+            box-sizing: border-box;
         }
-        .filter-group { display: flex; align-items: center; gap: 12px; }
-        .filter-group label { font-weight: 700; font-size: 14px; color: #0A192F; white-space: nowrap; }
+        .filter-group { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            height: 44px; /* Match element height */
+        }
+        .filter-group label { 
+            font-weight: 700; 
+            font-size: 14px; 
+            color: #0A192F; 
+            white-space: nowrap; 
+            margin: 0;
+            line-height: 44px; /* Align text perfectly */
+        }
         
-        /* Force Dropdown to specific height */
+        /* Force Dropdown Size & Reset Margins */
         .filter-group select { 
+            height: 44px; 
             padding: 0 12px; 
-            height: 42px; 
+            margin: 0;
             box-sizing: border-box;
             border: 1px solid #DDE4DF; 
             border-radius: 4px; 
@@ -40,14 +55,16 @@
             outline: none; 
             cursor: pointer; 
             min-width: 200px; 
+            background-color: #fff;
         }
         
-        /* Force Button to match exact height */
+        /* Force Button Size & Match Dropdown */
         .btn-export { 
             background: #087443; 
             color: white; 
             padding: 0 24px; 
-            height: 42px; 
+            height: 44px; 
+            margin: 0; /* Reset any default margin */
             box-sizing: border-box;
             border: none; 
             border-radius: 4px; 
@@ -59,6 +76,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            align-self: center; /* Force alignment within flex container */
         }
         .btn-export:hover { background: #065C35; }
 
