@@ -13,14 +13,14 @@
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
-        /* Filter Bar Styles (Updated to group items together) */
-        .filter-bar { display: flex; justify-content: flex-start; align-items: center; margin-top: 24px; background: white; padding: 12px 16px; border: 1px solid #DDE4DF; border-radius: 8px; }
+        /* Filter Bar Styles (Fixed spacing and alignment) */
+        .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; background: white; padding: 12px 16px; border: 1px solid #DDE4DF; border-radius: 8px; }
         .filter-group { display: flex; align-items: center; gap: 12px; }
-        .filter-group label { font-weight: 700; font-size: 14px; color: #0A192F; }
+        .filter-group label { font-weight: 700; font-size: 14px; color: #0A192F; white-space: nowrap; }
         .filter-group select { padding: 8px 12px; border: 1px solid #DDE4DF; border-radius: 4px; font-size: 14px; font-weight: 500; outline: none; cursor: pointer; min-width: 200px; }
         
         /* Export Button */
-        .btn-export { background: #10B981; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.15s; }
+        .btn-export { background: #10B981; color: white; padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
         .btn-export:hover { background: #059669; }
 
         /* Main Table Button */
@@ -78,11 +78,11 @@
                 <option value="ALL">All States</option>
                 <!-- Populated via JS -->
             </select>
-            
-            <button class="btn-export" onclick="exportTableToCSV('campaign_monitoring.csv')">
-                ⬇️ Export to CSV
-            </button>
         </div>
+        
+        <button class="btn-export" onclick="exportTableToCSV('campaign_monitoring.csv')">
+            Export to CSV
+        </button>
     </div>
 
     <div style="overflow-x: auto;">
@@ -209,12 +209,9 @@
             const rowData = [];
             const cols = row.querySelectorAll("th, td");
             
-            // Skip the "Actions" column (the last one)
             for (let i = 0; i < cols.length - 1; i++) {
                 let text = cols[i].innerText.trim();
                 if (text === "Manage Records") continue; 
-                
-                // Wrap in quotes to handle commas in names
                 rowData.push(`"${text.replace(/"/g, '""')}"`);
             }
             
