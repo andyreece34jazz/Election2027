@@ -431,10 +431,10 @@
             .section-title, .section-title-center { margin: 48px 0 24px; }
             .dashboard-section { margin-top: 48px; }
 
-            /* 1. FIX: Progress bar increased by 20% and keeps on screen */
+            /* 1. FIX: Progress bar aligns perfectly with text */
             .est-summary-block { flex-direction: column; align-items: flex-start; }
             .est-summary-right { width: 100%; min-width: 0; }
-            .est-progress-wrapper { width: 120%; max-width: calc(100% + 20px); margin-left: -10px; }
+            .est-progress-wrapper { width: 100%; margin-left: 0; }
             .est-progress-track { flex-grow: 1; width: 100%; }
             
             /* 2. FIX: Stack the Table & Remove horizontal scroll */
@@ -445,7 +445,7 @@
                 width: 100%;
             }
             .metrics-table {
-                min-width: 0 !important; /* Crucial: stops the 700px forced width */
+                min-width: 0 !important;
             }
             .metrics-table thead { display: none; }
             
@@ -458,7 +458,7 @@
                 box-sizing: border-box;
             }
             
-            /* 3. FIX: Text on left, Numbers on right */
+            /* 3. FIX: Text on left, Numbers on right with spacing */
             .metrics-table td {
                 display: flex;
                 justify-content: space-between;
@@ -468,6 +468,11 @@
                 text-align: right;
                 font-size: 14px;
                 box-sizing: border-box;
+            }
+            
+            /* Add padding to the right to pull numbers away from the edge */
+            .metrics-table td:not(:first-child) {
+                padding-right: 12px; 
             }
             
             .metrics-table td:first-child {
@@ -995,7 +1000,7 @@
     </div>
 </dialog>
 
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
 
 <script>
     // 1. Exclusive Accordion Fallback
