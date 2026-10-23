@@ -13,25 +13,25 @@
         tr:nth-child(even) { background: #fafbfc; }
         .highlight { background: #fff7e6; font-weight: bold; }
         
-        /* Filter Bar Styles (Strict Alignment) */
+        /* Filter Bar Styles */
         .filter-bar { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 40px; /* Wider gap */
+            gap: 40px; 
             margin-top: 24px; 
             background: white; 
             padding: 16px; 
             border: 1px solid #DDE4DF; 
             border-radius: 8px; 
-            height: 76px; /* Fixed height for the bar */
+            height: 76px; 
             box-sizing: border-box;
         }
         .filter-group { 
             display: flex; 
             align-items: center; 
             gap: 12px; 
-            height: 44px; /* Match element height */
+            height: 44px; 
         }
         .filter-group label { 
             font-weight: 700; 
@@ -39,10 +39,8 @@
             color: #0A192F; 
             white-space: nowrap; 
             margin: 0;
-            line-height: 44px; /* Align text perfectly */
+            line-height: 44px; 
         }
-        
-        /* Force Dropdown Size & Reset Margins */
         .filter-group select { 
             height: 44px; 
             padding: 0 12px; 
@@ -57,14 +55,12 @@
             min-width: 200px; 
             background-color: #fff;
         }
-        
-        /* Force Button Size & Match Dropdown */
         .btn-export { 
             background: #087443; 
             color: white; 
             padding: 0 24px; 
             height: 44px; 
-            margin: 0; /* Reset any default margin */
+            margin: 0;
             box-sizing: border-box;
             border: none; 
             border-radius: 4px; 
@@ -76,9 +72,27 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            align-self: center; /* Force alignment within flex container */
+            align-self: center;
         }
         .btn-export:hover { background: #065C35; }
+
+        /* Summary Totals Bar */
+        .summary-totals {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-top: 16px;
+            background: white;
+            padding: 12px 16px;
+            border: 1px solid #DDE4DF;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        .summary-totals h3 { margin: 0; font-size: 16px; font-weight: 700; color: #0A192F; }
+        .summary-item { display: flex; align-items: center; gap: 8px; }
+        .summary-item span { color: #4B5563; font-weight: 500; }
+        .summary-item strong { color: #087443; font-size: 18px; font-weight: 800; }
 
         /* Main Table Button */
         .btn-manage { background: #0A192F; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
@@ -140,6 +154,14 @@
         <button class="btn-export" onclick="exportTableToCSV('campaign_monitoring.csv')">
             Export to CSV
         </button>
+    </div>
+
+    <!-- Summary Totals Bar -->
+    <div class="summary-totals">
+        <h3>Summary Totals:</h3>
+        <div class="summary-item"><span>Pledged PUs</span> <strong id="sum-pledged">0</strong></div>
+        <div class="summary-item"><span>Images Received</span> <strong id="sum-images">0</strong></div>
+        <div class="summary-item"><span>Verified</span> <strong id="sum-verified">0</strong></div>
     </div>
 
     <div style="overflow-x: auto;">
@@ -338,17 +360,29 @@
         }
     }
 
-    // 4. Render Table
+    // 4. Render Table (and calculate summary totals)
     function renderTable(data) {
         const tbody = document.getElementById("table-body");
         tbody.innerHTML = "";
 
+        let totalPledged = 0;
+        let totalImages = 0;
+        let totalVerified = 0;
+
         if (data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No LGAs found for this state.</td></tr>`;
+            document.getElementById("sum-pledged").innerText = "0";
+            document.getElementById("sum-images").innerText = "0";
+            document.getElementById("sum-verified").innerText = "0";
             return;
         }
 
         data.forEach(row => {
+            // Calculate totals
+            totalPledged += Number(row.pledged_pus) || 0;
+            totalImages += Number(row.images_received) || 0;
+            totalVerified += Number(row.results_verified) || 0;
+
             const tr = document.createElement("tr");
             if (row.pledged_pus > 5 && row.images_received === 0) {
                 tr.className = "highlight";
@@ -366,6 +400,11 @@
             `;
             tbody.appendChild(tr);
         });
+
+        // Update Summary Totals UI
+        document.getElementById("sum-pledged").innerText = totalPledged;
+        document.getElementById("sum-images").innerText = totalImages;
+        document.getElementById("sum-verified").innerText = totalVerified;
     }
 
     // 5. Open Modal
