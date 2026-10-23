@@ -431,17 +431,23 @@
             .section-title, .section-title-center { margin: 48px 0 24px; }
             .dashboard-section { margin-top: 48px; }
 
-            /* FIX: State Summary block to prevent overflow */
+            /* 1. FIX: Progress bar increased by 20% and keeps on screen */
             .est-summary-block { flex-direction: column; align-items: flex-start; }
             .est-summary-right { width: 100%; min-width: 0; }
-            .est-progress-track { width: 100%; }
+            .est-progress-wrapper { width: 120%; max-width: calc(100% + 20px); margin-left: -10px; }
+            .est-progress-track { flex-grow: 1; width: 100%; }
             
-            /* FIX: Stack the Table */
+            /* 2. FIX: Stack the Table & Remove horizontal scroll */
+            .metrics-container { overflow-x: hidden; }
+            
             .metrics-table, .metrics-table thead, .metrics-table tbody, .metrics-table th, .metrics-table td, .metrics-table tr {
                 display: block;
                 width: 100%;
             }
-            .metrics-table thead { display: none; } /* Hide headers */
+            .metrics-table {
+                min-width: 0 !important; /* Crucial: stops the 700px forced width */
+            }
+            .metrics-table thead { display: none; }
             
             .metrics-table tr {
                 margin-bottom: 16px;
@@ -449,8 +455,10 @@
                 border-radius: 8px;
                 padding: 12px 16px;
                 background: #F9FAFB;
+                box-sizing: border-box;
             }
             
+            /* 3. FIX: Text on left, Numbers on right */
             .metrics-table td {
                 display: flex;
                 justify-content: space-between;
@@ -459,27 +467,29 @@
                 padding: 8px 0;
                 text-align: right;
                 font-size: 14px;
+                box-sizing: border-box;
             }
             
             .metrics-table td:first-child {
+                display: block;
                 font-weight: 700;
                 font-size: 16px;
                 text-align: left;
                 border-bottom: 1px solid #DDE4DF;
                 margin-bottom: 8px;
-                padding-bottom: 12px;
+                padding-bottom: 8px;
                 color: var(--ink);
             }
             
             /* Add labels before values for mobile */
-            .metrics-table td:nth-child(2)::before { content: "Registered Voters"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(3)::before { content: "Accredited Voters"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(4)::before { content: "Valid Votes"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(5)::before { content: "Rejected Votes"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(6)::before { content: "APC"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(7)::before { content: "PDP"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(8)::before { content: "ADC"; font-weight: 500; color: var(--muted); }
-            .metrics-table td:nth-child(9)::before { content: "NDC"; font-weight: 500; color: var(--muted); }
+            .metrics-table td:nth-child(2)::before { content: "Registered Voters"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(3)::before { content: "Accredited Voters"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(4)::before { content: "Valid Votes"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(5)::before { content: "Rejected Votes"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(6)::before { content: "APC"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(7)::before { content: "PDP"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(8)::before { content: "ADC"; font-weight: 500; color: var(--muted); text-align: left; }
+            .metrics-table td:nth-child(9)::before { content: "NDC"; font-weight: 500; color: var(--muted); text-align: left; }
 
             /* Footer mobile */
             .footer-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -594,7 +604,6 @@
         </div>
 
         <div class="fed-card">
-            <!-- REVERTED TITLE -->
             <h3>Polling Unit Coverage</h3>
             <div class="fed-big-number" id="dash-coverage-text">0 <span>of</span> 176,846</div>
             <p class="fed-subtext">Polling units reviewed</p>
@@ -656,7 +665,6 @@
                 <p>Figures from reviewed polling-unit records in the selected area.</p>
             </div>
             <div class="est-summary-right">
-                <!-- REVERTED TITLE -->
                 <h4>Polling Unit Coverage</h4>
                 <div class="est-big-number" id="est-coverage-text">0 <span>of</span> 0</div>
                 <p>Polling units reviewed</p>
