@@ -350,9 +350,10 @@ async function checkCoverage() {
             headerText = "🎖️ It's your turn to be the first champion contributor";
             subtext = "Pledge now. Help contribute polling-unit results";
         } else {
-            titleText = `This polling unit already has ${pledgeCount} contributor(s).`;
-            headerText = "🏅 It's your turn to become a champion contributor";
-            subtext = "Add your support as a backup to ensure the result is captured.";
+            // UPDATED BACKUP MESSAGE
+            titleText = "This polling unit already has contributors.";
+            headerText = "🏅 Join to become a champion contributor";
+            subtext = "Help provide a photo of the polling-unit results.";
         }
 
         // Render the new structure matching the screenshot
